@@ -1,0 +1,9 @@
+name: Regios
+main: couk.Adamki11s.Regios.Main.Regios
+version: 5.0.35
+authors: [Adamki11s, johnnyzerox7]
+commands:
+  regios:
+    aliases: [reg, r]
+    description: Use /regios help <Page Number>
+    usage: Use /regios help for help.
