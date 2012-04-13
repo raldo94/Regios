@@ -3,14 +3,22 @@ package couk.Adamki11s.Regios.RBF;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BrewingStand;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.Furnace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import couk.Adamki11s.Regios.CustomEvents.RegionRestoreEvent;
 import couk.Adamki11s.Regios.CustomExceptions.FileExistanceException;
@@ -21,6 +29,8 @@ import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.jnbt.ByteArrayTag;
 import couk.Adamki11s.jnbt.CompoundTag;
 import couk.Adamki11s.jnbt.IntTag;
+import couk.Adamki11s.jnbt.ListItemStackArrayTag;
+import couk.Adamki11s.jnbt.ListStringArrayTag;
 import couk.Adamki11s.jnbt.NBTInputStream;
 import couk.Adamki11s.jnbt.Tag;
 
@@ -31,14 +41,15 @@ public class RBF_Load extends PermissionsCore {
 		return tag;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void loadRegion(Region r, String backupname, Player p) throws IOException, RegionExistanceException, FileExistanceException, InvalidNBTFormat {
 		if(p != null){
-		if (!super.canModifyMain(r, p)) {
-			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+			if (!super.canModify(r, p)) {
+				if (p != null) {
+					p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				}
+				return;
 			}
-			return;
-		}
 		}
 
 		if (r == null) {
@@ -86,6 +97,8 @@ public class RBF_Load extends PermissionsCore {
 
 		byte[] blocks = (byte[]) getChildTag(tagCollection, "BlockID", ByteArrayTag.class).getValue();
 		byte[] blockData = (byte[]) getChildTag(tagCollection, "Data", ByteArrayTag.class).getValue();
+		List<ItemStack[]> containerData = (List<ItemStack[]>) getChildTag(tagCollection, "ContainerData", ListItemStackArrayTag.class).getValue();
+		List<String[]> signData = (List<String[]>) getChildTag(tagCollection, "SignData", ListStringArrayTag.class).getValue();
 
 		int index = 0;
 
@@ -93,8 +106,45 @@ public class RBF_Load extends PermissionsCore {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
 					Block b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
+					if(b.getType().equals(Material.CHEST)) { //Added to prevent chests/furnaces/etc from dropping everything in them when regenerating regions -jzx7
+						Chest ih = (Chest) b.getState();
+						ih.getBlockInventory().clear();
+					} else if(b.getType().equals(Material.FURNACE)) {
+						Furnace ih = (Furnace) b.getState();
+						ih.getInventory().clear();
+					} else if(b.getType().equals(Material.DISPENSER)) {
+						Dispenser ih = (Dispenser) b.getState();
+						ih.getInventory().clear();
+					} else if(b.getType().equals(Material.BREWING_STAND)) {
+						BrewingStand ih = (BrewingStand) b.getState();
+						ih.getInventory().clear();
+					}
+
 					b.setTypeId((int) blocks[index]);
 					b.setData(blockData[index]);
+
+					if(b.getType().equals(Material.CHEST)) { //Added to load chest/furnace/etc inventory from backup
+						Chest chest = (Chest) b.getState();
+						chest.getBlockInventory().setContents(containerData.get(index));
+					} else if(b.getType().equals(Material.FURNACE)) {
+						Furnace furnace = (Furnace) b.getState();
+						furnace.getInventory().setContents(containerData.get(index));
+					}else if(b.getType().equals(Material.DISPENSER)) {
+						Dispenser dispenser = (Dispenser) b.getState();
+						dispenser.getInventory().setContents(containerData.get(index));
+					} else if(b.getType().equals(Material.BREWING_STAND)) {
+						BrewingStand brew = (BrewingStand) b.getState();
+						brew.getInventory().setContents(containerData.get(index));
+					} else if(b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
+						Sign sign = (Sign) b.getState();
+						int line = 0;
+						for(String s : signData.get(index)) {
+							sign.setLine(line, s);
+							line++;
+						}
+						sign.update();
+					}
+
 					index++;
 				}
 			}

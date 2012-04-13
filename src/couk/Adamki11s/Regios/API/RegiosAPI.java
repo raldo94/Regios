@@ -55,6 +55,17 @@ public class RegiosAPI {
 	public ArrayList<Region> getRegions() {
 		return GlobalRegionManager.getRegions();
 	}
+	
+	/**
+	 * Get a list of all the Regions in specified world.
+	 * 
+	 * @param w
+	 *            World
+	 * @return List of Regions.
+	 */
+	public ArrayList<Region> getRegions(World w) {
+		return GlobalRegionManager.getRegions(w);
+	}
 
 	/**
 	 * Return the world setting for the specified world.

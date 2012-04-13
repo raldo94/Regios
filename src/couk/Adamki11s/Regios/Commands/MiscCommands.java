@@ -38,7 +38,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if (!super.canModifyMain(r, p)) {
+			if (!super.canModify(r, p)) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -133,7 +133,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if (!super.canModifyBasic(r, p)) {
+			if (!super.canModify(r, p)) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -157,7 +157,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -181,7 +181,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -213,7 +213,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}

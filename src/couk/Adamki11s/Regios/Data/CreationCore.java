@@ -5,8 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
+
 import org.bukkit.Material;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class CreationCore {
 
@@ -122,82 +124,83 @@ public class CreationCore {
 		if (!generalconfig.exists()) {
 			log.info(prefix + " Creating general configuration.");
 			generalconfig.createNewFile();
-			Configuration c = new Configuration(generalconfig);
-			c.setProperty("Region.Economy", "NONE");
-			c.setProperty("Region.LogsEnabled", true);
-			c.setProperty("Region.Tools.Setting.ID", Material.WOOD_AXE.getId());
-			c.save();
+			FileConfiguration c = YamlConfiguration.loadConfiguration(generalconfig);
+			c.set("Region.UseEconomy", false);
+			c.set("Region.LogsEnabled", true);
+			c.set("Region.Tools.Setting.ID", Material.WOOD_AXE.getId());
+			c.save(generalconfig);
 		}
 		if (!defaultregions.exists()) {
 			log.info(prefix + " Creating default region settings configuration.");
 			defaultregions.createNewFile();
-			Configuration c = new Configuration(defaultregions);
-			c.setProperty("DefaultSettings.General.Protected.BlockBreak", false);
-			c.setProperty("DefaultSettings.General.Protected.BlockPlace", false);
-			c.setProperty("DefaultSettings.General.Protected.General", false);
-			c.setProperty("DefaultSettings.General.PreventEntry", false);
-			c.setProperty("DefaultSettings.General.PreventExit", false);
-			c.setProperty("DefaultSettings.General.MobSpawns", true);
-			c.setProperty("DefaultSettings.General.MonsterSpawns", true);
-			c.setProperty("DefaultSettings.General.PvP", false);
-			c.setProperty("DefaultSettings.General.DoorsLocked", false);
-			c.setProperty("DefaultSettings.General.ChestsLocked", false);
-			c.setProperty("DefaultSettings.General.PreventInteraction", false);
+			FileConfiguration c = YamlConfiguration.loadConfiguration(defaultregions);
+			c.set("DefaultSettings.General.Protected.BlockBreak", false);
+			c.set("DefaultSettings.General.Protected.BlockPlace", false);
+			c.set("DefaultSettings.General.Protected.General", false);
+			c.set("DefaultSettings.General.PreventEntry", false);
+			c.set("DefaultSettings.General.PreventExit", false);
+			c.set("DefaultSettings.General.MobSpawns", true);
+			c.set("DefaultSettings.General.MonsterSpawns", true);
+			c.set("DefaultSettings.General.PvP", false);
+			c.set("DefaultSettings.General.DoorsLocked", false);
+			c.set("DefaultSettings.General.ChestsLocked", false);
+			c.set("DefaultSettings.General.PreventInteraction", false);
 
-			c.setProperty("DefaultSettings.Protection.FireProtection", true);
+			c.set("DefaultSettings.Protection.FireProtection", true);
+			c.set("DefaultSettings.Protection.TNTEnabled", true);
 
-			c.setProperty("DefaultSettings.Messages.WelcomeMessage", "<BGREEN>Welcome to <BLUE>[NAME] <BGREEN>owned by <YELLOW>[OWNER]");
-			c.setProperty("DefaultSettings.Messages.LeaveMessage", "<RED>You left <BLUE>[NAME] <RED>owned by <YELLOW>[OWNER]");
-			c.setProperty("DefaultSettings.Messages.ProtectionMessage", "<RED>This region is protected by owner <YELLOW>[OWNER]!");
-			c.setProperty("DefaultSettings.Messages.PreventEntryMessage", "<RED>You cannot enter this region : <BLUE>[NAME]");
-			c.setProperty("DefaultSettings.Messages.PreventExitMessage", "<RED>You cannot exit this region : <BLUE>[NAME]");
-			c.setProperty("DefaultSettings.Messages.ShowWelcomeMessage", true);
-			c.setProperty("DefaultSettings.Messages.ShowLeaveMessage", true);
-			c.setProperty("DefaultSettings.Messages.ShowProtectionMessage", true);
-			c.setProperty("DefaultSettings.Messages.ShowPreventEntryMessage", true);
-			c.setProperty("DefaultSettings.Messages.ShowPreventExitMessage", true);
-			c.setProperty("DefaultSettings.Messages.ShowPvPWarning", true);
+			c.set("DefaultSettings.Messages.WelcomeMessage", "<BGREEN>Welcome to <BLUE>[NAME] <BGREEN>owned by <YELLOW>[OWNER]");
+			c.set("DefaultSettings.Messages.LeaveMessage", "<RED>You left <BLUE>[NAME] <RED>owned by <YELLOW>[OWNER]");
+			c.set("DefaultSettings.Messages.ProtectionMessage", "<RED>This region is protected by owner <YELLOW>[OWNER]!");
+			c.set("DefaultSettings.Messages.PreventEntryMessage", "<RED>You cannot enter this region : <BLUE>[NAME]");
+			c.set("DefaultSettings.Messages.PreventExitMessage", "<RED>You cannot exit this region : <BLUE>[NAME]");
+			c.set("DefaultSettings.Messages.ShowWelcomeMessage", true);
+			c.set("DefaultSettings.Messages.ShowLeaveMessage", true);
+			c.set("DefaultSettings.Messages.ShowProtectionMessage", true);
+			c.set("DefaultSettings.Messages.ShowPreventEntryMessage", true);
+			c.set("DefaultSettings.Messages.ShowPreventExitMessage", true);
+			c.set("DefaultSettings.Messages.ShowPvPWarning", true);
 
-			c.setProperty("DefaultSettings.Permissions.TemporaryCache.AddNodes", "");
-			c.setProperty("DefaultSettings.Permissions.PermanentCache.AddNodes", "");
-			c.setProperty("DefaultSettings.Permissions.PermanentCache.RemoveNodes", "");
+			c.set("DefaultSettings.Permissions.TemporaryCache.AddNodes", "");
+			c.set("DefaultSettings.Permissions.PermanentCache.AddNodes", "");
+			c.set("DefaultSettings.Permissions.PermanentCache.RemoveNodes", "");
 
-			c.setProperty("DefaultSettings.Other.LSPS", 0);
-			c.setProperty("DefaultSettings.Other.HealthEnabled", true);
-			c.setProperty("DefaultSettings.Other.HealthRegenRate", 0);
-			c.setProperty("DefaultSettings.Other.VelocityWarp", 0);
+			c.set("DefaultSettings.Other.LSPS", 0);
+			c.set("DefaultSettings.Other.HealthEnabled", true);
+			c.set("DefaultSettings.Other.HealthRegenRate", 0);
+			c.set("DefaultSettings.Other.VelocityWarp", 0);
 
-			c.setProperty("DefaultSettings.Modes.ProtectionMode", "WHITELIST");
-			c.setProperty("DefaultSettings.Modes.PreventEntryMode", "WHITELIST");
-			c.setProperty("DefaultSettings.Modes.PreventExitMode", "WHITELIST");
-			c.setProperty("DefaultSettings.Modes.ItemControlMode", "WHITELIST");
+			c.set("DefaultSettings.Modes.ProtectionMode", "WHITELIST");
+			c.set("DefaultSettings.Modes.PreventEntryMode", "WHITELIST");
+			c.set("DefaultSettings.Modes.PreventExitMode", "WHITELIST");
+			c.set("DefaultSettings.Modes.ItemControlMode", "WHITELIST");
 
-			c.setProperty("DefaultSettings.Inventory.PermWipeOnEnter", false);
-			c.setProperty("DefaultSettings.Inventory.PermWipeOnExit", false);
-			c.setProperty("DefaultSettings.Inventory.WipeAndCacheOnEnter", false);
-			c.setProperty("DefaultSettings.Inventory.WipeAndCacheOnExit", false);
+			c.set("DefaultSettings.Inventory.PermWipeOnEnter", false);
+			c.set("DefaultSettings.Inventory.PermWipeOnExit", false);
+			c.set("DefaultSettings.Inventory.WipeAndCacheOnEnter", false);
+			c.set("DefaultSettings.Inventory.WipeAndCacheOnExit", false);
 
-			c.setProperty("DefaultSettings.Command.ForceCommand", false);
-			c.setProperty("DefaultSettings.Command.CommandSet", "");
+			c.set("DefaultSettings.Command.ForceCommand", false);
+			c.set("DefaultSettings.Command.CommandSet", "");
 
-			c.setProperty("DefaultSettings.Economy.ForSale", false);
-			c.setProperty("DefaultSettings.Economy.SalePrice", 0);
+			c.set("DefaultSettings.Economy.ForSale", false);
+			c.set("DefaultSettings.Economy.SalePrice", 0);
 
-			c.setProperty("DefaultSettings.Password.PasswordProtection", false);
-			c.setProperty("DefaultSettings.Password.Password", "NA");
-			c.setProperty("DefaultSettings.Password.PasswordMessage", "<RED>Authentication required! Do /regios auth <password>");
-			c.setProperty("DefaultSettings.Password.PasswordSuccessMessage", "Authentication successful!");
+			c.set("DefaultSettings.Password.PasswordProtection", false);
+			c.set("DefaultSettings.Password.Password", "NA");
+			c.set("DefaultSettings.Password.PasswordMessage", "<RED>Authentication required! Do /regios auth <password>");
+			c.set("DefaultSettings.Password.PasswordSuccessMessage", "Authentication successful!");
 
-			c.setProperty("DefaultSettings.Spout.SpoutWelcomeIconID", Material.GRASS.getId());
-			c.setProperty("DefaultSettings.Spout.SpoutLeaveIconID", Material.DIRT.getId());
-			c.setProperty("DefaultSettings.Spout.Sound.PlayCustomMusic", false);
-			c.setProperty("DefaultSettings.Spout.Sound.CustomMusicURL", "");
+			c.set("DefaultSettings.Spout.SpoutWelcomeIconID", Material.GRASS.getId());
+			c.set("DefaultSettings.Spout.SpoutLeaveIconID", Material.DIRT.getId());
+			c.set("DefaultSettings.Spout.Sound.PlayCustomMusic", false);
+			c.set("DefaultSettings.Spout.Sound.CustomMusicURL", "");
 
-			c.setProperty("DefaultSettings.General.PlayerCap.Cap", 0);
+			c.set("DefaultSettings.General.PlayerCap.Cap", 0);
 
-			c.setProperty("DefaultSettings.Block.BlockForm.Enabled", true);
+			c.set("DefaultSettings.Block.BlockForm.Enabled", true);
 
-			c.save();
+			c.save(defaultregions);
 		}
 		if (!flawless) {
 			log.info(prefix + " Required configurations created successfully!");

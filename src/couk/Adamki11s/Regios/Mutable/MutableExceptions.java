@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import couk.Adamki11s.Regios.Regions.Region;
 
@@ -155,34 +156,42 @@ public class MutableExceptions {
 	 */
 	
 	public void addSubOwner(Region r, String message){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		String current = (String)all.get("Region.Essentials.SubOwners");
 		all.remove("Region.Essentials.SubOwners");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.SubOwners", current.trim() + message.trim() + ",");
+		c.set("Region.Essentials.SubOwners", current.trim() + message.trim() + ",");
 		r.setSubOwners((current.trim() + "," + message.trim()).split(","));
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public void removeSubOwner(Region r, String message){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		String current = (String)all.get("Region.Essentials.SubOwners");
 		current = current.replaceAll(" ", "");
 		current = current.replaceAll(message + ",", "");
 		current = current.replaceAll(",,", ",");
 		all.remove("Region.Essentials.SubOwners");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.SubOwners", current.trim());
+		c.set("Region.Essentials.SubOwners", current.trim());
 		r.setSubOwners((current.trim()).split(","));
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public String listSubOwnersExceptions(Region r) {
@@ -194,16 +203,20 @@ public class MutableExceptions {
 	}
 	
 	public void eraseAllSubOwners(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.SubOwners");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.SubOwners", "");
+		c.set("Region.Essentials.SubOwners", "");
 		r.setSubOwners(("").split(","));
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public boolean checkSubOwnerException(Region r, String ex) {

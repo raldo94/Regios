@@ -1,11 +1,12 @@
 package couk.Adamki11s.Regios.Mutable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.Regios.Scheduler.LightningRunner;
@@ -13,16 +14,20 @@ import couk.Adamki11s.Regios.Scheduler.LightningRunner;
 public class MutableFun {
 	
 	public void editLSPS(Region r, int val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Other.LSPS");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Other.LSPS", val);
+		c.set("Region.Other.LSPS", val);
 		r.setLSPS(val);
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 		if(val == 0){
 			LightningRunner.removeRegion(r);
 		} else if(val > 0){
@@ -31,81 +36,105 @@ public class MutableFun {
 	}
 	
 	public void editHealthRegen(Region r, int val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Other.HealthRegen");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Other.HealthRegen", val);
+		c.set("Region.Other.HealthRegen", val);
 		r.setHealthRegen(val);
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public void editVelocityWarp(Region r, double val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Other.VelocityWarp");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Other.VelocityWarp", val);
+		c.set("Region.Other.VelocityWarp", val);
 		r.setVelocityWarp(val);
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public void editWarpLocation(Region r, Location val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Teleportation.Warp.Location");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Teleportation.Warp.Location", val.getWorld().getName() + "," + val.getBlockX() + "," + val.getBlockY() + "," + val.getBlockZ());
+		c.set("Region.Teleportation.Warp.Location", val.getWorld().getName() + "," + val.getBlockX() + "," + val.getBlockY() + "," + val.getBlockZ());
 		r.setWarp(val);
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public void editRemoveWarpLocation(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Teleportation.Warp.Location");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Teleportation.Warp.Location", r.getWorld() + ",0,0,0");
-		r.setWarp(new Location(Bukkit.getServer().getWorld(r.getWorld()), 0, 0, 0));
-		c.save();
+		c.set("Region.Teleportation.Warp.Location", r.getWorld().getName() + ",0,0,0");
+		r.setWarp(new Location(r.getWorld(), 0, 0, 0));
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public void editHealthEnabled(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Other.HealthEnabled");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Other.HealthEnabled", val);
+		c.set("Region.Other.HealthEnabled", val);
 		r.setHealthEnabled(val);
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public void editPvPEnabled(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Other.PvP");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Other.PvP", val);
+		c.set("Region.Other.PvP", val);
 		r.setPvp(val);
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 
 }

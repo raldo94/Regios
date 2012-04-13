@@ -1,9 +1,12 @@
 package couk.Adamki11s.Regios.Mutable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import couk.Adamki11s.Extras.Cryptography.ExtrasCryptography;
 import couk.Adamki11s.Regios.Regions.Region;
@@ -13,108 +16,157 @@ public class MutableProtectionMisc {
 	ExtrasCryptography exCrypt = new ExtrasCryptography();
 	
 	public void editInteraction(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.PreventInteraction");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.PreventInteraction", val);
+		c.set("Region.General.PreventInteraction", val);
 		r.setPreventInteraction(val);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editChestsLocked(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.ChestsLocked");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.ChestsLocked", val);
+		c.set("Region.General.ChestsLocked", val);
 		r.setChestsLocked(val);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editBlockForm(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Block.BlockForm.Enabled");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Block.BlockForm.Enabled", val);
+		c.set("Region.Block.BlockForm.Enabled", val);
 		r.setBlockForm(val);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editPlayerCap(Region r, int val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.PlayerCap.Cap");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.PlayerCap.Cap", val);
+		c.set("Region.General.PlayerCap.Cap", val);
 		r.setPlayerCap(val);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editDoorsLocked(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.DoorsLocked");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.DoorsLocked", val);
+		c.set("Region.General.DoorsLocked", val);
 		r.setDoorsLocked(val);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editSetPassword(Region r, String val){
-		Configuration c = r.getConfigFile();
-		c.load();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
 		val = exCrypt.computeSHA2_384BitHash(val);
-		Map<String, Object> all = c.getAll();
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.Password.Password");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.Password.Password", val);
+		c.set("Region.General.Password.Password", val);
 		r.setPassword(val);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editPasswordEnabled(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.Password.Enabled");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.Password.Enabled", val);
+		c.set("Region.General.Password.Enabled", val);
 		r.setPasswordEnabled(val);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editFireProtection(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.FireProtection");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.FireProtection", val);
+		c.set("Region.General.FireProtection", val);
 		r.setFireProtection(val);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void editTNTEnabled(Region r, boolean val){
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
+		all.remove("Region.General.TNTEnabled");
+		for(Entry<String, Object> entry : all.entrySet()){
+			c.set(entry.getKey(), entry.getValue());
+		}
+		c.set("Region.General.TNT", val);
+		r.setFireProtection(val);
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

@@ -35,8 +35,6 @@ package couk.Adamki11s.jnbt;
 
 import java.util.Collections;
 import java.util.List;
-import couk.Adamki11s.jnbt.NBTUtils;
-import couk.Adamki11s.jnbt.Tag;
 
 /**
  * The <code>TAG_List</code> tag.

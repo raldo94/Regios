@@ -11,9 +11,20 @@ public class GlobalRegionManager {
 	
 	private static ArrayList<Region> regions = new ArrayList<Region>();
 	private static ArrayList<GlobalWorldSetting> worldSettings = new ArrayList<GlobalWorldSetting>();
+	private static ArrayList<Region> regionsInWorld = new ArrayList<Region>();
 	
 	public static ArrayList<Region> getRegions(){
 		return regions;
+	}
+	
+	public static ArrayList<Region> getRegions(World w){
+		regionsInWorld.clear();
+		for(Region r : regions) {
+			if(r.getWorld().getName().equalsIgnoreCase(w.getName())) {
+				regionsInWorld.add(r);
+			}
+		}
+		return regionsInWorld;
 	}
 	
 	public static ArrayList<GlobalWorldSetting> getWorldSettings(){
@@ -88,8 +99,8 @@ public class GlobalRegionManager {
 		return r.getChunkGrid();
 	}
 	
-	public static void addRegion(Region reg){
-		regions.add(reg);
+	public static void addRegion(Region genericRegion){
+		regions.add(genericRegion);
 	}
 	
 	public static void addWorldSetting(GlobalWorldSetting gws){

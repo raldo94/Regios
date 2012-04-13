@@ -2,6 +2,7 @@ package couk.Adamki11s.Regios.Commands;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
 import couk.Adamki11s.Regios.CustomEvents.RegionCommandEvent;
 import couk.Adamki11s.Regios.CustomExceptions.FileExistanceException;
 import couk.Adamki11s.Regios.CustomExceptions.InvalidNBTFormat;
@@ -822,6 +824,14 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
+			
+			if (args.length == 3 && (args[0].equalsIgnoreCase("tntenabled") || args[0].equalsIgnoreCase("tnt-enabled"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.protection.tnt-enabled")) {
+					misc.setTNTEnabled(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
 
 			if (args.length == 3 && (args[0].equalsIgnoreCase("playercap") || args[0].equalsIgnoreCase("player-cap"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.player-cap")) {
@@ -927,9 +937,17 @@ public class CommandCore implements CommandExecutor {
 			 * Permissions
 			 */
 
-			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-add"))) {
+			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-add-add"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
-					perms.addToTempCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+					perms.addToTempAddCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-rem-add"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache-add")) {
+					perms.addToTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -951,9 +969,17 @@ public class CommandCore implements CommandExecutor {
 				}
 			}
 
-			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-rem"))) {
+			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-add-rem"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
-					perms.removeFromTempCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+					perms.removeFromTempAddCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-rem-rem"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
+					perms.removeFromTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -975,9 +1001,17 @@ public class CommandCore implements CommandExecutor {
 				}
 			}
 
-			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-reset"))) {
+			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-add-reset"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
 					perms.resetTempAddCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-rem-reset"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
+					perms.resetTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -1023,9 +1057,17 @@ public class CommandCore implements CommandExecutor {
 				}
 			}
 
-			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-list"))) {
+			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-add-list"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
 					perms.listTempAddCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-rem-list"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
+					perms.listTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}

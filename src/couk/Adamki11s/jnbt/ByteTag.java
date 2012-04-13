@@ -1,6 +1,5 @@
 package couk.Adamki11s.jnbt;
 
-import couk.Adamki11s.jnbt.Tag;
 
 /*
  * JNBT License

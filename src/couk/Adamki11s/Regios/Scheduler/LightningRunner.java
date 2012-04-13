@@ -1,8 +1,9 @@
 package couk.Adamki11s.Regios.Scheduler;
 
 import java.util.HashMap;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,8 +31,8 @@ public class LightningRunner {
 		}
 	}
 
-	public static boolean doesStikesContain(Region r) {
-		return strikes.containsKey(r);
+	public static boolean doesStrikesContain(Region genericRegion) {
+		return strikes.containsKey(genericRegion);
 	}
 
 	public static void executeStrikes() {

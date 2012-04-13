@@ -2,17 +2,17 @@ package couk.Adamki11s.Regios.CustomEvents;
 
 import org.bukkit.Location;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 import couk.Adamki11s.Regios.Regions.Region;
 
-@SuppressWarnings("serial")
 public class RegionLightningStrikeEvent extends Event {
-	
+	private static final HandlerList handlers = new HandlerList();
 	private Region region;
 	private Location location;
 
     public RegionLightningStrikeEvent(String name) {
-        super(name);
+        super();
     }
     
     public Region getRegion(){
@@ -23,9 +23,17 @@ public class RegionLightningStrikeEvent extends Event {
     	return this.location;
     }
 
-    public void setProperties(Location location, Region region) {
+    public void setProperties(Location location, Region r) {
     	this.location = location;
-        this.region = region;
+        this.region = r;
+    }
+
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+     
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
 }

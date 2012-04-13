@@ -1,35 +1,28 @@
 package couk.Adamki11s.Regios.Permissions;
 
+import net.milkbowl.vault.permission.Permission;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import ru.tehkode.permissions.PermissionManager;
-
-import com.nijiko.permissions.PermissionHandler;
-
 import couk.Adamki11s.Regios.Regions.Region;
 
 public class PermissionsCore {
 
-	public static PermissionHandler permissionHandler = null;
-	public static PermissionManager pex;
-	public static boolean hasPermissions = false, iConomyEnabled = false, hasPEX = false;
+	public static Permission permission = null;
+	public static boolean hasPermissions = false;
 
 	public static boolean doesHaveNode(Player p, String node) {
 		if (p.isOp()) {
 			return true;
 		}
 
-		if (hasPermissions) {
-			return permissionHandler.has(p, node);
+		if(hasPermissions) {
+			return permission.has(p, node);
 		} else {
-			if (hasPEX) {
-				return pex.has(p, node);
-			} else {
-				return p.hasPermission(node);
-			}
+			return p.hasPermission(node);
 		}
 	}
 
@@ -41,14 +34,14 @@ public class PermissionsCore {
 		p.sendNotification("Permissions", ChatColor.RED + "You cannot do this!", Material.FIRE);
 	}
 
-	public static boolean canModifyBasic(Region r, Player p) {
+	public static boolean canModify(Region r, Player p) {
 		if (doesHaveNode(p, ("regios.override." + r.getName())) || doesHaveNode(p, "regios.override.all")) {
 			return true;
 		}
-		if (canModifyMain(r, p)) {
+		if (r.getOwner().equalsIgnoreCase(p.getName())) {
 			return true;
 		}
-		if (r.getOwner().equalsIgnoreCase(p.getName())) {
+		if (p.isOp()) {
 			return true;
 		}
 		for (String s : r.getSubOwners()) {
@@ -56,46 +49,30 @@ public class PermissionsCore {
 				return true;
 			}
 		}
-		if (p.isOp()) {
-			return true;
-		}
 		return false;
 	}
+	
+	public static void addTempUserPermission(Player p, String node) {
+		if (hasPermissions) {
+			permission.playerAddTransient(p.getWorld().getName(), p.getName(), node);
+		}
+	}
 
-	public static boolean canModifyMain(Region r, Player p) {
-		if (doesHaveNode(p, ("regios.override." + r.getName())) || doesHaveNode(p, "regios.override.all")) {
-			return true;
+	public static void removeTempUserPermission(Player p, String node) {
+		if (hasPermissions) {
+			permission.playerRemoveTransient(p.getWorld().getName(), p.getName(), node);
 		}
-		if (r.getOwner().equalsIgnoreCase(p.getName())) {
-			return true;
-		}
-		if (p.isOp()) {
-			return true;
-		}
-		return false;
 	}
 
 	public static void addUserPermission(Player p, String node) {
 		if (hasPermissions) {
-			permissionHandler.addUserPermission(p.getWorld().getName(), p.getName(), node);
-			permissionHandler.save(p.getName());
-			try {
-				permissionHandler.load();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			permission.playerAdd(p.getWorld().getName(), p.getName(), node);
 		}
 	}
 
 	public static void removeUserPermission(Player p, String node) {
 		if (hasPermissions) {
-			permissionHandler.removeUserPermission(p.getWorld().getName(), p.getName(), node);
-			permissionHandler.save(p.getName());
-			try {
-				permissionHandler.load();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			permission.playerRemove(p.getWorld().getName(), p.getName(), node);
 		}
 	}
 

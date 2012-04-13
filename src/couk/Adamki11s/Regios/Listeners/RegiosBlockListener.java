@@ -10,10 +10,12 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +32,7 @@ import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.Regios.Regions.SubRegionManager;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
 
-public class RegiosBlockListener extends BlockListener {
+public class RegiosBlockListener implements Listener {
 
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	private static final SubRegionManager srm = new SubRegionManager();
@@ -91,7 +93,7 @@ public class RegiosBlockListener extends BlockListener {
 			} else {
 				for (Region r : currentRegionSet) {
 					if (r.is_protection()) {
-						if (!r.canBuild(p)) {
+						if (!r.canBypassProtection(p)) {
 							LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 									+ (" Player '" + p.getName() + "' tried to place " + evt.getBlock().getType().toString() + " but was prevented."));
 							r.sendBuildMessage(p);
@@ -103,7 +105,7 @@ public class RegiosBlockListener extends BlockListener {
 			}
 		}
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onSignChange(SignChangeEvent evt) {
 		if (!EconomyCore.isEconomySupportEnabled()) {
 			return;
@@ -132,7 +134,7 @@ public class RegiosBlockListener extends BlockListener {
 							evt.setCancelled(true);
 							return;
 						}
-						if (!PermissionsCore.canModifyMain(r, evt.getPlayer())) {
+						if (!PermissionsCore.canModify(r, evt.getPlayer())) {
 							if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
 								evt.getPlayer().sendMessage(ChatColor.RED + "[Regios] You don't have permissions to sell this region!");
 							}
@@ -154,8 +156,7 @@ public class RegiosBlockListener extends BlockListener {
 			}
 		}
 	}
-
-	@Override
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockIgnite(BlockIgniteEvent evt) {
 		World w = evt.getBlock().getWorld();
 		Chunk c = w.getChunkAt(evt.getBlock());
@@ -229,7 +230,7 @@ public class RegiosBlockListener extends BlockListener {
 
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockForm(BlockFormEvent evt) {
 
 		Location l = evt.getBlock().getLocation();
@@ -291,8 +292,7 @@ public class RegiosBlockListener extends BlockListener {
 			return;
 		}
 	}
-
-	@Override
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent evt) {
 		Player p = evt.getPlayer();
 		Block b = evt.getBlock();
@@ -361,11 +361,9 @@ public class RegiosBlockListener extends BlockListener {
 		} else {
 			r = currentRegionSet.get(0);
 		}
-		
-		p.sendMessage("Building in region : " + r.getName());
 
 		if (r.getItems().isEmpty() && r.is_protectionPlace()) {
-			if (r.canBuild(p, r)) {
+			if (r.canBypassProtection(p, r)) {
 				return;
 			} else {
 				evt.setCancelled(true);
@@ -387,7 +385,7 @@ public class RegiosBlockListener extends BlockListener {
 		}
 		
 		if (r.is_protectionPlace()) {
-			if (!r.canBuild(p)) {
+			if (!r.canBypassProtection(p)) {
 				evt.setCancelled(true);
 				r.sendBuildMessage(p);
 				return;
@@ -397,8 +395,8 @@ public class RegiosBlockListener extends BlockListener {
 	}
 
 	final CreationCommands cc = new CreationCommands();
-
-	@Override
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent evt) {
 		Player p = evt.getPlayer();
 		Block b = evt.getBlock();
@@ -412,7 +410,7 @@ public class RegiosBlockListener extends BlockListener {
 			if (sign.getLine(0).contains("[Regios]")) {
 				Region reg = GlobalRegionManager.getRegion(sign.getLine(1).substring(0, sign.getLine(1).length()));
 				if (reg != null) {
-					if (!PermissionsCore.canModifyMain(reg, p)) {
+					if (!PermissionsCore.canModify(reg, p)) {
 						p.sendMessage(ChatColor.RED + "[Regios] You cannot destroy this sign!");
 						evt.setCancelled(true);
 						int count = 0;
@@ -499,7 +497,7 @@ public class RegiosBlockListener extends BlockListener {
 		}
 
 		if (r.is_protectionBreak()) {
-			if (!r.canBuild(p)) {
+			if (!r.canBypassProtection(p)) {
 				evt.setCancelled(true);
 				r.sendBuildMessage(p);
 				return;

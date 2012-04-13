@@ -3,7 +3,6 @@ package couk.Adamki11s.Regios.Regions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,12 +11,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.util.config.Configuration;
 
 import couk.Adamki11s.Extras.Cryptography.ExtrasCryptography;
-import couk.Adamki11s.Regios.Checks.Checks;
 import couk.Adamki11s.Regios.Checks.ChunkGrid;
-import couk.Adamki11s.Regios.Checks.PermChecks;
 import couk.Adamki11s.Regios.CustomEvents.RegionCreateEvent;
 import couk.Adamki11s.Regios.CustomEvents.RegionEnterEvent;
 import couk.Adamki11s.Regios.CustomEvents.RegionExitEvent;
@@ -27,74 +23,114 @@ import couk.Adamki11s.Regios.Data.MODE;
 import couk.Adamki11s.Regios.Data.Saveable;
 import couk.Adamki11s.Regios.Inventory.InventoryCacheManager;
 import couk.Adamki11s.Regios.Listeners.RegiosPlayerListener;
+import couk.Adamki11s.Regios.Permissions.PermChecks;
 import couk.Adamki11s.Regios.Permissions.PermissionsCacheManager;
-import couk.Adamki11s.Regios.Permissions.PermissionsCore;
 import couk.Adamki11s.Regios.Scheduler.HealthRegeneration;
 import couk.Adamki11s.Regios.Scheduler.LightningRunner;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
 import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
 import couk.Adamki11s.Regios.SpoutInterface.SpoutRegion;
 
-public class Region extends PermChecks implements Checks {
+public class Region extends PermChecks {
 
-	private RegionLocation l1;
+	protected RegionLocation l1;
 
-	private RegionLocation l2;
+	protected RegionLocation l2;
 
-	private final Region region = this;
+	protected static final GlobalRegionManager grm = new GlobalRegionManager();
+	protected static final Saveable saveable = new Saveable();
 
-	private static final GlobalRegionManager grm = new GlobalRegionManager();
-	private static final Saveable saveable = new Saveable();
+	protected ChunkGrid chunkGrid;
 
-	private ChunkGrid chunkGrid;
+	protected World world;
 
-	private String world;
+	protected Location warp = null;
 
-	private Location warp = null;
+	protected String[] customSoundUrl
+	, commandSet
+	, temporaryNodesCacheAdd
+	, temporaryNodesCacheRem
+	, permanentNodesCacheAdd
+	, permanentNodesCacheRemove
+	, subOwners;
 
-	private String[] customSoundUrl, commandSet, temporaryNodesCacheAdd, permanentNodesCacheAdd, permanentNodesCacheRemove, subOwners;
+	protected ArrayList<String> exceptions = new ArrayList<String>();
+	protected ArrayList<String> nodes = new ArrayList<String>();
+	protected ArrayList<Integer> items = new ArrayList<Integer>();
 
-	private ArrayList<String> exceptions = new ArrayList<String>();
-	private ArrayList<String> nodes = new ArrayList<String>();
-	private ArrayList<Integer> items = new ArrayList<Integer>();
+	protected String welcomeMessage = ""
+			, leaveMessage = ""
+			, protectionMessage = ""
+			, preventEntryMessage = ""
+			, preventExitMessage = ""
+			, password = ""
+			, name = ""
+			, owner = ""
+			, spoutEntryMessage = ""
+			, spoutExitMessage = ""
+			, spoutTexturePack = "";
 
-	private String welcomeMessage = "", leaveMessage = "", protectionMessage = "", preventEntryMessage = "", preventExitMessage = "", password = "", name = "", owner = "",
-			spoutEntryMessage = "", spoutExitMessage = "", spoutTexturePack = "";
+	protected Material spoutEntryMaterial = Material.GRASS, spoutExitMaterial = Material.DIRT;
 
-	private Material spoutEntryMaterial = Material.GRASS, spoutExitMaterial = Material.DIRT;
+	protected boolean _protection = false
+			, _protectionPlace = false
+			, _protectionBreak = false
+			, preventEntry = false
+			, preventExit = false
+			, mobSpawns = true
+			, monsterSpawns = true
+			, healthEnabled = true
+			, pvp = true
+			, doorsLocked = false
+			, chestsLocked = false
+			, preventInteraction = false
+			, showPvpWarning = true
+			, passwordEnabled = false
+			, showWelcomeMessage = true
+			, showLeaveMessage = true
+			, showProtectionMessage = true
+			, showPreventEntryMessage = true
+			, showPreventExitMessage = true
+			, fireProtection = false
+			, playCustomSoundUrl = false
+			, permWipeOnEnter = false
+			, permWipeOnExit = false
+			, wipeAndCacheOnEnter = false
+			, wipeAndCacheOnExit = false
+			, forceCommand = false
+			, blockForm = true
+			, forSale = false
+			, useSpoutTexturePack = false
+			, spoutWelcomeEnabled
+			, spoutLeaveEnabled
+			, TNTEnabled = true;
 
-	private boolean _protection = false, _protectionPlace = false, _protectionBreak = false, preventEntry = false, preventExit = false, mobSpawns = true,
-			monsterSpawns = true, healthEnabled = true, pvp = true, doorsLocked = false, chestsLocked = false, preventInteraction = false, showPvpWarning = true,
-			passwordEnabled = false, showWelcomeMessage = true, showLeaveMessage = true, showProtectionMessage = true, showPreventEntryMessage = true,
-			showPreventExitMessage = true, fireProtection = false, playCustomSoundUrl = false, permWipeOnEnter = false, permWipeOnExit = false, wipeAndCacheOnEnter = false,
-			wipeAndCacheOnExit = false, forceCommand = false, blockForm = true, forSale = false, useSpoutTexturePack = false, spoutWelcomeEnabled, spoutLeaveEnabled;
+	protected int LSPS = 0, healthRegen = 0, playerCap = 0, salePrice = 0;
+	protected double velocityWarp = 0;
 
-	private int LSPS = 0, healthRegen = 0, playerCap = 0, salePrice = 0;
-	private double velocityWarp = 0;
+	protected MODE protectionMode = MODE.Whitelist
+			, preventEntryMode = MODE.Whitelist
+			, preventExitMode = MODE.Whitelist
+			, itemMode = MODE.Whitelist;
 
-	private MODE protectionMode = MODE.Whitelist, preventEntryMode = MODE.Whitelist, preventExitMode = MODE.Whitelist, itemMode = MODE.Whitelist;
+	protected HashMap<Player, Boolean> authentication = new HashMap<Player, Boolean>();
+	protected HashMap<Player, Long> timeStamps = new HashMap<Player, Long>();
+	protected ArrayList<Player> playersInRegion = new ArrayList<Player>();
+	protected HashMap<Player, Boolean> welcomeMessageSent = new HashMap<Player, Boolean>();
+	protected HashMap<Player, Boolean> leaveMessageSent = new HashMap<Player, Boolean>();
+	protected HashMap<Player, PlayerInventory> inventoryCache = new HashMap<Player, PlayerInventory>();
 
-	private HashMap<Player, Boolean> authentication = new HashMap<Player, Boolean>();
-	private HashMap<Player, Long> timeStamps = new HashMap<Player, Long>();
-	private ArrayList<Player> playersInRegion = new ArrayList<Player>();
-	private HashMap<Player, Boolean> welcomeMessageSent = new HashMap<Player, Boolean>();
-	private HashMap<Player, Boolean> leaveMessageSent = new HashMap<Player, Boolean>();
-	private HashMap<Player, PlayerInventory> inventoryCache = new HashMap<Player, PlayerInventory>();
+	protected ExtrasCryptography exCrypt = new ExtrasCryptography();
 
-	private ExtrasCryptography exCrypt = new ExtrasCryptography();
-
-	public Region(String owner, String name, Location l1, Location l2, World world, Player p, boolean save) {
-		if (world == null || l1 == null || l2 == null) {
-			Logger.getLogger("Regios").info("[Regios] Failed to load region : " + name + ". Could not read location(s) and/or world.");
-			return;
-		}
+	public Region(String owner, String name, World world, Player p, boolean save) {
 		this.owner = owner;
 		this.name = name;
-		this.l1 = new RegionLocation(l1.getWorld(), l1.getX(), l1.getY(), l1.getZ());
-		this.l2 = new RegionLocation(l2.getWorld(), l2.getX(), l2.getY(), l2.getZ());
-		RegionLocation rl1 = new RegionLocation(l1.getWorld(), l1.getX(), l1.getY(), l1.getZ()), rl2 = new RegionLocation(l2.getWorld(), l2.getX(), l2.getY(), l2.getZ());
-
-		this.world = world.getName();
+		
+		if (world != null) {
+			this.world = world;
+		} else {
+			this.world = Bukkit.getServer().getWorlds().get(0);
+		}
 
 		if (save) {
 			RegionCreateEvent event = new RegionCreateEvent("RegionCreateEvent");
@@ -161,15 +197,11 @@ public class Region extends PermChecks implements Checks {
 		this.forSale = ConfigurationData.forSale;
 		this.salePrice = ConfigurationData.salePrice;
 		this.blockForm = ConfigurationData.blockForm;
-		if (this.LSPS > 0 && !LightningRunner.doesStikesContain(this)) {
+		this.TNTEnabled = ConfigurationData.tntEnabled;
+		if (this.LSPS > 0 && !LightningRunner.doesStrikesContain(this)) {
 			LightningRunner.addRegion(this);
-		} else if (this.LSPS == 0 && LightningRunner.doesStikesContain(this)) {
+		} else if (this.LSPS == 0 && LightningRunner.doesStrikesContain(this)) {
 			LightningRunner.removeRegion(this);
-		}
-		chunkGrid = new ChunkGrid(l1, l2, this);
-		GlobalRegionManager.addRegion(this);
-		if (p == null && save) {
-			saveable.saveRegion(this, rl1, rl2);
 		}
 	}
 
@@ -178,13 +210,14 @@ public class Region extends PermChecks implements Checks {
 				+ this.name + ".log");
 	}
 
-	public Configuration getConfigFile() {
-		return new Configuration(new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + this.name
-				+ ".rz"));
+	public File getConfigFile() {
+		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + this.name
+				+ ".rz");
 	}
 
-	public File getRawConfigFile() {
-		return new File(("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + this.name + ".rz"));
+	public File getRawConfigFile(){
+		return new File(("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + this.name
+				+ ".rz"));
 	}
 
 	public File getExceptionDirectory() {
@@ -195,7 +228,7 @@ public class Region extends PermChecks implements Checks {
 		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + "Backups");
 	}
 
-	public File getDirectory() {
+	public File getDirectory(){
 		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name);
 	}
 
@@ -285,23 +318,22 @@ public class Region extends PermChecks implements Checks {
 				}
 			}
 			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
-			if (PermissionsCore.hasPermissions) {
-				try {
-					if (this.temporaryNodesCacheAdd != null) {
-						if (this.temporaryNodesCacheAdd.length > 0) {
-							PermissionsCacheManager.unCacheNodes(p, this);
-							LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary node caches wiped upon region exit for player '" + p.getName() + "'"));
-						}
+
+			try {
+				if (this.temporaryNodesCacheAdd != null) {
+					if (this.temporaryNodesCacheAdd.length > 0) {
+						PermissionsCacheManager.unCacheNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary node caches wiped upon region exit for player '" + p.getName() + "'"));
 					}
-					if (this.permanentNodesCacheRemove != null) {
-						if (this.permanentNodesCacheRemove.length > 0) {
-							PermissionsCacheManager.permRemoveNodes(p, this);
-							LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes wiped upon region exit for player '" + p.getName() + "'"));
-						}
-					}
-				} catch (Exception ex) {
-					// Fail silently if the operation is unsupported
 				}
+				if (this.permanentNodesCacheRemove != null) {
+					if (this.permanentNodesCacheRemove.length > 0) {
+						PermissionsCacheManager.permRemoveNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes wiped upon region exit for player '" + p.getName() + "'"));
+					}
+				}
+			} catch (Exception ex) {
+				// Fail silently if the operation is unsupported
 			}
 			if (this.showLeaveMessage) {
 				p.sendMessage(this.colourFormat(this.liveFormat(leaveMessage, p)));
@@ -311,7 +343,7 @@ public class Region extends PermChecks implements Checks {
 					SpoutRegion.sendLeaveMessage(p, this);
 				}
 				if (this.playCustomSoundUrl) {
-					SpoutRegion.stopMusicPlaying(p, region);
+					SpoutRegion.stopMusicPlaying(p, this);
 				}
 				if (this.useSpoutTexturePack) {
 					SpoutRegion.resetTexturePack(p);
@@ -383,25 +415,23 @@ public class Region extends PermChecks implements Checks {
 					}
 				}
 			}
-			if (PermissionsCore.hasPermissions) {
-				try {
-					if (this.temporaryNodesCacheAdd != null) {
-						if (this.temporaryNodesCacheAdd.length > 0) {
-							PermissionsCacheManager.cacheNodes(p, this);
-							LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary node caches added upon region enter for player '" + p.getName() + "'"));
-						}
-
+			try {
+				if (this.temporaryNodesCacheAdd != null) {
+					if (this.temporaryNodesCacheAdd.length > 0) {
+						PermissionsCacheManager.cacheNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary node caches added upon region enter for player '" + p.getName() + "'"));
 					}
 
-					if (this.permanentNodesCacheAdd != null) {
-						if (this.permanentNodesCacheAdd.length > 0) {
-							PermissionsCacheManager.permAddNodes(p, this);
-							LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes added upon region enter for player '" + p.getName() + "'"));
-						}
-					}
-				} catch (Exception ex) {
-					// Fail silently if the operation is unsupported
 				}
+
+				if (this.permanentNodesCacheAdd != null) {
+					if (this.permanentNodesCacheAdd.length > 0) {
+						PermissionsCacheManager.permAddNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes added upon region enter for player '" + p.getName() + "'"));
+					}
+				}
+			} catch (Exception ex) {
+				// Fail silently if the operation is unsupported
 			}
 			if (this.showWelcomeMessage) {
 				p.sendMessage(this.colourFormat(this.liveFormat(welcomeMessage, p)));
@@ -538,7 +568,6 @@ public class Region extends PermChecks implements Checks {
 		this.l2 = new RegionLocation(w, x, y, z);
 	}
 
-	@Override
 	public boolean canBuild(Player p) {
 		return super.canBypassProtection(p, this);
 	}
@@ -547,32 +576,26 @@ public class Region extends PermChecks implements Checks {
 		return super.canBypassProtection(p, this);
 	}
 
-	@Override
 	public boolean canEnter(Player p) {
-		return super.canBypassEntryProtection(p, this);
+		return super.canEnter(p, this);
 	}
 
-	@Override
 	public boolean canExit(Player p) {
-		return super.canBypassExitProtection(p, this);
+		return super.canExit(p, this);
 	}
 
-	@Override
 	public boolean canModify(Player p) {
 		return super.canOverride(p, this);
 	}
 
-	@Override
 	public boolean isProtected() {
 		return this._protection;
 	}
 
-	@Override
 	public boolean isPreventingEntry() {
 		return this.preventEntry;
 	}
 
-	@Override
 	public boolean isPreventingExit() {
 		return this.preventExit;
 	}
@@ -671,10 +694,6 @@ public class Region extends PermChecks implements Checks {
 
 	public String[] getSubOwners() {
 		return this.subOwners;
-	}
-
-	public String[] getTempCacheNodes() {
-		return this.temporaryNodesCacheAdd;
 	}
 
 	public String[] getPermAddNodes() {
@@ -890,11 +909,12 @@ public class Region extends PermChecks implements Checks {
 		return message;
 	}
 
-	public String getWorld() {
+
+	public World getWorld() {
 		return world;
 	}
 
-	public void setWorld(String world) {
+	public void setWorld(World world) {
 		this.world = world;
 	}
 
@@ -914,12 +934,20 @@ public class Region extends PermChecks implements Checks {
 		this.commandSet = commandSet;
 	}
 
-	public String[] getTemporaryNodesCacheAdd() {
+	public String[] getTempNodesCacheAdd() {
 		return temporaryNodesCacheAdd;
 	}
 
-	public void setTemporaryNodesCacheAdd(String[] temporaryNodesCacheAdd) {
+	public void setTempNodesCacheAdd(String[] temporaryNodesCacheAdd) {
 		this.temporaryNodesCacheAdd = temporaryNodesCacheAdd;
+	}
+	
+	public String[] getTempNodesCacheRem() {
+		return this.temporaryNodesCacheRem;
+	}
+	
+	public void setTempNodesCacheRem(String[] temporaryNodesCacheRem) {
+		this.temporaryNodesCacheRem = temporaryNodesCacheRem;
 	}
 
 	public String[] getPermanentNodesCacheAdd() {
@@ -1243,7 +1271,7 @@ public class Region extends PermChecks implements Checks {
 	}
 
 	public Region getRegion() {
-		return region;
+		return this;
 	}
 
 	public static GlobalRegionManager getGrm() {
@@ -1396,6 +1424,14 @@ public class Region extends PermChecks implements Checks {
 
 	public void setSpoutLeaveEnabled(boolean spoutLeaveEnabled) {
 		this.spoutLeaveEnabled = spoutLeaveEnabled;
+	}
+
+	public boolean isTNTEnabled() {
+		return TNTEnabled;
+	}
+
+	public void setTNTEnabled(boolean TNTEnabled) {
+		this.TNTEnabled = TNTEnabled;
 	}
 
 }

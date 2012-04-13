@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import couk.Adamki11s.Regios.Data.LoaderCore;
 import couk.Adamki11s.Regios.Data.Saveable;
@@ -18,16 +19,20 @@ public class MutableAdministration extends Saveable {
 	final LoaderCore lc = new LoaderCore();
 
 	public void setOwner(Region r, String owner) {
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Owner");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Owner", owner);
+		c.set("Region.Essentials.Owner", owner);
 		r.setOwner(owner);
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 
 	public void reloadRegions() {
@@ -111,7 +116,7 @@ public class MutableAdministration extends Saveable {
 		tin.setSpoutExitMessage(inf.getSpoutExitMessage());
 		tin.setSpoutTexturePack(inf.getSpoutTexturePack());
 		tin.setSubOwners(inf.getSubOwners());
-		tin.setTemporaryNodesCacheAdd(inf.getTemporaryNodesCacheAdd());
+		tin.setTempNodesCacheAdd(inf.getTempNodesCacheAdd());
 		tin.setUseSpoutTexturePack(inf.isUseSpoutTexturePack());
 		tin.setVelocityWarp(inf.getVelocityWarp());
 		tin.setWarp(inf.getWarp());

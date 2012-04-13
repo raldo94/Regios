@@ -6,20 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
-import couk.Adamki11s.jnbt.ByteArrayTag;
-import couk.Adamki11s.jnbt.ByteTag;
-import couk.Adamki11s.jnbt.CompoundTag;
-import couk.Adamki11s.jnbt.DoubleTag;
-import couk.Adamki11s.jnbt.EndTag;
-import couk.Adamki11s.jnbt.FloatTag;
-import couk.Adamki11s.jnbt.IntTag;
-import couk.Adamki11s.jnbt.ListTag;
-import couk.Adamki11s.jnbt.LongTag;
-import couk.Adamki11s.jnbt.NBTConstants;
-import couk.Adamki11s.jnbt.NBTUtils;
-import couk.Adamki11s.jnbt.ShortTag;
-import couk.Adamki11s.jnbt.StringTag;
-import couk.Adamki11s.jnbt.Tag;
+
+import org.bukkit.inventory.ItemStack;
 
 /*
  * JNBT License
@@ -156,6 +144,12 @@ public final class NBTOutputStream implements Closeable {
             break;
         case NBTConstants.TYPE_COMPOUND:
             writeCompoundTagPayload((CompoundTag) tag);
+            break;
+        case NBTConstants.TYPE_LISTSTRING_ARRAY:
+            writeListStringArrayTagPayload((ListStringArrayTag) tag);
+            break;
+        case NBTConstants.TYPE_LISTITEMSTACK_ARRAY:
+            writeListItemStackArrayTagPayload((ListItemStackArrayTag) tag);
             break;
         default:
             throw new IOException("Invalid tag type: " + type + ".");
@@ -307,6 +301,62 @@ public final class NBTOutputStream implements Closeable {
      */
     private void writeEndTagPayload(EndTag tag) {
         /* empty */
+    }
+    
+    /**
+     * Writes a <code>TAG_ListString_Array</code> tag.
+     * 
+     * @param tag
+     *            The tag.
+     * @throws IOException
+     *             if an I/O error occurs.
+     */
+    private void writeListStringArrayTagPayload(ListStringArrayTag tag) throws IOException { //Added to allow saving String[] to file -jzx7
+    	StringBuilder string = new StringBuilder();
+    	for(String[] sa : tag.getValue()) {
+    		string.append("[");
+    		if(sa != null) {
+    			for(String s : sa) {
+    				string.append(s + ",");
+    			}
+    			string.append("],");
+    		} else {
+    			string.append("null],");
+    		}
+    	}
+        byte[] bytes = string.toString().getBytes();
+        os.writeInt(bytes.length);
+        os.write(bytes);
+    }
+    
+    /**
+     * Writes a <code>TAG_ListItemStack_Array</code> tag.
+     * 
+     * @param tag
+     *            The tag.
+     * @throws IOException
+     *             if an I/O error occurs.
+     */
+    private void writeListItemStackArrayTagPayload(ListItemStackArrayTag tag) throws IOException { //Added to allow saving ItemStack[] to file -jzx7
+    	StringBuilder string = new StringBuilder();
+    	for(ItemStack[] isa : tag.getValue()) {
+    		string.append("[");
+    		if(isa != null) {
+    			for(ItemStack is : isa) {
+    				if(is != null) {
+    					string.append(is.serialize() + "|");
+    				} else {
+    	    			string.append("null|");
+    				}
+    			}
+    			string.append("],");
+    		} else {
+    			string.append("null],");
+    		}
+    	}
+        byte[] bytes = string.toString().getBytes();
+        os.writeInt(bytes.length);
+        os.write(bytes);
     }
 
     public void close() throws IOException {

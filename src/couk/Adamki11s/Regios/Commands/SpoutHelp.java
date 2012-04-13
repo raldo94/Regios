@@ -13,8 +13,8 @@ import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import couk.Adamki11s.Regios.Main.Regios;
-import couk.Adamki11s.Regios.SpoutGUI.ScreenHolder;
 import couk.Adamki11s.Regios.SpoutGUI.RegionScreenManager.RGB;
+import couk.Adamki11s.Regios.SpoutGUI.ScreenHolder;
 
 public class SpoutHelp {
 	

@@ -18,6 +18,7 @@ import couk.Adamki11s.Regios.Data.ConfigurationData;
 import couk.Adamki11s.Regios.Listeners.RegiosPlayerListener;
 import couk.Adamki11s.Regios.Net.PingManager;
 import couk.Adamki11s.Regios.RBF.RBF_Core;
+import couk.Adamki11s.Regios.Regions.CubeRegion;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.Regios.Restrictions.RestrictionManager;
@@ -100,7 +101,7 @@ public class CreationCommands {
 		if (errors.length() >= 5) {
 			throw new InvalidDataSetException(errors);
 		}
-		Region r = new Region(rds.getOwner(), rds.getName(), rds.getL1(), rds.getL2(), Bukkit.getServer().getWorld(rds.getWorld()), null, true);
+		Region r = new CubeRegion(rds.getOwner(), rds.getName(), rds.getL1(), rds.getL2(), Bukkit.getServer().getWorld(rds.getWorld()), null, true);
 		PingManager.created();
 		RegionCreateEvent event = new RegionCreateEvent("RegionCreateEvent");
 		event.setProperties(null, r);
@@ -138,11 +139,12 @@ public class CreationCommands {
 			return;
 		}
 
-		RestrictionParameters params = RestrictionManager.getRestriction(p);
 		double width = Math.max(point1.get(p).getX(), point2.get(p).getX()) - Math.min(point1.get(p).getX(), point2.get(p).getX()), height = Math.max(point1.get(p).getY(),
 				point2.get(p).getY()) - Math.min(point1.get(p).getY(), point2.get(p).getY()), length = Math.max(point1.get(p).getZ(), point2.get(p).getZ())
 				- Math.min(point1.get(p).getZ(), point2.get(p).getZ());
 		int rCount = GlobalRegionManager.getOwnedRegions(p.getName());
+		
+		RestrictionParameters params = RestrictionManager.getRestriction(p);
 		
 		if(width > params.getRegionWidthLimit()){
 			p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this width!");
@@ -167,7 +169,7 @@ public class CreationCommands {
 			return;
 		}
 
-		Region r = new Region(p.getName(), name, point1.get(p), point2.get(p), p.getWorld(), null, true);
+		Region r = new CubeRegion(p.getName(), name, point1.get(p), point2.get(p), p.getWorld(), null, true);
 		p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + name + ChatColor.GREEN + " created successfully!");
 		clearPoints(p);
 		modding.put(p, false);

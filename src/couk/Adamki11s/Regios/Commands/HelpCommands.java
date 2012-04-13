@@ -21,7 +21,8 @@ public class HelpCommands {
 			("/r prevent-entry <region>"), ("/r allow-entry <region>"), ("/r prevent-exit <region>"),
 			("/r allow-exit <region>"), ("/r prevent-interaction <region> <T/F>"), ("/r doors-locked <region> <T/F>"),
 			("/r chests-locked <region> <T/F>"), ("/r set-password <region> <password>"), ("/r use-password <region> <T/F>"),
-			("/r fire-protection <region> <T/F>"), ("/r player-cap <region> <cap>"), ("/r block-form <region> <T/F>") };
+			("/r fire-protection <region> <T/F>"), ("/r tntenabled <region> <T/F>"), ("/r player-cap <region> <cap>"),
+			("/r block-form <region> <T/F>") };
 
 	public String[] messagesText = { ("/r set-welcome <region> <message>"), ("/r show-welcome <region> <T/F>"),
 			("/r set-leave <region> <message>"), ("/r show-leave <region> <T/F>"), ("/r set-prevent-exit <region> <message>"),
@@ -79,13 +80,13 @@ public class HelpCommands {
 			p.sendMessage(ChatColor.GREEN + "[Regios] /r help fun");
 			p.sendMessage(ChatColor.GREEN + "[Regios] /r help data");
 			p.sendMessage(ChatColor.GREEN + "[Regios] /r help messages");
-			p.sendMessage(ChatColor.GREEN + "[Regios] /r help sh.inventory");
-			p.sendMessage(ChatColor.GREEN + "[Regios] /r help sh.modes");
-			p.sendMessage(ChatColor.GREEN + "[Regios] /r help sh.modify");
+			p.sendMessage(ChatColor.GREEN + "[Regios] /r help inventory");
+			p.sendMessage(ChatColor.GREEN + "[Regios] /r help modes");
+			p.sendMessage(ChatColor.GREEN + "[Regios] /r help modify");
 			p.sendMessage(ChatColor.GREEN + "[Regios] /r help exceptions");
 			p.sendMessage(ChatColor.GREEN + "[Regios] /r help spout");
 			p.sendMessage(ChatColor.GREEN + "[Regios] /r help permissions");
-			p.sendMessage(ChatColor.GREEN + "[Regios] /r help sh.other");
+			p.sendMessage(ChatColor.GREEN + "[Regios] /r help other");
 			p.sendMessage(ChatColor.LIGHT_PURPLE + "[Regios] -----------------------------------------");
 			return;
 		} else if (args.length == 2) {
@@ -134,16 +135,16 @@ public class HelpCommands {
 
 				p.sendMessage(ChatColor.LIGHT_PURPLE + "[Regios] -----------------------------------------");
 				return;
-			} else if (args[1].equalsIgnoreCase("this.inventory")) {
+			} else if (args[1].equalsIgnoreCase("inventory")) {
 				p.sendMessage(ChatColor.DARK_RED + "[this.inventory]");
 				for (String gl : this.inventText) {
 					p.sendMessage(pre + gl);
 				}
-				p.sendMessage(ChatColor.DARK_RED + "[this.inventory]");
+				p.sendMessage(ChatColor.DARK_RED + "[Inventory]");
 
 				p.sendMessage(ChatColor.LIGHT_PURPLE + "[Regios] -----------------------------------------");
 				return;
-			} else if (args[1].equalsIgnoreCase("this.modes")) {
+			} else if (args[1].equalsIgnoreCase("modes")) {
 				p.sendMessage(ChatColor.DARK_RED + "[Modes]");
 				for (String gl : this.modeText) {
 					p.sendMessage(pre + gl);
@@ -152,7 +153,7 @@ public class HelpCommands {
 
 				p.sendMessage(ChatColor.LIGHT_PURPLE + "[Regios] -----------------------------------------");
 				return;
-			} else if (args[1].equalsIgnoreCase("this.modify")) {
+			} else if (args[1].equalsIgnoreCase("modify")) {
 				p.sendMessage(ChatColor.DARK_RED + "[Modify]");
 				for (String gl : this.modifyText) {
 					p.sendMessage(pre + gl);
@@ -188,7 +189,7 @@ public class HelpCommands {
 
 				p.sendMessage(ChatColor.LIGHT_PURPLE + "[Regios] -----------------------------------------");
 				return;
-			} else if (args[1].equalsIgnoreCase("this.other")) {
+			} else if (args[1].equalsIgnoreCase("other")) {
 				p.sendMessage(ChatColor.DARK_RED + "[Other]");
 				for (String gl : this.otherText) {
 					p.sendMessage(pre + gl);

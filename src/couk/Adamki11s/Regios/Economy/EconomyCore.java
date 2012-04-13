@@ -2,12 +2,10 @@ package couk.Adamki11s.Regios.Economy;
 
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-
-import com.iCo6.iConomy;
-
-import cosine.boseconomy.BOSEconomy;
+import couk.Adamki11s.Regios.Mutable.MutableAdministration;
+import couk.Adamki11s.Regios.Mutable.MutableEconomy;
+import couk.Adamki11s.Regios.Regions.Region;
+import net.milkbowl.vault.economy.Economy;
 
 public class EconomyCore {
 
@@ -16,40 +14,32 @@ public class EconomyCore {
 	public static Economy economy = null;
 
 	public static boolean economySupport = false;
+	
+	static MutableAdministration admin = new MutableAdministration();
+	static MutableEconomy econ = new MutableEconomy();
 
-	public static iConomy iconomy = null;
-	
-	public static BOSEconomy boseconomy = null;
-	
-	private static iConomyManager iconomyManager = new iConomyManager();
-	
-	private static BoseEconomyManager boseManager = new BoseEconomyManager();
-
-	public static void boseConomySetup() {
-		Plugin temp = Bukkit.getServer().getPluginManager().getPlugin("BOSEconomy");
-		if (temp != null) {
-			boseconomy = (BOSEconomy) temp;
-			economySupport = true;
-			log.info("[Regios] Hooked into BOSEconomy Successfully!");
-			return;
-		}	
-		log.info("[Regios] Failed to hook into BOSEconomy!");
-	}
-	
-	public static Economy getEconomy(){
-		return economy;
-	}
-	
 	public static boolean isEconomySupportEnabled(){
 		return economySupport;
 	}
-	
-	public static iConomyManager getiConomyManager(){
-		return iconomyManager;
+
+	public static double getBalance(String p) {
+		return economy.bankBalance(p).balance;
+	}
+
+	public static boolean canAffordRegion(String p, int price){
+		return getBalance(p) >= price;
+	}
+	public static void buyRegion(Region r, String buyer, String seller, int price){
+		economy.bankDeposit(seller, (double)price);
+		economy.bankWithdraw(buyer, (double)price);
+		buy(seller, buyer, r, price);
 	}
 	
-	public static BoseEconomyManager getBoseEconomyManager(){
-		return boseManager;
+	public static void buy(String seller, String buyer, Region r, int value){
+		econ.editForSale(r, false);
+		admin.setOwner(r, buyer);
+		r.setOwner(buyer);
+		EconomyPending.sendAppropriatePending(seller, buyer, r.getName(), value);
 	}
 
 }

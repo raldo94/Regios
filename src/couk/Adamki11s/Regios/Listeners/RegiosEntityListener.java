@@ -6,15 +6,20 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
@@ -28,11 +33,11 @@ import couk.Adamki11s.Regios.Regions.SubRegionManager;
 import couk.Adamki11s.Regios.Scheduler.HealthRegeneration;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
 
-public class RegiosEntityListener extends EntityListener {
+public class RegiosEntityListener implements Listener {
 
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	private static final SubRegionManager srm = new SubRegionManager();
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent evt) {
 
 		Location l = evt.getEntity().getLocation();
@@ -57,7 +62,7 @@ public class RegiosEntityListener extends EntityListener {
 
 		if (regionSet.isEmpty()) {
 			if (GlobalRegionManager.getGlobalWorldSetting(w) != null) {
-				if (!GlobalRegionManager.getGlobalWorldSetting(w).canCreatureSpawn(evt.getCreatureType())) {
+				if (!GlobalRegionManager.getGlobalWorldSetting(w).canCreatureSpawn(evt.getEntityType())) {
 					evt.setCancelled(true);
 				}
 				return;
@@ -73,10 +78,10 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
+			// inside region then cancel the
+			// check.
 			if (GlobalRegionManager.getGlobalWorldSetting(w) != null) {
-				if (!GlobalRegionManager.getGlobalWorldSetting(w).canCreatureSpawn(evt.getCreatureType())) {
+				if (!GlobalRegionManager.getGlobalWorldSetting(w).canCreatureSpawn(evt.getEntityType())) {
 					evt.setCancelled(true);
 				}
 			}
@@ -90,8 +95,8 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (!r.canMobsSpawn()) {
-			CreatureType ce = evt.getCreatureType();
-			if (ce == CreatureType.CHICKEN || ce == CreatureType.COW || ce == CreatureType.PIG || ce == CreatureType.SHEEP || ce == CreatureType.SQUID) {
+			EntityType ce = evt.getEntityType();
+			if (ce == EntityType.CHICKEN || ce == EntityType.COW || ce == EntityType.PIG || ce == EntityType.SHEEP || ce == EntityType.SQUID || ce == EntityType.SNOWMAN || ce == EntityType.VILLAGER || ce == EntityType.OCELOT || ce == EntityType.IRON_GOLEM || ce == EntityType.WOLF) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Mob '" + ce.getName() + "' tried to spawn but was prevented."));
 				evt.setCancelled(true);
 				return;
@@ -99,15 +104,15 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (!r.canMonstersSpawn()) {
-			CreatureType ce = evt.getCreatureType();
-			if (ce != CreatureType.CHICKEN && ce != CreatureType.COW && ce != CreatureType.PIG && ce != CreatureType.SHEEP && ce != CreatureType.SQUID) {
+			EntityType ce = evt.getEntityType();
+			if (ce != EntityType.CHICKEN && ce != EntityType.COW && ce != EntityType.PIG && ce != EntityType.SHEEP && ce != EntityType.SQUID && ce != EntityType.SNOWMAN && ce != EntityType.VILLAGER && ce != EntityType.OCELOT && ce != EntityType.IRON_GOLEM && ce != EntityType.WOLF) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Monster '" + ce.getName() + "' tried to spawn but was prevented."));
 				evt.setCancelled(true);
 				return;
 			}
 		}
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDeath(EntityDeathEvent evt) {
 		Entity e = evt.getEntity();
 		if (e instanceof Player) {
@@ -117,7 +122,7 @@ public class RegiosEntityListener extends EntityListener {
 			}
 		}
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPaintingBreak(PaintingBreakEvent evt) {
 
 		Player cause;
@@ -174,8 +179,8 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
+			// inside region then cancel the
+			// check.
 			if (gws != null) {
 				if (gws.invert_protection) {
 					evt.setCancelled(true);
@@ -192,7 +197,7 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (r.is_protectionBreak()) {
-			if (!r.canBuild(cause)) {
+			if (!r.canBypassProtection(cause)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Painting break was prevented."));
 				r.sendBuildMessage(cause);
 				evt.setCancelled(true);
@@ -201,7 +206,7 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPaintingPlace(PaintingPlaceEvent evt) {
 
 		Player cause = evt.getPlayer();
@@ -247,8 +252,8 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
+			// inside region then cancel the
+			// check.
 			if (gws != null) {
 				if (gws.invert_protection) {
 					evt.setCancelled(true);
@@ -265,7 +270,7 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (r.is_protectionPlace()) {
-			if (!r.canBuild(cause)) {
+			if (!r.canBypassProtection(cause)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Painting place was prevented."));
 				r.sendBuildMessage(cause);
 				evt.setCancelled(true);
@@ -276,7 +281,7 @@ public class RegiosEntityListener extends EntityListener {
 	}
 
 
-	
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onExplosionPrime(ExplosionPrimeEvent evt) {
 
 		Location l = evt.getEntity().getLocation();
@@ -342,12 +347,12 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
+			// inside region then cancel the
+			// check.
 			return;
 		} else {
 			for (Region r : currentRegionSet) {
-				if (r.is_protection()) {
+				if (r.is_protection() || !r.isTNTEnabled()) {
 					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Entity explosion was prevented."));
 					evt.setCancelled(true);
 					evt.setRadius(0);
@@ -357,7 +362,7 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent evt) {
 
 		if (!(evt.getEntity() instanceof Player)) {
@@ -401,8 +406,8 @@ public class RegiosEntityListener extends EntityListener {
 		}
 
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
+			// inside region then cancel the
+			// check.
 			if (gws != null) {
 				if (!gws.invert_pvp && gws.overridingPvp) {
 					evt.setCancelled(true);
@@ -427,18 +432,42 @@ public class RegiosEntityListener extends EntityListener {
 		if (!r.isPvpEnabled()) {
 			if (evt instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent edevt = (EntityDamageByEntityEvent) evt;
+				Entity damager;
 				if (edevt.getDamager() instanceof Player && edevt.getEntity() instanceof Player) {
-					Player damager = (Player) edevt.getDamager();
+					damager = (Player) edevt.getDamager();
 					LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
-							+ (" Player '" + damager.getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-					damager.sendMessage(ChatColor.RED + "[Regios] You cannot fight within regions in this world!");
+							+ (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
+					((Player) damager).sendMessage(ChatColor.RED + "[Regios] You cannot fight within regions in this world!");
 					evt.setCancelled(true);
 					evt.setDamage(0);
+					return;
+				} else if (edevt.getDamager().getType() == EntityType.ARROW && edevt.getEntity() instanceof Player) { //Check to see if the player was shot by an arrow.
+					Projectile arrow = (Arrow) edevt.getDamager();
+					damager = arrow.getShooter(); //get the arrows shooter
+					if(damager.getType() == EntityType.PLAYER) { //if shot by a player, cancel the event
+						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
+								+ (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
+						((Player) damager).sendMessage(ChatColor.RED + "[Regios] You cannot fight within regions in this world!");
+						evt.setCancelled(true);
+						evt.setDamage(0);
+					}
+					return;
+				} else if (edevt.getDamager().getType() == EntityType.SPLASH_POTION && edevt.getEntity() instanceof Player) { //Check if player was hit by a potion
+					Projectile potion = (ThrownPotion) edevt.getDamager();
+					damager = potion.getShooter(); //get the potion's thrower
+					if(damager.getType() == EntityType.PLAYER) { //if it was thrown by a player, cancel the event
+						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
+								+ (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
+						((Player) damager).sendMessage(ChatColor.RED + "[Regios] You cannot fight within regions in this world!");
+						evt.setCancelled(true);
+						evt.setDamage(0);
+					}
+					return;
+				} else {
 					return;
 				}
 			}
 		}
-
 	}
 
 	public boolean areChunksEqual(Chunk c1, Chunk c2) {

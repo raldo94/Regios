@@ -9,12 +9,14 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+
 import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.Regios.Regions.SubRegionManager;
 
-public class SpoutInventoryListener extends org.getspout.spoutapi.event.inventory.InventoryListener {
+public class SpoutInventoryListener implements Listener {
 	
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	private static final SubRegionManager srm = new SubRegionManager();
@@ -22,9 +24,8 @@ public class SpoutInventoryListener extends org.getspout.spoutapi.event.inventor
 	public boolean areChunksEqual(Chunk c1, Chunk c2){
 		return (c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
 	}
-	
-	@Override
-	public void onInventoryOpen(org.getspout.spoutapi.event.inventory.InventoryOpenEvent evt){
+
+	public void onInventoryOpen(org.getspout.spoutapi.event.inventory.InventoryEvent evt){
 		Player p = evt.getPlayer();
 		World w = p.getWorld();
 		Location l = evt.getLocation();	
@@ -74,7 +75,7 @@ public class SpoutInventoryListener extends org.getspout.spoutapi.event.inventor
 			}
 			
 			if(r.areChestsLocked()){
-				if(!r.canBuild(p)){
+				if(!r.canBypassProtection(p)){
 					p.sendMessage(ChatColor.RED + "[Regios] Chests are locked for this region!");
 					evt.setCancelled(true);
 				} else {

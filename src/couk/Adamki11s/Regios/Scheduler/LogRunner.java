@@ -73,10 +73,10 @@ public class LogRunner {
 		}
 	}
 
-	public static String getPrefix(Region r) {
+	public static String getPrefix(Region genericRegion) {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return "[" + sdf.format(cal.getTime()) + "]" + "[" + r.getName() + "]";
+		return "[" + sdf.format(cal.getTime()) + "]" + "[" + genericRegion.getName() + "]";
 	}
 
 	public static void addLogMessage(Region r, String message) {

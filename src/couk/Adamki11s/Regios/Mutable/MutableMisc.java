@@ -1,27 +1,34 @@
 package couk.Adamki11s.Regios.Mutable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import couk.Adamki11s.Regios.Regions.Region;
 
 public class MutableMisc {
 	
 	public void editAddToForceCommandSet(Region r, String message){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		String current = (String)all.get("Region.Command.CommandSet");
 		all.remove("Region.Command.CommandSet");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Command.CommandSet", current.trim() + message.trim() + ",");
+		c.set("Region.Command.CommandSet", current.trim() + message.trim() + ",");
 		r.setCommandSet((current.trim() + "," + message.trim()).split(","));
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public boolean checkCommandSet(Region r, String addition){
@@ -34,46 +41,58 @@ public class MutableMisc {
 	}
 	
 	public void editRemoveFromForceCommandSet(Region r, String message){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		String current = (String)all.get("Region.Command.CommandSet");
 		current = current.replaceAll(" ", "");
 		current = current.replaceAll(message + ",", "");
 		current = current.replaceAll(",,", ",");
 		all.remove("Region.Command.CommandSet");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Command.CommandSet", current.trim());
+		c.set("Region.Command.CommandSet", current.trim());
 		r.setCommandSet((current.trim()).split(","));
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public void editSetForceCommand(Region r, boolean val){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Command.ForceCommand");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Command.ForceCommand", val);
+		c.set("Region.Command.ForceCommand", val);
 		r.setForceCommand(val);
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public void editResetForceCommandSet(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Command.CommandSet");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Command.CommandSet", "");
+		c.set("Region.Command.CommandSet", "");
 		r.setCommandSet(("").split(","));
-		c.save();
+		try {
+	c.save(r.getConfigFile());
+} catch (IOException e) {
+	e.printStackTrace();
+}
 	}
 	
 	public String listCommandSet(Region r) {

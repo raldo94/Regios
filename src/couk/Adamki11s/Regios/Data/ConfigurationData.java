@@ -14,7 +14,7 @@ public class ConfigurationData {
 	public static boolean regionProtected, regionProtectedBreak, regionPlaceProtected, regionPreventEntry, regionPreventExit, mobSpawns, monsterSpawns, healthEnabled, pvp, doorsLocked, chestsLocked, preventInteraction,
 			showPvpWarning, checkForUpdates, downloadUpdatesAuto, cacheOldVersions, forceReload, passwordEnabled, showWelcomeMessage, showLeaveMessage, showProtectionMessage,
 			showPreventEntryMessage, showPreventExitMessage, fireProtection, playCustomMusic, permWipeOnEnter, permWipeOnExit,
-			wipeAndCacheOnEnter, wipeAndCacheOnExit, forceCommand, blockForm, forSale, logs;
+			wipeAndCacheOnEnter, wipeAndCacheOnExit, forceCommand, blockForm, forSale, logs, tntEnabled;
 
 	public static int LSPS, healthRegen, velocityWarp, playerCap, salePrice;
 
@@ -25,7 +25,7 @@ public class ConfigurationData {
 			String dam, String dasm, Material welcome, Material leave, boolean welcomeMsg, boolean leaveMsg, boolean protectMsg, boolean preventEntryMsg, boolean preventExitMsg,
 			boolean fireProt, String[] music, boolean playmusic, boolean permWipeOnEnter1, boolean permWipeOnExit1,
 			boolean wipeAndCacheOnEnter1, boolean wipeAndCacheOnExit1, boolean forceCommand1, String[] commandSet1, String[] tempAddCache, String[] permAddCache,
-			String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp) {
+			String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt) {
 		defaultWelcomeMessage = a;
 		defaultLeaveMessage = b;
 		defaultProtectionMessage = c;
@@ -82,6 +82,7 @@ public class ConfigurationData {
 		regionProtectedBreak = breakProtect;
 		forSale = fs;
 		salePrice = sp;
+		tntEnabled = tnt;
 	}
 
 }

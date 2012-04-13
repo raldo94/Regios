@@ -2,16 +2,16 @@ package couk.Adamki11s.Regios.CustomEvents;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
-@SuppressWarnings("serial")
 public class RegionCommandEvent extends Event {
 
 	private CommandSender sender;
 	private String label;
 	private String[] args;
+	private static final HandlerList handlers = new HandlerList();
 
 	public RegionCommandEvent(String name) {
-		super(name);
 	}
 
 	public CommandSender getSender(){
@@ -31,5 +31,13 @@ public class RegionCommandEvent extends Event {
 		this.label = label;
 		this.args = args;
 	}
+
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+     
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
 }

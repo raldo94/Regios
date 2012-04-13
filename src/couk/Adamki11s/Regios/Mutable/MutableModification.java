@@ -8,9 +8,9 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
 
 import couk.Adamki11s.Regios.Commands.AdministrationCommands;
 import couk.Adamki11s.Regios.CustomEvents.RegionDeleteEvent;
@@ -19,6 +19,7 @@ import couk.Adamki11s.Regios.Data.LoaderCore;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.Regios.Regions.RegionLocation;
+import couk.Adamki11s.Regios.Scheduler.LogRunner;
 
 public class MutableModification {
 
@@ -32,19 +33,23 @@ public class MutableModification {
 		Location bigger = new Location(r.getL1().getWorld(), Math.max(r.getL1().getX(), r.getL2().getX()), Math.max(r.getL1().getY(), r.getL2().getY()), Math.max(r.getL1()
 				.getZ(), r.getL2().getZ()));
 		bigger.add(0, value, 0);
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Points.Point1");
 		all.remove("Region.Essentials.Points.Point2");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Points.Point1", convertLocation(smaller));
-		c.setProperty("Region.Essentials.Points.Point2", convertLocation(bigger));
+		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
+		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
 		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
 		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editExpandDown(Region r, int value) {
@@ -53,19 +58,23 @@ public class MutableModification {
 		Location bigger = new Location(r.getL1().getWorld(), Math.max(r.getL1().getX(), r.getL2().getX()), Math.max(r.getL1().getY(), r.getL2().getY()), Math.max(r.getL1()
 				.getZ(), r.getL2().getZ()));
 		smaller.subtract(0, value, 0);
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Points.Point1");
 		all.remove("Region.Essentials.Points.Point2");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Points.Point1", convertLocation(smaller));
-		c.setProperty("Region.Essentials.Points.Point2", convertLocation(bigger));
+		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
+		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
 		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
 		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editShrinkDown(Region r, int value) {
@@ -74,19 +83,23 @@ public class MutableModification {
 		Location bigger = new Location(r.getL1().getWorld(), Math.max(r.getL1().getX(), r.getL2().getX()), Math.max(r.getL1().getY(), r.getL2().getY()), Math.max(r.getL1()
 				.getZ(), r.getL2().getZ()));
 		bigger.subtract(0, value, 0);
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Points.Point1");
 		all.remove("Region.Essentials.Points.Point2");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Points.Point1", convertLocation(smaller));
-		c.setProperty("Region.Essentials.Points.Point2", convertLocation(bigger));
+		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
+		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
 		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
 		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editShrinkUp(Region r, int value) {
@@ -95,51 +108,63 @@ public class MutableModification {
 		Location bigger = new Location(r.getL1().getWorld(), Math.max(r.getL1().getX(), r.getL2().getX()), Math.max(r.getL1().getY(), r.getL2().getY()), Math.max(r.getL1()
 				.getZ(), r.getL2().getZ()));
 		smaller.add(0, value, 0);
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Points.Point1");
 		all.remove("Region.Essentials.Points.Point2");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Points.Point1", convertLocation(smaller));
-		c.setProperty("Region.Essentials.Points.Point2", convertLocation(bigger));
+		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
+		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
 		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
 		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editExpandMax(Region r) {
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Points.Point1");
 		all.remove("Region.Essentials.Points.Point2");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
 		r.getL1().setY(0);
-		r.getL2().setY(128);
-		c.setProperty("Region.Essentials.Points.Point1", convertLocation(r.getL1().toBukkitLocation()));
-		c.setProperty("Region.Essentials.Points.Point2", convertLocation(r.getL2().toBukkitLocation()));
-		c.save();
+		r.getL2().setY(256);
+		c.set("Region.Essentials.Points.Point1", convertLocation(r.getL1().toBukkitLocation()));
+		c.set("Region.Essentials.Points.Point2", convertLocation(r.getL2().toBukkitLocation()));
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editModifyPoints(Region r, Location l1, Location l2) {
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Points.Point1");
 		all.remove("Region.Essentials.Points.Point2");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Points.Point1", convertLocation(l1));
-		c.setProperty("Region.Essentials.Points.Point2", convertLocation(l2));
+		c.set("Region.Essentials.Points.Point1", convertLocation(l1));
+		c.set("Region.Essentials.Points.Point2", convertLocation(l2));
 		r.setL1(l1.getWorld(), l1.getX(), l1.getY(), l1.getY());
 		r.setL1(l2.getWorld(), l2.getX(), l2.getY(), l2.getY());
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editExpandOut(Region r, int expand) {
@@ -149,19 +174,23 @@ public class MutableModification {
 				.getZ(), r.getL2().getZ()));
 		smaller.subtract(expand, 0, expand);
 		bigger.add(expand, 0, expand);
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Points.Point1");
 		all.remove("Region.Essentials.Points.Point2");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Points.Point1", convertLocation(smaller));
-		c.setProperty("Region.Essentials.Points.Point2", convertLocation(bigger));
+		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
+		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
 		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
 		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editShrinkIn(Region r, int shrink) {
@@ -171,19 +200,23 @@ public class MutableModification {
 				.getZ(), r.getL2().getZ()));
 		smaller.add(shrink, 0, shrink);
 		bigger.subtract(shrink, 0, shrink);
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Points.Point1");
 		all.remove("Region.Essentials.Points.Point2");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Points.Point1", convertLocation(smaller));
-		c.setProperty("Region.Essentials.Points.Point2", convertLocation(bigger));
+		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
+		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
 		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
 		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void editRename(Region r, String new_name, Player p) {
@@ -193,21 +226,25 @@ public class MutableModification {
 			return;
 		}
 
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Name");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Name", new_name);
-		c.save();
+		c.set("Region.Essentials.Name", new_name);
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		
 		
-		c = r.getConfigFile();
-		c.load();
-		Map<String, Object> construct = c.getAll();
+		file = r.getConfigFile();
+		c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> construct = c.getValues(true);
 		
 		File conf = r.getRawConfigFile();
 		conf.delete();
@@ -218,11 +255,15 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		c = new Configuration(newConf);
+		c = YamlConfiguration.loadConfiguration(newConf);
 		for (Entry<String, Object> cont : construct.entrySet()) {
-			c.setProperty(cont.getKey(), cont.getValue());
+			c.set(cont.getKey(), cont.getValue());
 		}
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		r.getDirectory().renameTo(new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + new_name));
 		
@@ -235,21 +276,25 @@ public class MutableModification {
 			throw new RegionExistanceException(new_name);
 		}
 
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Essentials.Name");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Essentials.Name", new_name);
-		c.save();
+		c.set("Region.Essentials.Name", new_name);
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		
 		
-		c = r.getConfigFile();
-		c.load();
-		Map<String, Object> construct = c.getAll();
+		file = r.getConfigFile();
+		c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> construct = c.getValues(true);
 		
 		File conf = r.getRawConfigFile();
 		conf.delete();
@@ -260,11 +305,15 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		c = new Configuration(newConf);
+		c = YamlConfiguration.loadConfiguration(newConf);
 		for (Entry<String, Object> cont : construct.entrySet()) {
-			c.setProperty(cont.getKey(), cont.getValue());
+			c.set(cont.getKey(), cont.getValue());
 		}
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		r.getDirectory().renameTo(new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + new_name));
 		
@@ -277,6 +326,7 @@ public class MutableModification {
 		File f = r.getLogFile().getParentFile().getParentFile();
 		deleteDir(f);
 		GlobalRegionManager.deleteRegionFromCache(r);
+		LogRunner.log.remove(r); //fix for LogRunner trying to save a log for a Region that no longer exists -jzx7
 		RegionDeleteEvent event = new RegionDeleteEvent("RegionDeleteEvent");
 		event.setProperties(p, r);
 		Bukkit.getServer().getPluginManager().callEvent(event);
@@ -290,6 +340,7 @@ public class MutableModification {
 		File f = r.getLogFile().getParentFile().getParentFile();
 		deleteDir(f);
 		GlobalRegionManager.deleteRegionFromCache(r);
+		LogRunner.log.remove(r); //fix for LogRunner trying to save a log for a Region that no longer exists -jzx7
 		RegionDeleteEvent event = new RegionDeleteEvent("RegionDeleteEvent");
 		event.setProperties(null, r);
 		Bukkit.getServer().getPluginManager().callEvent(event);

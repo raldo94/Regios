@@ -29,7 +29,7 @@ public class RegionScreen5 {
 	//need to add cmd checking to this.
 
 	public static enum PermToggle {
-		CACHE, PERM_ADD, PERM_REMOVE, SET;
+		CACHE_ADD, CACHE_REM, PERM_ADD, PERM_REMOVE, SET;
 	}
 
 	public static HashMap<SpoutPlayer, PermToggle> toggle = new HashMap<SpoutPlayer, PermToggle>();
@@ -54,11 +54,13 @@ public class RegionScreen5 {
 		((GenericButton) sh.page5Widgets[0]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page5Widgets[1]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page5Widgets[2]).setTextColor(RGB.WHITE.getColour());
-		((GenericButton) sh.page5Widgets[11]).setTextColor(RGB.WHITE.getColour());
+		((GenericButton) sh.page5Widgets[3]).setTextColor(RGB.WHITE.getColour());
+		((GenericButton) sh.page5Widgets[12]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page5Widgets[0]).setDirty(true);
 		((GenericButton) sh.page5Widgets[1]).setDirty(true);
 		((GenericButton) sh.page5Widgets[2]).setDirty(true);
-		((GenericButton) sh.page5Widgets[11]).setDirty(true);
+		((GenericButton) sh.page5Widgets[3]).setDirty(true);
+		((GenericButton) sh.page5Widgets[12]).setDirty(true);
 		butt.setTextColor(RGB.GREEN.getColour());
 		butt.setDirty(true);
 		toggle.put(sp, tog);
@@ -71,8 +73,14 @@ public class RegionScreen5 {
 
 	public static void nextPage(SpoutPlayer sp, Region r, ScreenHolder sh) {
 		switch (toggle.get(sp)) {
-		case CACHE:
-			if (currentPage.get(sp) >= getExceptionPages(r.getTemporaryNodesCacheAdd().length)) {
+		case CACHE_ADD:
+			if (currentPage.get(sp) >= getExceptionPages(r.getTempNodesCacheAdd().length)) {
+				sp.sendNotification(ChatColor.RED + "Error!", "No next page!", Material.FIRE);
+				return;
+			}
+			break;
+		case CACHE_REM:
+			if (currentPage.get(sp) >= getExceptionPages(r.getTempNodesCacheRem().length)) {
 				sp.sendNotification(ChatColor.RED + "Error!", "No next page!", Material.FIRE);
 				return;
 			}
@@ -112,8 +120,12 @@ public class RegionScreen5 {
 
 	public static void eraseExceptions(PermToggle toggle, SpoutPlayer sp, Region r) {
 		switch (toggle) {
-		case CACHE:
+		case CACHE_ADD:
 			perms.editResetTempAddCache(r);
+			sp.sendNotification("Cache", ChatColor.GREEN + "Permissions erased", Material.PAPER);
+			break;
+		case CACHE_REM:
+			perms.editResetTempRemCache(r);
 			sp.sendNotification("Cache", ChatColor.GREEN + "Permissions erased", Material.PAPER);
 			break;
 		case PERM_ADD:
@@ -134,14 +146,27 @@ public class RegionScreen5 {
 
 	public static void addException(PermToggle toggle, SpoutPlayer sp, Region r, String ex, TextField tf) {
 		switch (toggle) {
-		case CACHE:
-			if (perms.checkTempCache(r, ex)) {
+		case CACHE_ADD:
+			if (perms.checkTempAddCache(r, ex)) {
 				sp.sendNotification(ChatColor.RED + "Error!", "Permission Exists!", Material.FIRE);
 				tf.setText("");
 				tf.setDirty(true);
 				break;
 			} else {
 				perms.editAddToTempAddCache(r, ex);
+				sp.sendNotification(ChatColor.GREEN + "Temp Cache", "Permission added", Material.PAPER);
+				tf.setText("");
+				tf.setDirty(true);
+				break;
+			}
+		case CACHE_REM:
+			if (perms.checkTempRemCache(r, ex)) {
+				sp.sendNotification(ChatColor.RED + "Error!", "Permission Exists!", Material.FIRE);
+				tf.setText("");
+				tf.setDirty(true);
+				break;
+			} else {
+				perms.editAddToTempRemCache(r, ex);
 				sp.sendNotification(ChatColor.GREEN + "Temp Cache", "Permission added", Material.PAPER);
 				tf.setText("");
 				tf.setDirty(true);
@@ -192,14 +217,27 @@ public class RegionScreen5 {
 
 	public static void removeException(PermToggle toggle, SpoutPlayer sp, Region r, String ex, TextField tf) {
 		switch (toggle) {
-		case CACHE:
-			if (!perms.checkTempCache(r, ex)) {
+		case CACHE_ADD:
+			if (!perms.checkTempAddCache(r, ex)) {
 				sp.sendNotification(ChatColor.RED + "Error!", "Permission doesn't exist", Material.FIRE);
 				tf.setText("");
 				tf.setDirty(true);
 				break;
 			} else {
 				perms.editRemoveFromTempAddCache(r, ex);
+				sp.sendNotification(ChatColor.GREEN + "Temp Cache", "Permission removed", Material.PAPER);
+				tf.setText("");
+				tf.setDirty(true);
+				break;
+			}
+		case CACHE_REM:
+			if (!perms.checkTempRemCache(r, ex)) {
+				sp.sendNotification(ChatColor.RED + "Error!", "Permission doesn't exist", Material.FIRE);
+				tf.setText("");
+				tf.setDirty(true);
+				break;
+			} else {
+				perms.editRemoveFromTempRemCache(r, ex);
 				sp.sendNotification(ChatColor.GREEN + "Temp Cache", "Permission removed", Material.PAPER);
 				tf.setText("");
 				tf.setDirty(true);
@@ -249,37 +287,43 @@ public class RegionScreen5 {
 	}
 	
 	public static void updateButtons(ScreenHolder sh, SpoutPlayer sp, PermToggle tog){
-		if(tog == PermToggle.CACHE || tog == PermToggle.PERM_ADD || tog == PermToggle.PERM_REMOVE){
-			((GenericButton) sh.page5Widgets[4]).setText("Add Permission");
-			((GenericButton) sh.page5Widgets[4]).setDirty(true);
-			((GenericButton) sh.page5Widgets[5]).setText("Remove Permission");
+		if(tog == PermToggle.CACHE_ADD || tog == PermToggle.CACHE_REM || tog == PermToggle.PERM_ADD || tog == PermToggle.PERM_REMOVE){
+			((GenericButton) sh.page5Widgets[5]).setText("Add Permission");
 			((GenericButton) sh.page5Widgets[5]).setDirty(true);
-			((GenericButton) sh.page5Widgets[6]).setText("Erase Permissions");
+			((GenericButton) sh.page5Widgets[6]).setText("Remove Permission");
 			((GenericButton) sh.page5Widgets[6]).setDirty(true);
+			((GenericButton) sh.page5Widgets[7]).setText("Erase Permissions");
+			((GenericButton) sh.page5Widgets[7]).setDirty(true);
 		} else {
-			((GenericButton) sh.page5Widgets[4]).setText("Add Command");
-			((GenericButton) sh.page5Widgets[4]).setDirty(true);
-			((GenericButton) sh.page5Widgets[5]).setText("Remove Command");
+			((GenericButton) sh.page5Widgets[5]).setText("Add Command");
 			((GenericButton) sh.page5Widgets[5]).setDirty(true);
-			((GenericButton) sh.page5Widgets[6]).setText("Erase Commands");
+			((GenericButton) sh.page5Widgets[6]).setText("Remove Command");
 			((GenericButton) sh.page5Widgets[6]).setDirty(true);
+			((GenericButton) sh.page5Widgets[7]).setText("Erase Commands");
+			((GenericButton) sh.page5Widgets[7]).setDirty(true);
 		}
 	}
 
 	public static void updateExceptionPages(SpoutPlayer sp, int page, ScreenHolder sh, Region r) {
-		for (Widget w : ((GenericContainer) sh.page5Widgets[10]).getChildren()) {
-			((GenericContainer) sh.page5Widgets[10]).removeChild(w);
+		for (Widget w : ((GenericContainer) sh.page5Widgets[11]).getChildren()) {
+			((GenericContainer) sh.page5Widgets[11]).removeChild(w);
 		}
 		
-		ArrayList<String> sortedTempNodes = new ArrayList<String>();
+		ArrayList<String> sortedTempAddNodes = new ArrayList<String>();
+		ArrayList<String> sortedTempRemNodes = new ArrayList<String>();
 		ArrayList<String> sortedAddNodes = new ArrayList<String>();
 		ArrayList<String> sortedRemNodes = new ArrayList<String>();
 		ArrayList<String> sortedCmdSet = new ArrayList<String>();
 		
-		if(r.getTemporaryNodesCacheAdd() != null){
-		for(String s : r.getTemporaryNodesCacheAdd()){
-			sortedTempNodes.add(s);
+		if(r.getTempNodesCacheAdd() != null){
+		for(String s : r.getTempNodesCacheAdd()){
+			sortedTempAddNodes.add(s);
 		}
+		}
+		if(r.getTempNodesCacheRem() != null){
+			for(String s : r.getTempNodesCacheRem()){
+				sortedTempRemNodes.add(s);
+			}
 		}
 		if(r.getPermAddNodes() != null){
 		for(String s : r.getPermAddNodes()){
@@ -297,7 +341,8 @@ public class RegionScreen5 {
 		}
 		}
 		
-		Collections.sort(sortedTempNodes);
+		Collections.sort(sortedTempAddNodes);
+		Collections.sort(sortedTempRemNodes);
 		Collections.sort(sortedAddNodes);
 		Collections.sort(sortedRemNodes);
 		Collections.sort(sortedCmdSet);
@@ -305,60 +350,74 @@ public class RegionScreen5 {
 		for (int exc = ((page * 5) - 5); exc < ((page * 5)); exc++) {
 
 			switch (toggle.get(sp)) {
-			case CACHE:
-				((GenericLabel) sh.page5Widgets[7]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getTempCacheNodes().length));
-				((GenericLabel) sh.page5Widgets[7]).setDirty(true);
-				((GenericContainer) sh.page5Widgets[10]).setDirty(true);
-				if (exc < (sortedTempNodes.size()) && sortedTempNodes.get(exc).length() >= 2) {
-					GenericLabel ex = new GenericLabel((sortedTempNodes.get(exc)));
+			case CACHE_ADD:
+				((GenericLabel) sh.page5Widgets[8]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getTempNodesCacheAdd().length));
+				((GenericLabel) sh.page5Widgets[8]).setDirty(true);
+				((GenericContainer) sh.page5Widgets[11]).setDirty(true);
+				if (exc < (sortedTempAddNodes.size()) && sortedTempAddNodes.get(exc).length() >= 2) {
+					GenericLabel ex = new GenericLabel((sortedTempAddNodes.get(exc)));
 					ex.setTextColor(RGB.YELLOW.getColour());
-					((GenericContainer) sh.page5Widgets[10]).addChild(ex);
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
 				} else {
 					GenericLabel ex = new GenericLabel("-");
 					ex.setTextColor(RGB.YELLOW.getColour());
-					((GenericContainer) sh.page5Widgets[10]).addChild(ex);
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
+				}
+				break;
+			case CACHE_REM:
+				((GenericLabel) sh.page5Widgets[8]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getTempNodesCacheRem().length));
+				((GenericLabel) sh.page5Widgets[8]).setDirty(true);
+				((GenericContainer) sh.page5Widgets[11]).setDirty(true);
+				if (exc < (sortedTempRemNodes.size()) && sortedTempRemNodes.get(exc).length() >= 2) {
+					GenericLabel ex = new GenericLabel((sortedTempRemNodes.get(exc)));
+					ex.setTextColor(RGB.YELLOW.getColour());
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
+				} else {
+					GenericLabel ex = new GenericLabel("-");
+					ex.setTextColor(RGB.YELLOW.getColour());
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
 				}
 				break;
 			case PERM_ADD:
-				((GenericLabel) sh.page5Widgets[7]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(sortedAddNodes.size()));
-				((GenericLabel) sh.page5Widgets[7]).setDirty(true);
-				((GenericContainer) sh.page5Widgets[10]).setDirty(true);
+				((GenericLabel) sh.page5Widgets[8]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(sortedAddNodes.size()));
+				((GenericLabel) sh.page5Widgets[8]).setDirty(true);
+				((GenericContainer) sh.page5Widgets[11]).setDirty(true);
 				if (exc < (sortedAddNodes.size()) && sortedAddNodes.get(exc).length() >= 2) {
 					GenericLabel ex = new GenericLabel(sortedAddNodes.get(exc));
 					ex.setTextColor(RGB.YELLOW.getColour());
-					((GenericContainer) sh.page5Widgets[10]).addChild(ex);
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
 				} else {
 					GenericLabel ex = new GenericLabel("-");
 					ex.setTextColor(RGB.YELLOW.getColour());
-					((GenericContainer) sh.page5Widgets[10]).addChild(ex);
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
 				}
 				break;
 			case PERM_REMOVE:
-				((GenericLabel) sh.page5Widgets[7]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getPermanentNodesCacheRemove().length));
-				((GenericLabel) sh.page5Widgets[7]).setDirty(true);
-				((GenericContainer) sh.page5Widgets[10]).setDirty(true);
+				((GenericLabel) sh.page5Widgets[8]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getPermanentNodesCacheRemove().length));
+				((GenericLabel) sh.page5Widgets[8]).setDirty(true);
+				((GenericContainer) sh.page5Widgets[11]).setDirty(true);
 				if ((exc < sortedRemNodes.size()) && sortedRemNodes.get(exc).length() >= 2) {
 					GenericLabel ex = new GenericLabel(sortedRemNodes.get(exc));
 					ex.setTextColor(RGB.YELLOW.getColour());
-					((GenericContainer) sh.page5Widgets[10]).addChild(ex);
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
 				} else {
 					GenericLabel ex = new GenericLabel("-");
 					ex.setTextColor(RGB.YELLOW.getColour());
-					((GenericContainer) sh.page5Widgets[10]).addChild(ex);
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
 				}
 				break;
 			case SET:
-				((GenericLabel) sh.page5Widgets[7]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getCommandSet().length));
-				((GenericLabel) sh.page5Widgets[7]).setDirty(true);
-				((GenericContainer) sh.page5Widgets[10]).setDirty(true);
+				((GenericLabel) sh.page5Widgets[8]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getCommandSet().length));
+				((GenericLabel) sh.page5Widgets[8]).setDirty(true);
+				((GenericContainer) sh.page5Widgets[11]).setDirty(true);
 				if ((exc < sortedCmdSet.size()) && sortedCmdSet.get(exc).length() >= 2) {
 					GenericLabel ex = new GenericLabel(sortedCmdSet.get(exc));
 					ex.setTextColor(RGB.YELLOW.getColour());
-					((GenericContainer) sh.page5Widgets[10]).addChild(ex);
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
 				} else {
 					GenericLabel ex = new GenericLabel("-");
 					ex.setTextColor(RGB.YELLOW.getColour());
-					((GenericContainer) sh.page5Widgets[10]).addChild(ex);
+					((GenericContainer) sh.page5Widgets[11]).addChild(ex);
 				}
 				break;
 			}
@@ -383,12 +442,12 @@ public class RegionScreen5 {
 		}
 
 		currentPage.put(sp, 1);
-		toggle.put(sp, PermToggle.CACHE);
+		toggle.put(sp, PermToggle.CACHE_ADD);
 
-		((GenericButton) sh.page5Widgets[0]).setText("Cache");
+		((GenericButton) sh.page5Widgets[0]).setText("Cache Add");
 		((GenericButton) sh.page5Widgets[0]).setHeight(20);
 		((GenericButton) sh.page5Widgets[0]).setWidth(80);
-		((GenericButton) sh.page5Widgets[0]).setX(45);
+		((GenericButton) sh.page5Widgets[0]).setX(5);
 		((GenericButton) sh.page5Widgets[0]).setY(55);
 		((GenericButton) sh.page5Widgets[0]).setHoverColor(RGB.YELLOW.getColour());
 		((GenericButton) sh.page5Widgets[0]).setTextColor(RGB.GREEN.getColour());
@@ -399,13 +458,14 @@ public class RegionScreen5 {
 		} else {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[0]);
 		}
-
-		((GenericButton) sh.page5Widgets[1]).setText("Perm Add");
+		
+		((GenericButton) sh.page5Widgets[1]).setText("Cache Remove");
 		((GenericButton) sh.page5Widgets[1]).setHeight(20);
 		((GenericButton) sh.page5Widgets[1]).setWidth(80);
-		((GenericButton) sh.page5Widgets[1]).setX(130);
+		((GenericButton) sh.page5Widgets[1]).setX(90);
 		((GenericButton) sh.page5Widgets[1]).setY(55);
 		((GenericButton) sh.page5Widgets[1]).setHoverColor(RGB.YELLOW.getColour());
+		((GenericButton) sh.page5Widgets[1]).setTextColor(RGB.GREEN.getColour());
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[1])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[1].getId()).setVisible(true);
@@ -414,10 +474,10 @@ public class RegionScreen5 {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[1]);
 		}
 
-		((GenericButton) sh.page5Widgets[2]).setText("Perm Remove");
+		((GenericButton) sh.page5Widgets[2]).setText("Perm Add");
 		((GenericButton) sh.page5Widgets[2]).setHeight(20);
 		((GenericButton) sh.page5Widgets[2]).setWidth(80);
-		((GenericButton) sh.page5Widgets[2]).setX(215);
+		((GenericButton) sh.page5Widgets[2]).setX(175);
 		((GenericButton) sh.page5Widgets[2]).setY(55);
 		((GenericButton) sh.page5Widgets[2]).setHoverColor(RGB.YELLOW.getColour());
 
@@ -427,31 +487,13 @@ public class RegionScreen5 {
 		} else {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[2]);
 		}
-		
-		((GenericButton) sh.page5Widgets[11]).setText("Command Set");
-		((GenericButton) sh.page5Widgets[11]).setHeight(20);
-		((GenericButton) sh.page5Widgets[11]).setWidth(80);
-		((GenericButton) sh.page5Widgets[11]).setX(300);
-		((GenericButton) sh.page5Widgets[11]).setY(55);
-		((GenericButton) sh.page5Widgets[11]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[11])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[11].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[11].getId()).setDirty(true);
-		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[11]);
-		}
-		
-		switchToggle(sp, PermToggle.CACHE, sh, r, ((GenericButton) sh.page5Widgets[0]), true);
-
-		((GenericTextField) sh.page5Widgets[3]).setText("");
-		((GenericTextField) sh.page5Widgets[3]).setHeight(20);
-		((GenericTextField) sh.page5Widgets[3]).setWidth(160);
-		((GenericTextField) sh.page5Widgets[3]).setX(10);
-		((GenericTextField) sh.page5Widgets[3]).setY(95);
-		((GenericTextField) sh.page5Widgets[3]).setMaximumCharacters(25);
-		((GenericTextField) sh.page5Widgets[3]).setFieldColor(RGB.BLACK.getColour());
-		((GenericTextField) sh.page5Widgets[3]).setBorderColor(RGB.SPRING_GREEN.getColour());
+		((GenericButton) sh.page5Widgets[3]).setText("Perm Remove");
+		((GenericButton) sh.page5Widgets[3]).setHeight(20);
+		((GenericButton) sh.page5Widgets[3]).setWidth(80);
+		((GenericButton) sh.page5Widgets[3]).setX(260);
+		((GenericButton) sh.page5Widgets[3]).setY(55);
+		((GenericButton) sh.page5Widgets[3]).setHoverColor(RGB.YELLOW.getColour());
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[3])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[3].getId()).setVisible(true);
@@ -459,14 +501,31 @@ public class RegionScreen5 {
 		} else {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[3]);
 		}
+		
+		((GenericButton) sh.page5Widgets[12]).setText("Command Set");
+		((GenericButton) sh.page5Widgets[12]).setHeight(20);
+		((GenericButton) sh.page5Widgets[12]).setWidth(80);
+		((GenericButton) sh.page5Widgets[12]).setX(345);
+		((GenericButton) sh.page5Widgets[12]).setY(55);
+		((GenericButton) sh.page5Widgets[12]).setHoverColor(RGB.YELLOW.getColour());
 
-		((GenericButton) sh.page5Widgets[4]).setText("Add Permission");
-		((GenericButton) sh.page5Widgets[4]).setHeight(20);
-		((GenericButton) sh.page5Widgets[4]).setWidth(160);
-		((GenericButton) sh.page5Widgets[4]).setX(10);
-		((GenericButton) sh.page5Widgets[4]).setY(125);
-		((GenericButton) sh.page5Widgets[4]).setHoverColor(RGB.YELLOW.getColour());
-		((GenericButton) sh.page5Widgets[4]).setTextColor(RGB.GREEN.getColour());
+		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[12])) {
+			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[12].getId()).setVisible(true);
+			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[12].getId()).setDirty(true);
+		} else {
+			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[12]);
+		}
+		
+		switchToggle(sp, PermToggle.CACHE_ADD, sh, r, ((GenericButton) sh.page5Widgets[0]), true);
+
+		((GenericTextField) sh.page5Widgets[4]).setText("");
+		((GenericTextField) sh.page5Widgets[4]).setHeight(20);
+		((GenericTextField) sh.page5Widgets[4]).setWidth(160);
+		((GenericTextField) sh.page5Widgets[4]).setX(10);
+		((GenericTextField) sh.page5Widgets[4]).setY(95);
+		((GenericTextField) sh.page5Widgets[4]).setMaximumCharacters(25);
+		((GenericTextField) sh.page5Widgets[4]).setFieldColor(RGB.BLACK.getColour());
+		((GenericTextField) sh.page5Widgets[4]).setBorderColor(RGB.SPRING_GREEN.getColour());
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[4])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[4].getId()).setVisible(true);
@@ -475,13 +534,13 @@ public class RegionScreen5 {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[4]);
 		}
 
-		((GenericButton) sh.page5Widgets[5]).setText("Remove Permission");
+		((GenericButton) sh.page5Widgets[5]).setText("Add Permission");
 		((GenericButton) sh.page5Widgets[5]).setHeight(20);
 		((GenericButton) sh.page5Widgets[5]).setWidth(160);
 		((GenericButton) sh.page5Widgets[5]).setX(10);
-		((GenericButton) sh.page5Widgets[5]).setY(155);
+		((GenericButton) sh.page5Widgets[5]).setY(125);
 		((GenericButton) sh.page5Widgets[5]).setHoverColor(RGB.YELLOW.getColour());
-		((GenericButton) sh.page5Widgets[5]).setTextColor(RGB.RED.getColour());
+		((GenericButton) sh.page5Widgets[5]).setTextColor(RGB.GREEN.getColour());
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[5])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[5].getId()).setVisible(true);
@@ -490,12 +549,13 @@ public class RegionScreen5 {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[5]);
 		}
 
-		((GenericButton) sh.page5Widgets[6]).setText("Erase Permissions");
+		((GenericButton) sh.page5Widgets[6]).setText("Remove Permission");
 		((GenericButton) sh.page5Widgets[6]).setHeight(20);
 		((GenericButton) sh.page5Widgets[6]).setWidth(160);
 		((GenericButton) sh.page5Widgets[6]).setX(10);
-		((GenericButton) sh.page5Widgets[6]).setY(185);
+		((GenericButton) sh.page5Widgets[6]).setY(155);
 		((GenericButton) sh.page5Widgets[6]).setHoverColor(RGB.YELLOW.getColour());
+		((GenericButton) sh.page5Widgets[6]).setTextColor(RGB.RED.getColour());
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[6])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[6].getId()).setVisible(true);
@@ -504,13 +564,12 @@ public class RegionScreen5 {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[6]);
 		}
 
-		((GenericLabel) sh.page5Widgets[7]).setX(215);
-		((GenericLabel) sh.page5Widgets[7]).setY(85);
-		((GenericLabel) sh.page5Widgets[7]).setWidth(50);
-		((GenericLabel) sh.page5Widgets[7]).setHeight(20);
-		((GenericLabel) sh.page5Widgets[7]).setTextColor(RGB.YELLOW.getColour());
-		((GenericLabel) sh.page5Widgets[7]).setText("Page 1 / " + getExceptionPages(r.getTempCacheNodes().length));
-		((GenericLabel) sh.page5Widgets[7]).setTooltip(ChatColor.YELLOW + "  Toggle between permissions");
+		((GenericButton) sh.page5Widgets[7]).setText("Erase Permissions");
+		((GenericButton) sh.page5Widgets[7]).setHeight(20);
+		((GenericButton) sh.page5Widgets[7]).setWidth(160);
+		((GenericButton) sh.page5Widgets[7]).setX(10);
+		((GenericButton) sh.page5Widgets[7]).setY(185);
+		((GenericButton) sh.page5Widgets[7]).setHoverColor(RGB.YELLOW.getColour());
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[7])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[7].getId()).setVisible(true);
@@ -519,12 +578,13 @@ public class RegionScreen5 {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[7]);
 		}
 
-		((GenericButton) sh.page5Widgets[8]).setX(215);
-		((GenericButton) sh.page5Widgets[8]).setY(95);
-		((GenericButton) sh.page5Widgets[8]).setWidth(35);
-		((GenericButton) sh.page5Widgets[8]).setHeight(20);
-		((GenericButton) sh.page5Widgets[8]).setTextColor(RGB.YELLOW.getColour());
-		((GenericButton) sh.page5Widgets[8]).setText("<");
+		((GenericLabel) sh.page5Widgets[8]).setX(215);
+		((GenericLabel) sh.page5Widgets[8]).setY(85);
+		((GenericLabel) sh.page5Widgets[8]).setWidth(50);
+		((GenericLabel) sh.page5Widgets[8]).setHeight(20);
+		((GenericLabel) sh.page5Widgets[8]).setTextColor(RGB.YELLOW.getColour());
+		((GenericLabel) sh.page5Widgets[8]).setText("Page 1 / " + getExceptionPages(r.getTempNodesCacheAdd().length));
+		((GenericLabel) sh.page5Widgets[8]).setTooltip(ChatColor.YELLOW + "  Toggle between permissions");
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[8])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[8].getId()).setVisible(true);
@@ -533,12 +593,12 @@ public class RegionScreen5 {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[8]);
 		}
 
-		((GenericButton) sh.page5Widgets[9]).setX(345);
+		((GenericButton) sh.page5Widgets[9]).setX(215);
 		((GenericButton) sh.page5Widgets[9]).setY(95);
 		((GenericButton) sh.page5Widgets[9]).setWidth(35);
 		((GenericButton) sh.page5Widgets[9]).setHeight(20);
 		((GenericButton) sh.page5Widgets[9]).setTextColor(RGB.YELLOW.getColour());
-		((GenericButton) sh.page5Widgets[9]).setText(">");
+		((GenericButton) sh.page5Widgets[9]).setText("<");
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[9])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[9].getId()).setVisible(true);
@@ -547,35 +607,49 @@ public class RegionScreen5 {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[9]);
 		}
 
-		((GenericContainer) sh.page5Widgets[10]).setX(215);
-		((GenericContainer) sh.page5Widgets[10]).setY(120);
-		((GenericContainer) sh.page5Widgets[10]).setWidth(100);
-		((GenericContainer) sh.page5Widgets[10]).setHeight(85);
-
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[10])) {
-			for (Widget w : ((Container) ((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[10].getId())).getChildren()) {
-				((Container) ((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[10].getId())).removeChild(w);
-			}
-		}
-
-		for (int index = 0; index <= 4; index++) {
-			if ((index < (r.getTemporaryNodesCacheAdd()).length) && r.getTemporaryNodesCacheAdd()[index].length() > 2) {
-				GenericLabel ex = new GenericLabel((r.getTemporaryNodesCacheAdd())[index]);
-				ex.setTextColor(RGB.YELLOW.getColour());
-				((GenericContainer) sh.page5Widgets[10]).addChild(ex);
-			} else {
-				GenericLabel ex = new GenericLabel("-");
-				ex.setTextColor(RGB.YELLOW.getColour());
-				((GenericContainer) sh.page5Widgets[10]).addChild(ex);
-			}
-		}
+		((GenericButton) sh.page5Widgets[10]).setX(345);
+		((GenericButton) sh.page5Widgets[10]).setY(95);
+		((GenericButton) sh.page5Widgets[10]).setWidth(35);
+		((GenericButton) sh.page5Widgets[10]).setHeight(20);
+		((GenericButton) sh.page5Widgets[10]).setTextColor(RGB.YELLOW.getColour());
+		((GenericButton) sh.page5Widgets[10]).setText(">");
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[10])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[10].getId()).setVisible(true);
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[10].getId()).setDirty(true);
-
 		} else {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[10]);
+		}
+
+		((GenericContainer) sh.page5Widgets[11]).setX(215);
+		((GenericContainer) sh.page5Widgets[11]).setY(120);
+		((GenericContainer) sh.page5Widgets[11]).setWidth(100);
+		((GenericContainer) sh.page5Widgets[11]).setHeight(85);
+
+		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[11])) {
+			for (Widget w : ((Container) ((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[11].getId())).getChildren()) {
+				((Container) ((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[11].getId())).removeChild(w);
+			}
+		}
+
+		for (int index = 0; index <= 4; index++) {
+			if ((index < (r.getTempNodesCacheAdd()).length) && r.getTempNodesCacheAdd()[index].length() > 2) {
+				GenericLabel ex = new GenericLabel((r.getTempNodesCacheAdd())[index]);
+				ex.setTextColor(RGB.YELLOW.getColour());
+				((GenericContainer) sh.page5Widgets[11]).addChild(ex);
+			} else {
+				GenericLabel ex = new GenericLabel("-");
+				ex.setTextColor(RGB.YELLOW.getColour());
+				((GenericContainer) sh.page5Widgets[11]).addChild(ex);
+			}
+		}
+
+		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page5Widgets[11])) {
+			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[11].getId()).setVisible(true);
+			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page5Widgets[11].getId()).setDirty(true);
+
+		} else {
+			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(Regios.regios, sh.page5Widgets[11]);
 		}
 		
 		updateExceptionPages(sp, 1, sh, r);

@@ -12,12 +12,14 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.material.Door;
@@ -26,7 +28,6 @@ import couk.Adamki11s.Extras.Events.ExtrasEvents;
 import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 import couk.Adamki11s.Regios.Commands.CreationCommands;
 import couk.Adamki11s.Regios.Data.ConfigurationData;
-import couk.Adamki11s.Regios.Economy.Economy;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
 import couk.Adamki11s.Regios.Economy.EconomyPending;
 import couk.Adamki11s.Regios.Permissions.PermissionsCore;
@@ -40,7 +41,7 @@ import couk.Adamki11s.Regios.Scheduler.LogRunner;
 import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
 import couk.Adamki11s.Regios.SpoutInterface.SpoutRegion;
 
-public class RegiosPlayerListener extends PlayerListener {
+public class RegiosPlayerListener implements Listener {
 
 	public static enum MSG {
 		PROTECTION, AUTHENTICATION, PREVENT_ENTRY, PREVENT_EXIT, ECONOMY;
@@ -64,7 +65,7 @@ public class RegiosPlayerListener extends PlayerListener {
 	public static HashMap<Player, Long> timeStampsEconomy = new HashMap<Player, Long>();
 
 	public static HashMap<Player, ShareData> loadingTerrain = new HashMap<Player, ShareData>();
-
+	
 	private static void setTimestamp(Player p, MSG msg) {
 		switch (msg) {
 		case PROTECTION:
@@ -109,7 +110,7 @@ public class RegiosPlayerListener extends PlayerListener {
 		}
 		return outcome;
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuit(PlayerQuitEvent evt) {
 		Player p = evt.getPlayer();
 		if (HealthRegeneration.isRegenerator(p)) {
@@ -124,14 +125,14 @@ public class RegiosPlayerListener extends PlayerListener {
 			}
 		}
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent evt) {
 		SpoutInterface.spoutEnabled.put(evt.getPlayer(), false);
 		if (EconomyPending.isPending(evt.getPlayer())) {
 			EconomyPending.loadAndSendPending(evt.getPlayer());
 		}
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent evt) {
 
 		if (evt.getClickedBlock() == null) {
@@ -212,40 +213,21 @@ public class RegiosPlayerListener extends PlayerListener {
 							} catch (NumberFormatException ex) {
 								ex.printStackTrace();
 							}
-							if (EconomyCore.getEconomy() == Economy.ICONOMY) {
-								if (!EconomyCore.getiConomyManager().canAffordRegion(p, price)) {
-									if (isSendable(p, MSG.ECONOMY)) {
-										p.sendMessage(ChatColor.RED + "[Regios] You cannot afford this region!");
-										LogRunner.addLogMessage(region, LogRunner.getPrefix(region)
-												+ (" Player '" + p.getName() + "' tried to buy region but didn't have enough money."));
-									}
-									return;
-								} else {
-									EconomyCore.getiConomyManager().buyRegion(region, p.getName(), region.getOwner(), price);
+							if (!EconomyCore.canAffordRegion(p.getName(), price)) {
+								if (isSendable(p, MSG.ECONOMY)) {
+									p.sendMessage(ChatColor.RED + "[Regios] You cannot afford this region!");
 									LogRunner.addLogMessage(region, LogRunner.getPrefix(region)
-											+ (" Player '" + p.getName() + "' bought region from '" + region.getOwner() + "' for " + price + "."));
-									p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + region.getName() + ChatColor.GREEN + " purchased for "
-											+ ChatColor.GOLD + price + ChatColor.GREEN + "!");
-									b.setTypeId(0);
-									return;
+											+ (" Player '" + p.getName() + "' tried to buy region but didn't have enough money."));
 								}
-							} else if (EconomyCore.getEconomy() == Economy.BOSECONOMY) {
-								if (!EconomyCore.getBoseEconomyManager().canAffordRegion(p.getName(), price)) {
-									if (isSendable(p, MSG.ECONOMY)) {
-										p.sendMessage(ChatColor.RED + "[Regios] You cannot afford this region!");
-										LogRunner.addLogMessage(region, LogRunner.getPrefix(region)
-												+ (" Player '" + p.getName() + "' tried to buy region but didn't have enough money."));
-									}
-									return;
-								} else {
-									EconomyCore.getBoseEconomyManager().buyRegion(region, p.getName(), region.getOwner(), price);
-									LogRunner.addLogMessage(region, LogRunner.getPrefix(region)
-											+ (" Player '" + p.getName() + "' bought region from '" + region.getOwner() + "' for " + price + "."));
-									p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + region.getName() + ChatColor.GREEN + " purchased for "
-											+ ChatColor.GOLD + price + ChatColor.GREEN + "!");
-									b.setTypeId(0);
-									return;
-								}
+								return;
+							} else {
+								EconomyCore.buyRegion(region, p.getName(), region.getOwner(), price);
+								LogRunner.addLogMessage(region, LogRunner.getPrefix(region)
+										+ (" Player '" + p.getName() + "' bought region from '" + region.getOwner() + "' for " + price + "."));
+								p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + region.getName() + ChatColor.GREEN + " purchased for "
+										+ ChatColor.GOLD + price + ChatColor.GREEN + "!");
+								b.setTypeId(0);
+								return;
 							}
 						} else {
 							PermissionsCore.sendInvalidPerms(p);
@@ -316,7 +298,7 @@ public class RegiosPlayerListener extends PlayerListener {
 		}
 
 		if (r.isPreventingInteraction()) {
-			if (!r.canBuild(p)) {
+			if (!r.canBypassProtection(p)) {
 				if (isSendable(p, MSG.PROTECTION)) {
 					p.sendMessage(ChatColor.RED + "[Regios] You cannot interact within this region!");
 				}
@@ -328,7 +310,7 @@ public class RegiosPlayerListener extends PlayerListener {
 
 		if (b.getTypeId() == 71 || b.getTypeId() == 64) {
 			if (r.areDoorsLocked()) {
-				if (!r.canBuild(p)) {
+				if (!r.canBypassProtection(p)) {
 					if (isSendable(p, MSG.PROTECTION)) {
 						p.sendMessage(ChatColor.RED + "[Regios] Doors are locked for this region!");
 					}
@@ -345,7 +327,7 @@ public class RegiosPlayerListener extends PlayerListener {
 	public boolean areChunksEqual(Chunk c1, Chunk c2) {
 		return (c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketFill(PlayerBucketFillEvent evt) {
 		Location l = evt.getBlockClicked().getLocation();
 		Player p = evt.getPlayer();
@@ -390,7 +372,7 @@ public class RegiosPlayerListener extends PlayerListener {
 		} else {
 			for (Region r : currentRegionSet) {
 				if (r.is_protection()) {
-					if (!r.canBuild(p)) {
+					if (!r.canBypassProtection(p)) {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 								+ (" Player '" + p.getName() + "' tried to fill a " + evt.getBucket().toString() + " but was prevented."));
 						r.sendBuildMessage(p);
@@ -401,7 +383,7 @@ public class RegiosPlayerListener extends PlayerListener {
 			}
 		}
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent evt) {
 		Location l = evt.getBlockClicked().getLocation();
 		Player p = evt.getPlayer();
@@ -446,7 +428,7 @@ public class RegiosPlayerListener extends PlayerListener {
 		} else {
 			for (Region r : currentRegionSet) {
 				if (r.is_protection()) {
-					if (!r.canBuild(p)) {
+					if (!r.canBypassProtection(p)) {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 								+ (" Player '" + p.getName() + "' tried to empty a " + evt.getBucket().toString() + " but was prevented."));
 						r.sendBuildMessage(p);
@@ -457,7 +439,7 @@ public class RegiosPlayerListener extends PlayerListener {
 			}
 		}
 	}
-
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerMove(PlayerMoveEvent evt) {
 
 		if (!extEvt.didMove(evt)) {

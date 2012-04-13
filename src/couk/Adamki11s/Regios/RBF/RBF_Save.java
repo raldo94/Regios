@@ -3,12 +3,21 @@ package couk.Adamki11s.Regios.RBF;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BrewingStand;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.Furnace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import couk.Adamki11s.Regios.CustomEvents.RegionBackupEvent;
 import couk.Adamki11s.Regios.CustomExceptions.FileExistanceException;
@@ -19,6 +28,8 @@ import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.jnbt.ByteArrayTag;
 import couk.Adamki11s.jnbt.CompoundTag;
 import couk.Adamki11s.jnbt.IntTag;
+import couk.Adamki11s.jnbt.ListItemStackArrayTag;
+import couk.Adamki11s.jnbt.ListStringArrayTag;
 import couk.Adamki11s.jnbt.NBTOutputStream;
 import couk.Adamki11s.jnbt.Tag;
 
@@ -61,7 +72,7 @@ public class RBF_Save extends PermissionsCore {
 			p.sendMessage(ChatColor.GREEN + "[Regios] Creating .rbf backup file...");
 		}
 		if (p != null) {
-			if (!super.canModifyBasic(r, p)) {
+			if (!super.canModify(r, p)) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -133,6 +144,8 @@ public class RBF_Save extends PermissionsCore {
 		// Copy
 		byte[] blockID = new byte[width * height * length];
 		byte[] blockData = new byte[width * height * length];
+		List<ItemStack[]> containerData = new ArrayList<ItemStack[]>();
+		List<String[]> signData = new ArrayList<String[]>();
 
 		int index = 0;
 
@@ -141,13 +154,36 @@ public class RBF_Save extends PermissionsCore {
 				for (int z = 0; z < length; z++) {
 					blockID[index] = (byte) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getTypeId();
 					blockData[index] = (byte) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getData();
+					if(blockID[index] == 54) { //Save Chest contents for later restoration - jzx7
+						Chest chest = (Chest) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+						containerData.add(chest.getBlockInventory().getContents());
+					} else if(blockID[index] == 61) { //Save Furnace contents for later restoration - jzx7
+						Furnace furnace = (Furnace) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+						containerData.add(furnace.getInventory().getContents());
+					} else if(blockID[index] == 23) { //Save Dispenser contents for later restoration - jzx7
+						Dispenser dispenser = (Dispenser) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+						containerData.add(dispenser.getInventory().getContents());
+					} else if(blockID[index] == 117) { //Save Brewing Stand contents for later restoration - jzx7
+						BrewingStand brew = (BrewingStand) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+						containerData.add(brew.getInventory().getContents());
+					} else {
+						containerData.add(null);
+					}
+					if(blockID[index] == 63 || blockID[index] == 68) { //Save sign data for later restoration -jzx7
+						Sign sign = (Sign) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+						signData.add(sign.getLines());
+					} else {
+						signData.add(null);
+					}
 					index++;
 				}
 			}
 		}
-
+		
 		backuptag.put("BlockID", new ByteArrayTag("BlockID", blockID));
 		backuptag.put("Data", new ByteArrayTag("Data", blockData));
+		backuptag.put("ContainerData", new ListItemStackArrayTag("ContainerData", containerData)); //jzx7
+		backuptag.put("SignData", new ListStringArrayTag("SignData", signData)); //jzx7
 		backuptag.put("StartX", new IntTag("StartX", min.getBlockX()));
 		backuptag.put("StartY", new IntTag("StartY", min.getBlockY()));
 		backuptag.put("StartZ", new IntTag("StartZ", min.getBlockZ()));
@@ -229,6 +265,8 @@ public class RBF_Save extends PermissionsCore {
 
 			byte[] blockID = new byte[width * height * length];
 			byte[] blockData = new byte[width * height * length];
+			List<ItemStack[]> containerData = new ArrayList<ItemStack[]>();
+			List<String[]> signData = new ArrayList<String[]>();
 
 			int index = 0;
 
@@ -237,6 +275,27 @@ public class RBF_Save extends PermissionsCore {
 					for (int z = 0; z < length; z++) {
 						blockID[index] = (byte) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getTypeId();
 						blockData[index] = (byte) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getData();
+						if(blockID[index] == 54) { //Save Chest contents for later restoration - jzx7
+							Chest chest = (Chest) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+							containerData.add(chest.getBlockInventory().getContents());
+						} else if(blockID[index] == 61) { //Save Furnace contents for later restoration - jzx7
+							Furnace furnace = (Furnace) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+							containerData.add(furnace.getInventory().getContents());
+						} else if(blockID[index] == 23) { //Save Dispenser contents for later restoration - jzx7
+							Dispenser dispenser = (Dispenser) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+							containerData.add(dispenser.getInventory().getContents());
+						} else if(blockID[index] == 117) { //Save Brewing Stand contents for later restoration - jzx7
+							BrewingStand brew = (BrewingStand) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+							containerData.add(brew.getInventory().getContents());
+						} else {
+							containerData.add(null);
+						}
+						if(blockID[index] == 63 || blockID[index] == 68) { //Save sign data for later restoration -jzx7
+							Sign sign = (Sign) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
+							signData.add(sign.getLines());
+						} else {
+							signData.add(null);
+						}
 						index++;
 					}
 				}
@@ -244,6 +303,8 @@ public class RBF_Save extends PermissionsCore {
 
 			backuptag.put("BlockID", new ByteArrayTag("BlockID", blockID));
 			backuptag.put("Data", new ByteArrayTag("Data", blockData));
+			backuptag.put("ContainerData", new ListItemStackArrayTag("ContainerData", containerData)); //jzx7
+			backuptag.put("SignData", new ListStringArrayTag("SignData", signData)); //jzx7
 			backuptag.put("StartX", new IntTag("StartX", min.getBlockX()));
 			backuptag.put("StartY", new IntTag("StartY", min.getBlockY()));
 			backuptag.put("StartZ", new IntTag("StartZ", min.getBlockZ()));
@@ -251,7 +312,7 @@ public class RBF_Save extends PermissionsCore {
 			backuptag.put("YSize", new IntTag("YSize", height));
 			backuptag.put("ZSize", new IntTag("ZSize", length));
 
-			CompoundTag compoundTag = new CompoundTag("TRX", backuptag);
+			CompoundTag compoundTag = new CompoundTag("BLP", backuptag);
 
 			NBTOutputStream nbt = new NBTOutputStream(new FileOutputStream(f));
 			nbt.writeTag(compoundTag);

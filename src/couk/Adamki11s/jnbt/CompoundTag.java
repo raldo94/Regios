@@ -35,7 +35,6 @@ package couk.Adamki11s.jnbt;
 
 import java.util.Collections;
 import java.util.Map;
-import couk.Adamki11s.jnbt.Tag;
 
 /**
  * The <code>TAG_Compound</code> tag.

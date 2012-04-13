@@ -3,7 +3,6 @@ package couk.Adamki11s.Regios.Commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import couk.Adamki11s.Regios.Economy.Economy;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
 import couk.Adamki11s.Regios.Mutable.MutableEconomy;
 import couk.Adamki11s.Regios.Permissions.PermissionsCore;
@@ -25,7 +24,7 @@ public class EconomyCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if (!super.canModifyMain(r, p)) {
+			if (!super.canModify(r, p)) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to sell this region!");
 				return;
 			}
@@ -56,26 +55,14 @@ public class EconomyCommands extends PermissionsCore {
 				return;
 			}
 			int price = r.getSalePrice();
-			if (EconomyCore.getEconomy() == Economy.ICONOMY) {
-				if (!EconomyCore.getiConomyManager().canAffordRegion(p, price)) {
-					p.sendMessage(ChatColor.RED + "[Regios] You cannot afford this region!");
-					return;
-				} else {
-					EconomyCore.getiConomyManager().buyRegion(r, p.getName(), r.getOwner(), price);
-					p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + r.getName() + ChatColor.GREEN + " purchased for " + ChatColor.GOLD + price
-							+ ChatColor.GREEN + "!");
-					return;
-				}
-			} else if (EconomyCore.getEconomy() == Economy.BOSECONOMY) {
-				if (!EconomyCore.getBoseEconomyManager().canAffordRegion(p.getName(), price)) {
-					p.sendMessage(ChatColor.RED + "[Regios] You cannot afford this region!");
-					return;
-				} else {
-					EconomyCore.getBoseEconomyManager().buyRegion(r, p.getName(), r.getOwner(), price);
-					p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + r.getName() + ChatColor.GREEN + " purchased for " + ChatColor.GOLD + price
-							+ ChatColor.GREEN + "!");
-					return;
-				}
+			if (!EconomyCore.canAffordRegion(p.getName(), price)) {
+				p.sendMessage(ChatColor.RED + "[Regios] You cannot afford this region!");
+				return;
+			} else {
+				EconomyCore.buyRegion(r, p.getName(), r.getOwner(), price);
+				p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + r.getName() + ChatColor.GREEN + " purchased for " + ChatColor.GOLD + price
+						+ ChatColor.GREEN + "!");
+				return;
 			}
 		}
 	}
@@ -96,7 +83,7 @@ public class EconomyCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if (!super.canModifyBasic(r, p)) {
+			if (!super.canModify(r, p)) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}

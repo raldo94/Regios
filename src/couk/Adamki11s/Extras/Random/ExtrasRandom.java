@@ -5,14 +5,14 @@ import java.util.Random;
 
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class ExtrasRandom extends RandomMethods {
 
-	private static final CreatureType[] creatures = CreatureType.values();
+	private static final EntityType[] creatures = EntityType.values();
 	private static final int creaturecount = creatures.length;
 	private static final Random r = new Random();
 
@@ -32,7 +32,7 @@ public class ExtrasRandom extends RandomMethods {
 	}
 
 	@Override
-	public CreatureType getRandomCreature() {
+	public EntityType getRandomCreature() {
 		return creatures[r.nextInt(creaturecount)];
 	}
 

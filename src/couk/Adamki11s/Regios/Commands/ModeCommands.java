@@ -15,7 +15,7 @@ public class ModeCommands extends PermissionsCore {
 	public void setProtectionMode(Region r, String region, String input, Player p){
 		MODE m = MODE.toMode(input);
 		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -31,7 +31,7 @@ public class ModeCommands extends PermissionsCore {
 	public void setPreventEntryMode(Region r, String region, String input, Player p){
 		MODE m = MODE.toMode(input);
 		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -47,7 +47,7 @@ public class ModeCommands extends PermissionsCore {
 	public void setPreventExitMode(Region r, String region, String input, Player p){
 		MODE m = MODE.toMode(input);
 		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -63,7 +63,7 @@ public class ModeCommands extends PermissionsCore {
 	public void setItemControlMode(Region r, String region, String input, Player p){
 		MODE m = MODE.toMode(input);
 		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}

@@ -1,18 +1,5 @@
 package couk.Adamki11s.jnbt;
 
-import couk.Adamki11s.jnbt.ByteArrayTag;
-import couk.Adamki11s.jnbt.ByteTag;
-import couk.Adamki11s.jnbt.CompoundTag;
-import couk.Adamki11s.jnbt.DoubleTag;
-import couk.Adamki11s.jnbt.EndTag;
-import couk.Adamki11s.jnbt.FloatTag;
-import couk.Adamki11s.jnbt.IntTag;
-import couk.Adamki11s.jnbt.ListTag;
-import couk.Adamki11s.jnbt.LongTag;
-import couk.Adamki11s.jnbt.NBTConstants;
-import couk.Adamki11s.jnbt.ShortTag;
-import couk.Adamki11s.jnbt.StringTag;
-import couk.Adamki11s.jnbt.Tag;
 
 /*
  * JNBT License
@@ -50,7 +37,7 @@ import couk.Adamki11s.jnbt.Tag;
 /**
  * A class which contains NBT-related utility methods.
  * 
- * @author Graham Edgecombe
+ * @author Graham Edgecombe, johnnyzerox7
  * 
  */
 public final class NBTUtils {
@@ -85,6 +72,10 @@ public final class NBTUtils {
             return "TAG_Short";
         } else if (clazz.equals(StringTag.class)) {
             return "TAG_String";
+        } else if (clazz.equals(ListStringArrayTag.class)) {
+            return "TAG_ListString_Array";
+        } else if (clazz.equals(ListItemStackArrayTag.class)) {
+            return "TAG_ListItemStack_Array";
         } else {
             throw new IllegalArgumentException("Invalid tag classs ("
                     + clazz.getName() + ").");
@@ -123,6 +114,10 @@ public final class NBTUtils {
             return NBTConstants.TYPE_SHORT;
         } else if (clazz.equals(StringTag.class)) {
             return NBTConstants.TYPE_STRING;
+        } else if (clazz.equals(ListStringArrayTag.class)) {
+            return NBTConstants.TYPE_LISTSTRING_ARRAY;
+        } else if (clazz.equals(ListItemStackArrayTag.class)) {
+            return NBTConstants.TYPE_LISTITEMSTACK_ARRAY;
         } else {
             throw new IllegalArgumentException("Invalid tag classs ("
                     + clazz.getName() + ").");
@@ -162,6 +157,10 @@ public final class NBTUtils {
             return ListTag.class;
         case NBTConstants.TYPE_COMPOUND:
             return CompoundTag.class;
+        case NBTConstants.TYPE_LISTSTRING_ARRAY:
+            return ListStringArrayTag.class;
+        case NBTConstants.TYPE_LISTITEMSTACK_ARRAY:
+            return ListItemStackArrayTag.class;
         default:
             throw new IllegalArgumentException("Invalid tag type : " + type
                     + ".");

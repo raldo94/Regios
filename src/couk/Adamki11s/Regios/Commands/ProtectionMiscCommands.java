@@ -23,7 +23,7 @@ public class ProtectionMiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -44,7 +44,7 @@ public class ProtectionMiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -69,7 +69,7 @@ public class ProtectionMiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -94,7 +94,7 @@ public class ProtectionMiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -119,7 +119,7 @@ public class ProtectionMiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -144,7 +144,7 @@ public class ProtectionMiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -171,7 +171,7 @@ public class ProtectionMiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -183,13 +183,38 @@ public class ProtectionMiscCommands extends PermissionsCore {
 		}
 		mutable.editFireProtection(r, val);
 	}
+	
+	public void setTNTEnabled(Region r, String region, String input, Player p) {
+		boolean val;
+		try {
+			val = Boolean.parseBoolean(input);
+		} catch (Exception bfe) {
+			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be boolean!");
+			return;
+		}
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			if(!super.canModify(r, p)){
+				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				return;
+			}
+			if (val) {
+				p.sendMessage(ChatColor.GREEN + "[Regios] TNT enabled for region " + ChatColor.BLUE + region);
+			} else {
+				p.sendMessage(ChatColor.GREEN + "[Regios] TNT disabled for region " + ChatColor.BLUE + region);
+			}
+		}
+		mutable.editTNTEnabled(r, val);
+	}
 
 	public void setPassword(Region r, String region, String input, Player p) {
 		if (r == null) {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyMain(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}

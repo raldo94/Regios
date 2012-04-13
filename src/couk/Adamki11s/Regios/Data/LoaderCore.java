@@ -8,11 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import couk.Adamki11s.Regios.CustomEvents.RegionLoadEvent;
-import couk.Adamki11s.Regios.Economy.Economy;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
+import couk.Adamki11s.Regios.Regions.CubeRegion;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.GlobalWorldSetting;
 import couk.Adamki11s.Regios.Regions.Region;
@@ -41,8 +42,7 @@ public class LoaderCore {
 
 	public void loadConfiguration() {
 		log.info(prefix + " Loading configuration files.");
-		Configuration c = new Configuration(defaultregions);
-		c.load();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(defaultregions);
 
 		String a = c.getString("DefaultSettings.Messages.WelcomeMessage", ""), b = c.getString("DefaultSettings.Messages.LeaveMessage", ""), cc = c.getString(
 				"DefaultSettings.Messages.ProtectionMessage", ""), d = c.getString("DefaultSettings.Messages.PreventEntryMessage", ""), e = c.getString(
@@ -58,7 +58,8 @@ public class LoaderCore {
 				"DefaultSettings.General.MonsterSpawns", true), j = c.getBoolean("DefaultSettings.Other.HealthEnabled", true), k = c.getBoolean("DefaultSettings.General.PvP",
 				false), m = c.getBoolean("DefaultSettings.General.DoorsLocked", false), n = c.getBoolean("DefaultSettings.General.ChestsLocked", false), o = c.getBoolean(
 				"DefaultSettings.General.PreventInteraction", false), v = c.getBoolean("DefaultSettings.Messages.ShowPvPWarning", true), pe = c.getBoolean(
-				"DefaultSettings.Password.PasswordProtection", false), fireProtection = c.getBoolean("DefaultSettings.Protection.FireProtection", false);
+				"DefaultSettings.Password.PasswordProtection", false), fireProtection = c.getBoolean("DefaultSettings.Protection.FireProtection", false)
+						, TNTEnabled = c.getBoolean("DefaultSettings.Protection.TNTEnabled", false);
 
 		int p = c.getInt("DefaultSettings.Other.LSPS", 0), q = c.getInt("DefaultSettings.Other.HealthRegen", 0), r = c.getInt("DefaultSettings.Other.VelocityWarp", 0);
 
@@ -95,41 +96,33 @@ public class LoaderCore {
 
 		// ___________________________________
 
-		c = new Configuration(updateconfig);
-
-		c.load();
+		c = YamlConfiguration.loadConfiguration(updateconfig);
 
 		boolean cfu = c.getBoolean("CheckForUpdates", true), dua = c.getBoolean("DownloadUpdatesAutomatically", true), cov = c.getBoolean("CacheOldVersions", true), fr = c
 				.getBoolean("ForceReload", true);
 
 		new ConfigurationData(a, b, cc, d, e, pass, f, g, h, i, j, k, m, n, o, v, pe, p, q, r, s, t, u, item, cfu, dua, cov, fr, exit, dam, dasm, welcomeIcon, leaveIcon, aa,
 				bb, ccc, dd, ee, fireProtection, musicUrl, playmusic, permWipeOnEnter, permWipeOnExit, wipeAndCacheOnEnter, wipeAndCacheOnExit, forceCommand, commandSet,
-				tempAddCache, permAddCache, permRemCache, form, playerCap, protectPlace, protectBreak, forSale, salePrice);
+				tempAddCache, permAddCache, permRemCache, form, playerCap, protectPlace, protectBreak, forSale, salePrice, TNTEnabled);
 
 		System.out.println("[Regios] Loaded default region configuation file.");
 		// Initialises variables in configuration data.
 
-		c = new Configuration(generalconfig);
-
-		c.load();
+		c = YamlConfiguration.loadConfiguration(generalconfig);
 
 		int id = c.getInt("Region.Tools.Setting.ID", Material.WOOD_AXE.getId());
 		ConfigurationData.defaultSelectionTool = Material.getMaterial(id);
 
-		Economy econ = Economy.toEconomy(c.getString("Region.Economy", "NONE"));
+		boolean econ = c.getBoolean("Region.UseEconomy", false);
 
 		boolean logs = c.getBoolean("Region.LogsEnabled", true);
 
 		ConfigurationData.logs = logs;
 
-		if (econ == Economy.NONE) {
+		if (!econ) {
 			EconomyCore.economySupport = false;
-			EconomyCore.economy = econ;
-			log.info(prefix + " No economy preset specified in config.");
-		} else if (econ == Economy.BOSECONOMY || econ == Economy.ICONOMY) {
+		} else {
 			EconomyCore.economySupport = true;
-			EconomyCore.economy = econ;
-			log.info(prefix + " Economy preset found : " + econ.toString().toUpperCase());
 		}
 
 		GlobalWorldSetting.writeWorldsToConfiguration();
@@ -147,7 +140,6 @@ public class LoaderCore {
 		} else {
 			if (!silent) {
 				log.info(prefix + " No Regions to load.");
-				return;
 			}
 		}
 		for (File root : children) {
@@ -191,9 +183,7 @@ public class LoaderCore {
 					}
 				}
 
-				Configuration c = new Configuration(toload);
-
-				c.load();
+				FileConfiguration c = YamlConfiguration.loadConfiguration(toload);
 
 				String welcomeMessage = c.getString("Region.Messages.WelcomeMessage", ""), leaveMessage = c.getString("Region.Messages.LeaveMessage", ""), protectionMessage = c
 						.getString("Region.Messages.ProtectionMessage", ""), preventEntryMessage = c.getString("Region.Messages.PreventEntryMessage", ""), preventExitMessage = c
@@ -211,7 +201,8 @@ public class LoaderCore {
 						.getBoolean("Region.General.Protected.BlockBreak", false), preventEntry = c.getBoolean("Region.General.PreventEntry", false), preventExit = c
 						.getBoolean("Region.General.PreventExit", false), preventInteraction = c.getBoolean("Region.General.PreventInteraction", false), doorsLocked = c
 						.getBoolean("Region.General.DoorsLocked", false), chestsLocked = c.getBoolean("Region.General.ChestsLocked", false), passwordEnabled = c.getBoolean(
-						"Region.General.Password.Enabled", false), fireProtection = c.getBoolean("DefaultSettings.Protection.FireProtection", false);
+						"Region.General.Password.Enabled", false), fireProtection = c.getBoolean("DefaultSettings.Protection.FireProtection", false)
+								, TNTEnabled = c.getBoolean("DefaultSettings.Protection.TNTEnabled", false);
 
 				String password = c.getString("Region.General.Password.Password", "");
 
@@ -246,6 +237,8 @@ public class LoaderCore {
 				String[] commandSet = c.getString("Region.Command.CommandSet", "").trim().split(",");
 
 				String[] tempAddCache = c.getString("Region.Permissions.TemporaryCache.AddNodes", "").trim().split(",");
+				
+				String[] tempRemCache = c.getString("Region.Permissions.TemporaryCache.RemoveNodes", "").trim().split(",");
 
 				String[] permAddCache = c.getString("Region.Permissions.PermanentCache.AddNodes", "").trim().split(",");
 
@@ -268,7 +261,7 @@ public class LoaderCore {
 				boolean useTexture = c.getBoolean("Region.Spout.Texture.UseTexture", false), sw = c.getBoolean("Region.Spout.Welcome.Enabled", true),
 						sl = c.getBoolean("Region.Spout.Leave.Enabled", true);
 
-				Region r = new Region(owner, name, l1, l2, world, null, false);
+				Region r = new CubeRegion(owner, name, l1, l2, world, null, false);
 
 				for (String s : exceptionsPlayers) {
 					r.addException(s);
@@ -328,6 +321,7 @@ public class LoaderCore {
 				r.setWelcomeMessage((welcomeMessage));
 
 				r.setFireProtection(fireProtection);
+				r.setTNTEnabled(TNTEnabled);
 
 				r.setPlayCustomSoundUrl(playmusic);
 				r.setCustomSoundUrl(musicUrl);
@@ -341,7 +335,8 @@ public class LoaderCore {
 				r.setCommandSet(commandSet);
 				r.setItems(items);
 
-				r.setTemporaryNodesCacheAdd(tempAddCache);
+				r.setTempNodesCacheAdd(tempAddCache);
+				r.setTempNodesCacheRem(tempRemCache);
 				r.setPermanentNodesCacheAdd(permAddCache);
 				r.setPermanentNodesCacheRemove(permRemCache);
 
@@ -356,9 +351,9 @@ public class LoaderCore {
 				r.setSalePrice(price);
 				r.setForSale(forSale);
 
-				if (r.getLSPS() > 0 && !LightningRunner.doesStikesContain(r)) {
+				if (r.getLSPS() > 0 && !LightningRunner.doesStrikesContain(r)) {
 					LightningRunner.addRegion(r);
-				} else if (r.getLSPS() == 0 && LightningRunner.doesStikesContain(r)) {
+				} else if (r.getLSPS() == 0 && LightningRunner.doesStrikesContain(r)) {
 					LightningRunner.removeRegion(r);
 				}
 

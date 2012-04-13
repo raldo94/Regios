@@ -1,6 +1,19 @@
 package couk.Adamki11s.Regios.API;
 
-import couk.Adamki11s.Regios.Mutable.*;
+import couk.Adamki11s.Regios.Mutable.MutableAdministration;
+import couk.Adamki11s.Regios.Mutable.MutableEconomy;
+import couk.Adamki11s.Regios.Mutable.MutableExceptions;
+import couk.Adamki11s.Regios.Mutable.MutableFun;
+import couk.Adamki11s.Regios.Mutable.MutableInventory;
+import couk.Adamki11s.Regios.Mutable.MutableMessages;
+import couk.Adamki11s.Regios.Mutable.MutableMisc;
+import couk.Adamki11s.Regios.Mutable.MutableMobs;
+import couk.Adamki11s.Regios.Mutable.MutableModes;
+import couk.Adamki11s.Regios.Mutable.MutableModification;
+import couk.Adamki11s.Regios.Mutable.MutablePermissions;
+import couk.Adamki11s.Regios.Mutable.MutableProtection;
+import couk.Adamki11s.Regios.Mutable.MutableProtectionMisc;
+import couk.Adamki11s.Regios.Mutable.MutableSpout;
 
 public class SaveData {
 	

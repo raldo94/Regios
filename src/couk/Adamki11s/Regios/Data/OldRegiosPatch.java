@@ -1,6 +1,7 @@
 package couk.Adamki11s.Regios.Data;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,12 +13,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
 
 import couk.Adamki11s.Regios.Mutable.MutableModification;
+import couk.Adamki11s.Regios.Regions.CubeRegion;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
 
@@ -219,7 +222,7 @@ public class OldRegiosPatch {
 						pvp = false;
 					}
 
-					Region r = new Region(owner, name, l1, l2, w, null, true);
+					Region r = new CubeRegion(owner, name, l1, l2, w, null, true);
 					r.setWelcomeMessage(replaceString(welcomeMessage));
 					r.setLeaveMessage(replaceString(leaveMessage));
 					r.setHealthRegen(healthRegen);
@@ -314,9 +317,9 @@ public class OldRegiosPatch {
 	}
 
 	private static void massConvertRegion(Region r) {
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.Messages.WelcomeMessage");
 		all.remove("Region.Messages.LeaveMessage");
 		all.remove("Region.Other.HealthRegen");
@@ -330,22 +333,26 @@ public class OldRegiosPatch {
 		all.remove("Region.Other.HealthEnabled");
 		all.remove("Region.Other.PvP");
 		for (Entry<String, Object> entry : all.entrySet()) {
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.Messages.WelcomeMessage", r.getWelcomeMessage());
-		c.setProperty("Region.Messages.LeaveMessage", r.getLeaveMessage());
-		c.setProperty("Region.Other.HealthRegen", r.getHealthRegen());
-		c.setProperty("Region.Other.LSPS", r.getLSPS());
-		c.setProperty("Region.Teleportation.Warp.Location", r.getWarp().getWorld().getName() + "," + r.getWarp().getBlockX() + "," + r.getWarp().getBlockY() + ","
+		c.set("Region.Messages.WelcomeMessage", r.getWelcomeMessage());
+		c.set("Region.Messages.LeaveMessage", r.getLeaveMessage());
+		c.set("Region.Other.HealthRegen", r.getHealthRegen());
+		c.set("Region.Other.LSPS", r.getLSPS());
+		c.set("Region.Teleportation.Warp.Location", r.getWarp().getWorld().getName() + "," + r.getWarp().getBlockX() + "," + r.getWarp().getBlockY() + ","
 				+ r.getWarp().getBlockZ());
-		c.setProperty("Region.Messages.ShowWelcomeMessage", r.isShowWelcomeMessage());
-		c.setProperty("Region.Messages.ShowLeaveMessage", r.isShowLeaveMessage());
-		c.setProperty("Region.General.Protected", r.is_protection());
-		c.setProperty("Region.General.PreventEntry", r.isPreventEntry());
-		c.setProperty("Region.General.PreventExit", r.isPreventExit());
-		c.setProperty("Region.Other.HealthEnabled", r.isHealthEnabled());
-		c.setProperty("Region.Other.PvP", r.isPvp());
-		c.save();
+		c.set("Region.Messages.ShowWelcomeMessage", r.isShowWelcomeMessage());
+		c.set("Region.Messages.ShowLeaveMessage", r.isShowLeaveMessage());
+		c.set("Region.General.Protected", r.is_protection());
+		c.set("Region.General.PreventEntry", r.isPreventEntry());
+		c.set("Region.General.PreventExit", r.isPreventExit());
+		c.set("Region.Other.HealthEnabled", r.isHealthEnabled());
+		c.set("Region.Other.PvP", r.isPvp());
+		try {
+			c.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

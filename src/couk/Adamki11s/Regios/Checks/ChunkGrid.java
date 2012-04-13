@@ -31,15 +31,9 @@ public class ChunkGrid {
 		return chunkGrid.contains(c);
 	}
 	
-	public ChunkGrid(Location l1, Location l2, Region r){ //Initialises the chunk grid for the given region
+	public ChunkGrid(Location l1, Location l2, Region cubeRegion){ //Initialises the chunk grid for the given region
 		World w = l1.getWorld();
-		if(w == null){
-			w = l2.getWorld();
-		}
-		if(w == null || l1 == null || l2 == null){
-			return;
-		}
-		region = r;
+		region = cubeRegion;
 		chunkGrid.add(w.getChunkAt(l1));
 		chunkGrid.add(w.getChunkAt(l2));
 		Location clone1 = new Location(l1.getWorld(), Math.max(l1.getX(), l2.getX()), Math.max(l1.getY(), l2.getY()), Math.max(l1.getZ(), l2.getZ()));

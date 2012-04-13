@@ -106,7 +106,7 @@ public class ScreenHolder {
 			new GenericButton("Items"), new GenericTextField(), new GenericButton("Add"), new GenericButton("Remove"), new GenericButton("Erase"),
 			new GenericLabel("Indicator"), new GenericButton("<"), new GenericButton(">"), new GenericContainer() };
 
-	public Widget[] page5Widgets = { new GenericButton("Cache"), new GenericButton("Perm-Add"), new GenericButton("Perm-Rem"), new GenericTextField(),
+	public Widget[] page5Widgets = { new GenericButton("Cache-Add"), new GenericButton("Cache-Rem"), new GenericButton("Perm-Add"), new GenericButton("Perm-Rem"), new GenericTextField(),
 			new GenericButton("Add"), new GenericButton("Remove"), new GenericButton("Erase"), new GenericLabel("Indicator"), new GenericButton("<"), new GenericButton(">"),
 			new GenericContainer(), new GenericButton("Cmd-Set") };
 

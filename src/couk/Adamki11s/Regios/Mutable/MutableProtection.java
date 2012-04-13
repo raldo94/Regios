@@ -1,142 +1,185 @@
 package couk.Adamki11s.Regios.Mutable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import couk.Adamki11s.Regios.Regions.Region;
 
 public class MutableProtection {
 	
 	public void editProtectBP(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.Protected.BlockPlace");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.Protected.BlockPlace", true);
+		c.set("Region.General.Protected.BlockPlace", true);
 		r.set_protectionPlace(true);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editUnProtectBP(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.Protected.BlockPlace");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.Protected.BlockPlace", false);
+		c.set("Region.General.Protected.BlockPlace", false);
 		r.set_protectionPlace(false);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editProtectBB(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.Protected.BlockBreak");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.Protected.BlockBreak", true);
+		c.set("Region.General.Protected.BlockBreak", true);
 		r.set_protectionBreak(true);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editUnProtectBB(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.Protected.BlockBreak");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.Protected.BlockBreak", false);
+		c.set("Region.General.Protected.BlockBreak", false);
 		r.set_protectionBreak(false);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editProtect(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.Protected.General");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.Protected.General", true);
+		c.set("Region.General.Protected.General", true);
 		r.set_protection(true);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editUnprotect(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.Protected.General");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.Protected.General", false);
+		c.set("Region.General.Protected.General", false);
 		r.set_protection(false);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editPreventEntry(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.PreventEntry");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.PreventEntry", true);
+		c.set("Region.General.PreventEntry", true);
 		r.setPreventEntry(true);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editAllowEntry(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.PreventEntry");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.PreventEntry", false);
+		c.set("Region.General.PreventEntry", false);
 		r.setPreventEntry(false);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editPreventExit(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.PreventExit");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.PreventExit", true);
+		c.set("Region.General.PreventExit", true);
 		r.setPreventExit(true);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void editAllowExit(Region r){
-		Configuration c = r.getConfigFile();
-		c.load();
-		Map<String, Object> all = c.getAll();
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
 		all.remove("Region.General.PreventExit");
 		for(Entry<String, Object> entry : all.entrySet()){
-			c.setProperty(entry.getKey(), entry.getValue());
+			c.set(entry.getKey(), entry.getValue());
 		}
-		c.setProperty("Region.General.PreventExit", false);
+		c.set("Region.General.PreventExit", false);
 		r.setPreventExit(false);
-		c.save();
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

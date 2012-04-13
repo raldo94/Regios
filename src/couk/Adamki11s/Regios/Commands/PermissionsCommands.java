@@ -11,16 +11,16 @@ public class PermissionsCommands extends PermissionsCore {
 
 	MutablePermissions mutable = new MutablePermissions();
 
-	public void addToTempCache(Region r, String region, String message, Player p) {
+	public void addToTempAddCache(Region r, String region, String message, Player p) {
 		if (r == null) {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			if(mutable.checkTempCache(r, message)){
+			if(mutable.checkTempAddCache(r, message)){
 				p.sendMessage(ChatColor.RED + "[Regios] The Node " + ChatColor.BLUE + message + ChatColor.RED + " already exists!");
 				return;
 			}
@@ -29,16 +29,16 @@ public class PermissionsCommands extends PermissionsCore {
 		mutable.editAddToTempAddCache(r, message);
 	}
 
-	public void removeFromTempCache(Region r, String region, String message, Player p) {
+	public void removeFromTempAddCache(Region r, String region, String message, Player p) {
 		if (r == null) {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			if(!mutable.checkTempCache(r, message)){
+			if(!mutable.checkTempAddCache(r, message)){
 				p.sendMessage(ChatColor.RED + "[Regios] The node " + ChatColor.BLUE + message + ChatColor.RED + " did not match any in the cache!");
 				return;
 			} else {
@@ -53,7 +53,7 @@ public class PermissionsCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -61,13 +61,64 @@ public class PermissionsCommands extends PermissionsCore {
 		}
 		mutable.editResetTempAddCache(r);
 	}
+	
+	public void addToTempRemCache(Region r, String region, String message, Player p) {
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			if(!super.canModify(r, p)){
+				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				return;
+			}
+			if(mutable.checkTempRemCache(r, message)){
+				p.sendMessage(ChatColor.RED + "[Regios] The Node " + ChatColor.BLUE + message + ChatColor.RED + " already exists!");
+				return;
+			}
+			p.sendMessage(ChatColor.GREEN + "[Regios] Node " + ChatColor.BLUE + message + ChatColor.GREEN + " added to region cache " + ChatColor.BLUE + region);
+		}
+		mutable.editAddToTempRemCache(r, message);
+	}
+
+	public void removeFromTempRemCache(Region r, String region, String message, Player p) {
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			if(!super.canModify(r, p)){
+				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				return;
+			}
+			if(!mutable.checkTempRemCache(r, message)){
+				p.sendMessage(ChatColor.RED + "[Regios] The node " + ChatColor.BLUE + message + ChatColor.RED + " did not match any in the cache!");
+				return;
+			} else {
+				p.sendMessage(ChatColor.GREEN + "[Regios] Node " + ChatColor.BLUE + message + ChatColor.GREEN + " removed from region cache " + ChatColor.BLUE + region);
+			}
+		}
+		mutable.editRemoveFromTempRemCache(r, message);
+	}
+
+	public void resetTempRemCache(Region r, String region, Player p) {
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			if(!super.canModify(r, p)){
+				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				return;
+			}
+			p.sendMessage(ChatColor.GREEN + "[Regios] Node cache reset for region " + ChatColor.BLUE + region);
+		}
+		mutable.editResetTempRemCache(r);
+	}
 
 	public void addToPermAddCache(Region r, String region, String message, Player p) {
 		if (r == null) {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -85,7 +136,7 @@ public class PermissionsCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -103,7 +154,7 @@ public class PermissionsCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -117,7 +168,7 @@ public class PermissionsCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -135,7 +186,7 @@ public class PermissionsCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -153,7 +204,7 @@ public class PermissionsCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModifyBasic(r, p)){
+			if(!super.canModify(r, p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -169,6 +220,16 @@ public class PermissionsCommands extends PermissionsCore {
 		} else {
 			p.sendMessage(ChatColor.GREEN + "[Regios] Temp Node cache for region " + ChatColor.BLUE + region);
 			p.sendMessage(mutable.listTempAddCache(r));
+		}
+	}
+	
+	public void listTempRemCache(Region r, String region, Player p){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Temp Node cache for region " + ChatColor.BLUE + region);
+			p.sendMessage(mutable.listTempRemCache(r));
 		}
 	}
 	
