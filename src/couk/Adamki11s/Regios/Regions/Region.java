@@ -136,7 +136,6 @@ public class Region extends PermChecks {
 			RegionCreateEvent event = new RegionCreateEvent("RegionCreateEvent");
 			event.setProperties(p, this);
 			Bukkit.getServer().getPluginManager().callEvent(event);
-			exceptions.add(owner);
 		} else {
 			RegionLoadEvent event = new RegionLoadEvent("RegionLoadEvent");
 			event.setProperties(this);
