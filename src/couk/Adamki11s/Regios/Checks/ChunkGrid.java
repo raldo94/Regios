@@ -31,7 +31,7 @@ public class ChunkGrid {
 		return chunkGrid.contains(c);
 	}
 	
-	public ChunkGrid(Location l1, Location l2, Region cubeRegion){ //Initialises the chunk grid for the given region
+	public ChunkGrid(Location l1, Location l2, Region cubeRegion){ //Initializes the chunk grid for the given region
 		World w = l1.getWorld();
 		region = cubeRegion;
 		chunkGrid.add(w.getChunkAt(l1));

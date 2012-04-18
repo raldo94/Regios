@@ -35,6 +35,8 @@ import couk.Adamki11s.jnbt.Tag;
 
 public class RBF_Save extends PermissionsCore {
 
+	private static final char[] ILLEGAL_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
+	
 	Region region;
 	String backupname;
 	Player player;
@@ -51,6 +53,14 @@ public class RBF_Save extends PermissionsCore {
 		Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(Regios.regios, new Runnable() {
 
 			public void run() {
+				for(char c : backupname.toCharArray()){
+					for(char il : ILLEGAL_CHARACTERS){
+						if(c == il){
+							player.sendMessage(ChatColor.RED + "[Regios] Invalid token " + ChatColor.YELLOW + c + ChatColor.RED + " in file name!");
+							return;
+						}
+					}
+				}
 				if (!isSharing) {
 					try {
 						saveRegion(region, backupname, player);
@@ -60,7 +70,11 @@ public class RBF_Save extends PermissionsCore {
 						e.printStackTrace();
 					}
 				} else {
-					saveBlueprint(l1, l2, backupname, player);
+					try {
+						saveBlueprint(l1, l2, backupname, player);
+					} catch (FileExistanceException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 
@@ -208,7 +222,7 @@ public class RBF_Save extends PermissionsCore {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	public synchronized void saveBlueprint(Location l1, Location l2, String backupname, Player p) {
+	public synchronized void saveBlueprint(Location l1, Location l2, String backupname, Player p) throws FileExistanceException {
 		try {
 			if (p != null) {
 				p.sendMessage(ChatColor.GREEN + "[Regios] Creating .blp Blueprint file...");
@@ -220,8 +234,8 @@ public class RBF_Save extends PermissionsCore {
 			} else {
 				if (p != null) {
 					p.sendMessage(ChatColor.RED + "[Regios] A Blueprint file with the name " + ChatColor.BLUE + backupname + ChatColor.RED + " already exists!");
-					return;
 				}
+				throw new FileExistanceException("UNKNOWN", true);
 			}
 
 			World w = l1.getWorld();

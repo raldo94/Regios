@@ -9,26 +9,48 @@ import couk.Adamki11s.Regios.Regions.Region;
 
 public class PermissionsCacheManager {
 
-	public static HashMap<Player, ArrayList<String>> temporaryCache = new HashMap<Player, ArrayList<String>>();
+	public static HashMap<Player, ArrayList<String>> temporaryAddCache = new HashMap<Player, ArrayList<String>>();
+	public static HashMap<Player, ArrayList<String>> temporaryRemCache = new HashMap<Player, ArrayList<String>>();
 
-	public static void cacheNodes(Player p, Region r) {
+	public static void cacheAddNodes(Player p, Region r) {
 		ArrayList<String> nodeCache = new ArrayList<String>();
 		for (String node : r.getTempNodesCacheAdd()) {
 			nodeCache.add(node.trim());
 			PermissionsCore.addTempUserPermission(p, node.trim());
 		}
-		temporaryCache.put(p, nodeCache);
+		temporaryAddCache.put(p, nodeCache);
 	}
 
-	public static void unCacheNodes(Player p, Region r) {
-		if (temporaryCache.containsKey(p)) {
-			ArrayList<String> cache = temporaryCache.get(p);
+	public static void unCacheAddNodes(Player p, Region r) {
+		if (temporaryAddCache.containsKey(p)) {
+			ArrayList<String> cache = temporaryAddCache.get(p);
 			if (!cache.isEmpty()) {
 				for (String node : cache) {
 					PermissionsCore.removeTempUserPermission(p, node.trim());
 				}
 			}
-			temporaryCache.remove(p);
+			temporaryAddCache.remove(p);
+		}
+	}
+	
+	public static void cacheRemNodes(Player p, Region r) {
+		ArrayList<String> nodeCache = new ArrayList<String>();
+		for (String node : r.getTempNodesCacheAdd()) {
+			nodeCache.add(node.trim());
+			PermissionsCore.removeTempUserPermission(p, node.trim());
+		}
+		temporaryRemCache.put(p, nodeCache);
+	}
+
+	public static void unCacheRemNodes(Player p, Region r) {
+		if (temporaryRemCache.containsKey(p)) {
+			ArrayList<String> cache = temporaryRemCache.get(p);
+			if (!cache.isEmpty()) {
+				for (String node : cache) {
+					PermissionsCore.addTempUserPermission(p, node.trim());
+				}
+			}
+			temporaryRemCache.remove(p);
 		}
 	}
 

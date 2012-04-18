@@ -11,7 +11,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import couk.Adamki11s.Regios.CustomEvents.RegionLoadEvent;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
 import couk.Adamki11s.Regios.Regions.CubeRegion;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
@@ -356,10 +355,6 @@ public class LoaderCore {
 				} else if (r.getLSPS() == 0 && LightningRunner.doesStrikesContain(r)) {
 					LightningRunner.removeRegion(r);
 				}
-
-				RegionLoadEvent event = new RegionLoadEvent("RegionLoadEvent");
-				event.setProperties(r);
-				Bukkit.getServer().getPluginManager().callEvent(event);
 
 			}
 		}

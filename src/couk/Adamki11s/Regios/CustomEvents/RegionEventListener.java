@@ -38,6 +38,10 @@ public abstract class RegionEventListener implements Listener {
 
 			this.onRegionRestore((RegionRestoreEvent) event);
 
+		} else if (event instanceof RegionModifyEvent) {
+
+			this.onRegionModify((RegionModifyEvent) event);
+
 		} else if (event instanceof RegionCommandEvent) {
 
 			this.onRegionCommand((RegionCommandEvent) event);
@@ -60,6 +64,8 @@ public abstract class RegionEventListener implements Listener {
 	public abstract void onRegionBackup(RegionBackupEvent event);
 
 	public abstract void onRegionRestore(RegionRestoreEvent event);
+	
+	public abstract void onRegionModify(RegionModifyEvent event);
 
 	public abstract void onRegionCommand(RegionCommandEvent event);
 

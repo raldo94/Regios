@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import couk.Adamki11s.Regios.API.RegionDataSet;
-import couk.Adamki11s.Regios.CustomEvents.RegionCreateEvent;
 import couk.Adamki11s.Regios.CustomExceptions.InvalidDataSetException;
 import couk.Adamki11s.Regios.CustomExceptions.RegionNameExistsException;
 import couk.Adamki11s.Regios.CustomExceptions.RegionPointsNotSetException;
@@ -101,11 +100,8 @@ public class CreationCommands {
 		if (errors.length() >= 5) {
 			throw new InvalidDataSetException(errors);
 		}
-		Region r = new CubeRegion(rds.getOwner(), rds.getName(), rds.getL1(), rds.getL2(), Bukkit.getServer().getWorld(rds.getWorld()), null, true);
+		new CubeRegion(rds.getOwner(), rds.getName(), rds.getL1(), rds.getL2(), Bukkit.getServer().getWorld(rds.getWorld()), null, true);
 		PingManager.created();
-		RegionCreateEvent event = new RegionCreateEvent("RegionCreateEvent");
-		event.setProperties(null, r);
-		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void createRegion(Player p, String name) throws RegionNameExistsException, RegionPointsNotSetException {
@@ -169,15 +165,12 @@ public class CreationCommands {
 			return;
 		}
 
-		Region r = new CubeRegion(p.getName(), name, point1.get(p), point2.get(p), p.getWorld(), null, true);
+		new CubeRegion(p.getName(), name, point1.get(p), point2.get(p), p.getWorld(), null, true);
 		p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + name + ChatColor.GREEN + " created successfully!");
 		clearPoints(p);
 		modding.put(p, false);
 		setting.put(p, false);
 		PingManager.created();
-		RegionCreateEvent event = new RegionCreateEvent("RegionCreateEvent");
-		event.setProperties(p, r);
-		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void createBlueprint(Player p, String name) {
@@ -252,12 +245,12 @@ public class CreationCommands {
 	public void expandMaxSelection(Player p) {
 		if (point1.containsKey(p) && point2.containsKey(p)) {
 			point1.put(p, (new Location(p.getWorld(), point1.get(p).getX(), 0, point1.get(p).getZ())));
-			point2.put(p, (new Location(p.getWorld(), point2.get(p).getX(), 128, point2.get(p).getZ())));
+			point2.put(p, (new Location(p.getWorld(), point2.get(p).getX(), 256, point2.get(p).getZ())));
 			p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
 			return;
 		} else if (mod1.containsKey(p) && mod2.containsKey(p)) {
 			mod1.put(p, (new Location(p.getWorld(), mod1.get(p).getX(), 0, mod1.get(p).getZ())));
-			mod2.put(p, (new Location(p.getWorld(), mod2.get(p).getX(), 128, mod2.get(p).getZ())));
+			mod2.put(p, (new Location(p.getWorld(), mod2.get(p).getX(), 256, mod2.get(p).getZ())));
 			p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
 			return;
 		} else {

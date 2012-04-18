@@ -321,8 +321,14 @@ public class Region extends PermChecks {
 			try {
 				if (this.temporaryNodesCacheAdd != null) {
 					if (this.temporaryNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.unCacheNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary node caches wiped upon region exit for player '" + p.getName() + "'"));
+						PermissionsCacheManager.unCacheAddNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add node caches wiped upon region exit for player '" + p.getName() + "'"));
+					}
+				}
+				if (this.temporaryNodesCacheRem != null) {
+					if (this.temporaryNodesCacheRem.length > 0) {
+						PermissionsCacheManager.unCacheRemNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove node caches restored upon region exit for player '" + p.getName() + "'"));
 					}
 				}
 				if (this.permanentNodesCacheRemove != null) {
@@ -417,12 +423,18 @@ public class Region extends PermChecks {
 			try {
 				if (this.temporaryNodesCacheAdd != null) {
 					if (this.temporaryNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.cacheNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary node caches added upon region enter for player '" + p.getName() + "'"));
+						PermissionsCacheManager.cacheAddNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add node caches added upon region enter for player '" + p.getName() + "'"));
 					}
 
 				}
+				if (this.temporaryNodesCacheRem != null) {
+					if (this.temporaryNodesCacheRem.length > 0) {
+						PermissionsCacheManager.cacheRemNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove node caches wiped upon region enter for player '" + p.getName() + "'"));
+					}
 
+				}
 				if (this.permanentNodesCacheAdd != null) {
 					if (this.permanentNodesCacheAdd.length > 0) {
 						PermissionsCacheManager.permAddNodes(p, this);

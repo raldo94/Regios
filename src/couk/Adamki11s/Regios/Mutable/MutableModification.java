@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import couk.Adamki11s.Regios.Commands.AdministrationCommands;
 import couk.Adamki11s.Regios.CustomEvents.RegionDeleteEvent;
+import couk.Adamki11s.Regios.CustomEvents.RegionModifyEvent;
 import couk.Adamki11s.Regios.CustomExceptions.RegionExistanceException;
 import couk.Adamki11s.Regios.Data.LoaderCore;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
@@ -50,6 +51,9 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		RegionModifyEvent event = new RegionModifyEvent("RegionModifyEvent");
+		event.setProperties(r);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void editExpandDown(Region r, int value) {
@@ -75,6 +79,9 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		RegionModifyEvent event = new RegionModifyEvent("RegionModifyEvent");
+		event.setProperties(r);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void editShrinkDown(Region r, int value) {
@@ -100,6 +107,9 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		RegionModifyEvent event = new RegionModifyEvent("RegionModifyEvent");
+		event.setProperties(r);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void editShrinkUp(Region r, int value) {
@@ -125,6 +135,9 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		RegionModifyEvent event = new RegionModifyEvent("RegionModifyEvent");
+		event.setProperties(r);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void editExpandMax(Region r) {
@@ -145,6 +158,9 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		RegionModifyEvent event = new RegionModifyEvent("RegionModifyEvent");
+		event.setProperties(r);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void editModifyPoints(Region r, Location l1, Location l2) {
@@ -165,6 +181,9 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		RegionModifyEvent event = new RegionModifyEvent("RegionModifyEvent");
+		event.setProperties(r);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void editExpandOut(Region r, int expand) {
@@ -191,6 +210,9 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		RegionModifyEvent event = new RegionModifyEvent("RegionModifyEvent");
+		event.setProperties(r);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void editShrinkIn(Region r, int shrink) {
@@ -217,6 +239,9 @@ public class MutableModification {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		RegionModifyEvent event = new RegionModifyEvent("RegionModifyEvent");
+		event.setProperties(r);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void editRename(Region r, String new_name, Player p) {

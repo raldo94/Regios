@@ -149,6 +149,9 @@ public class RBF_Load_Share extends PermissionsCore {
 						Sign sign = (Sign) b.getState();
 						int line = 0;
 						for(String s : signData.get(index)) {
+							if(line > 3) {
+								break;
+							}
 							sign.setLine(line, s);
 							line++;
 						}

@@ -93,7 +93,7 @@ public class Regios extends JavaPlugin {
 		p = pm.getPlugin("Vault");
 		if(p==null) {
 			EconomyCore.economySupport = false;
-			log.info("[Regios] Vault not detected. No economy and permissions support.");
+			log.info("[Regios] Vault not detected. No economy or permissions support. OP or superperms only.");
 		} else {
 			log.info("[Regios] Vault detected, Vault support enabled!");
 			if(setupEconomy()) {
