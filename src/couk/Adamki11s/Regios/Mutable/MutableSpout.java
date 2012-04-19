@@ -14,7 +14,7 @@ import couk.Adamki11s.Regios.Regions.Region;
 public class MutableSpout {
 	
 	public boolean checkMusicUrl(String url, Region r){
-		for(String URL : r.getMusicUrls()){
+		for(String URL : r.getCustomSoundUrl()){
 			if(URL.equalsIgnoreCase(url)){
 				return true;
 			}
@@ -167,7 +167,7 @@ public class MutableSpout {
 			c.set(entry.getKey(), entry.getValue());
 		}
 		c.set("Region.Spout.Sound.PlayCustomMusic", val);
-		r.setUseSpoutTexturePack(val);
+		r.setPlayCustomSoundUrl(val);
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {
@@ -184,8 +184,14 @@ public class MutableSpout {
 		for(Entry<String, Object> entry : all.entrySet()){
 			c.set(entry.getKey(), entry.getValue());
 		}
-		c.set("Region.Spout.Sound.CustomMusicURL", current.trim() + message.trim() + ",");
-		r.setCustomSoundUrl((current.trim() + "," + message.trim()).split(","));
+		if(current != null) {
+			c.set("Region.Spout.Sound.CustomMusicURL", current.trim() + message.trim() + ",");
+			r.setCustomSoundUrl((current.trim() + "," + message.trim()).split(","));
+		} else {
+			c.set("Region.Spout.Sound.CustomMusicURL", message.trim() + ",");
+			r.setCustomSoundUrl((message.trim()).split(","));
+		}
+		
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {

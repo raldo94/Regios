@@ -257,8 +257,9 @@ public class LoaderCore {
 
 				String textureUrl = c.getString("Region.Spout.Texture.TexturePackURL", "");
 
-				boolean useTexture = c.getBoolean("Region.Spout.Texture.UseTexture", false), sw = c.getBoolean("Region.Spout.Welcome.Enabled", true),
-						sl = c.getBoolean("Region.Spout.Leave.Enabled", true);
+				boolean useTexture = c.getBoolean("Region.Spout.Texture.UseTexture", false)
+						, sw = c.getBoolean("Region.Spout.Welcome.Enabled", true)
+						, sl = c.getBoolean("Region.Spout.Leave.Enabled", true);
 
 				Region r = new CubeRegion(owner, name, l1, l2, world, null, false);
 

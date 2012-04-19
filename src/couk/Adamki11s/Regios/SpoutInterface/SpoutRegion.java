@@ -80,21 +80,21 @@ public class SpoutRegion {
 	}
 
 	public static void playToPlayerMusicFromUrl(Player p, Region r) {
-		int length = r.getMusicUrls().length;
+		int length = r.getCustomSoundUrl().length;
 		String shuffled = "";
 		if (lastSong.containsKey(p)) {
 			shuffled = lastSong.get(p);
 		}
 		if (length == 1) {
-			shuffled = r.getMusicUrls()[0];
+			shuffled = r.getCustomSoundUrl()[0];
 		} else {
 			if (lastSong.containsKey(p)) {
 				while (lastSong.get(p).equalsIgnoreCase(shuffled)) {
 					int rnd = new Random().nextInt(length) + 0;
-					shuffled = r.getMusicUrls()[rnd];
+					shuffled = r.getCustomSoundUrl()[rnd];
 				}
 			} else {
-				shuffled = r.getMusicUrls()[new Random().nextInt(length - 1)];
+				shuffled = r.getCustomSoundUrl()[new Random().nextInt(length - 1)];
 			}
 		}
 		lastSong.put(p, shuffled);

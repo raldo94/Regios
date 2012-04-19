@@ -699,10 +699,6 @@ public class Region extends PermChecks {
 		return this.commandSet;
 	}
 
-	public String[] getMusicUrls() {
-		return this.customSoundUrl;
-	}
-
 	public String[] getSubOwners() {
 		return this.subOwners;
 	}

@@ -1,10 +1,12 @@
 package couk.Adamki11s.Regios.CustomEvents;
 
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public abstract class RegionEventListener implements Listener {
 
+	@EventHandler
 	public void onCustomEvent(Event event) {
 		if (event instanceof RegionEnterEvent) {
 

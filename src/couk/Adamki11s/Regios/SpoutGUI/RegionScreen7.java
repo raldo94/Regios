@@ -41,7 +41,7 @@ public class RegionScreen7 {
 	}
 
 	public static void nextPage(SpoutPlayer sp, Region r, ScreenHolder sh) {
-		if (currentPage.get(sp) >= getPages(r.getMusicUrls().length)) {
+		if (currentPage.get(sp) >= getPages(r.getCustomSoundUrl().length)) {
 			sp.sendNotification(ChatColor.RED + "Error!", "No next page!", Material.FIRE);
 			return;
 		}
@@ -101,7 +101,7 @@ public class RegionScreen7 {
 
 		ArrayList<String> sortedURLS = new ArrayList<String>();
 
-		for (String s : r.getMusicUrls()) {
+		for (String s : r.getCustomSoundUrl()) {
 			sortedURLS.add(s);
 		}
 
@@ -109,7 +109,7 @@ public class RegionScreen7 {
 
 		for (int exc = ((page * 5) - 5); exc < ((page * 5)); exc++) {
 
-			((GenericLabel) sh.page7Widgets[2]).setText("Page " + currentPage.get(sp) + " / " + getPages(r.getMusicUrls().length));
+			((GenericLabel) sh.page7Widgets[2]).setText("Page " + currentPage.get(sp) + " / " + getPages(r.getCustomSoundUrl().length));
 			((GenericLabel) sh.page7Widgets[2]).setDirty(true);
 			((GenericContainer) sh.page7Widgets[3]).setDirty(true);
 			if ((exc < sortedURLS.size()) && sortedURLS.get(exc).length() >= 2) {
@@ -147,7 +147,7 @@ public class RegionScreen7 {
 		((GenericTextField) sh.page7Widgets[0]).setBorderColor(RGB.SPRING_GREEN.getColour());
 		((GenericTextField) sh.page7Widgets[0]).setWidth(400);
 		((GenericTextField) sh.page7Widgets[0]).setHeight(15);
-		((GenericTextField) sh.page7Widgets[0]).setMaximumCharacters(26);
+		((GenericTextField) sh.page7Widgets[0]).setMaximumCharacters(256);
 
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[0])) {
 			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[0].getId()).setVisible(true);
@@ -268,8 +268,8 @@ public class RegionScreen7 {
 		}
 		
 		for (int index = 0; index <= 4; index++) {
-			if ((index < (r.getMusicUrls()).length) && r.getMusicUrls()[index].length() > 2) {
-				GenericLabel ex = new GenericLabel((r.getMusicUrls())[index]);
+			if ((index < (r.getCustomSoundUrl()).length) && r.getCustomSoundUrl()[index].length() > 2) {
+				GenericLabel ex = new GenericLabel((r.getCustomSoundUrl())[index]);
 				ex.setTextColor(RGB.YELLOW.getColour());
 				((GenericContainer) sh.page7Widgets[3]).addChild(ex);
 			} else {
