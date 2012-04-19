@@ -217,7 +217,7 @@ public class SpoutCommands extends PermissionsCore {
 				p.sendMessage(ChatColor.RED + "[Regios] The URL " + ChatColor.BLUE + message + ChatColor.RED + " does not exist!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] Spout Music URL added to region " + ChatColor.BLUE + region);
+			p.sendMessage(ChatColor.GREEN + "[Regios] Spout Music URL removed from region " + ChatColor.BLUE + region);
 		}
 		mutable.editRemoveFromMusicList(r, message);
 	}
