@@ -20,7 +20,7 @@ public class PermissionsCore {
 		}
 
 		if(hasPermissions) {
-			return permission.has(p, node);
+			return permission.has(p.getWorld(), p.getName(), node);
 		} else {
 			return p.hasPermission(node);
 		}

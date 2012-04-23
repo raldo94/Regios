@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.block.SpoutWeather;
 import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
@@ -20,7 +19,6 @@ public class SpoutRegion {
 
 	public static HashMap<Player, ArrayList<UUID>> widgetBindings = new HashMap<Player, ArrayList<UUID>>();
 	public static HashMap<Player, String> lastSong = new HashMap<Player, String>();
-	public static HashMap<Player, SpoutWeather> oldWeather = new HashMap<Player, SpoutWeather>();
 
 	public static void forceTexturePack(Player p, Region r){
 		SpoutPlayer sp = (SpoutPlayer)p;

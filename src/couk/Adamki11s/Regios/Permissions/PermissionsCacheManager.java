@@ -32,12 +32,12 @@ public class PermissionsCacheManager {
 			temporaryAddCache.remove(p);
 		}
 	}
-	
+
 	public static void cacheRemNodes(Player p, Region r) {
 		ArrayList<String> nodeCache = new ArrayList<String>();
-		for (String node : r.getTempNodesCacheAdd()) {
+		for (String node : r.getTempNodesCacheRem()) {
 			nodeCache.add(node.trim());
-			PermissionsCore.removeTempUserPermission(p, node.trim());
+			PermissionsCore.removeUserPermission(p, node.trim());
 		}
 		temporaryRemCache.put(p, nodeCache);
 	}
@@ -47,7 +47,7 @@ public class PermissionsCacheManager {
 			ArrayList<String> cache = temporaryRemCache.get(p);
 			if (!cache.isEmpty()) {
 				for (String node : cache) {
-					PermissionsCore.addTempUserPermission(p, node.trim());
+					PermissionsCore.addUserPermission(p, node.trim());
 				}
 			}
 			temporaryRemCache.remove(p);
@@ -56,7 +56,9 @@ public class PermissionsCacheManager {
 
 	public static void permAddNodes(Player p, Region r) {
 		for (String node : r.getPermAddNodes()) {
-			PermissionsCore.addUserPermission(p, node.trim());
+			if(!PermissionsCore.doesHaveNode(p, node.trim())) {
+				PermissionsCore.addUserPermission(p, node.trim());
+			}
 		}
 	}
 

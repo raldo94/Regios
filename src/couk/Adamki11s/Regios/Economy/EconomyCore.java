@@ -22,16 +22,12 @@ public class EconomyCore {
 		return economySupport;
 	}
 
-	public static double getBalance(String p) {
-		return economy.bankBalance(p).balance;
-	}
-
 	public static boolean canAffordRegion(String p, int price){
-		return getBalance(p) >= price;
+		return economy.getBalance(p) >= price;
 	}
 	public static void buyRegion(Region r, String buyer, String seller, int price){
-		economy.bankDeposit(seller, (double)price);
-		economy.bankWithdraw(buyer, (double)price);
+		economy.depositPlayer(seller, (double)price);
+		economy.withdrawPlayer(buyer, (double)price);
 		buy(seller, buyer, r, price);
 	}
 	

@@ -946,7 +946,7 @@ public class CommandCore implements CommandExecutor {
 			}
 			
 			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-rem-add"))) {
-				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache-add")) {
+				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
 					perms.addToTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);

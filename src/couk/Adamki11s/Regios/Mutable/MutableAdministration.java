@@ -117,6 +117,7 @@ public class MutableAdministration extends Saveable {
 		tin.setSpoutTexturePack(inf.getSpoutTexturePack());
 		tin.setSubOwners(inf.getSubOwners());
 		tin.setTempNodesCacheAdd(inf.getTempNodesCacheAdd());
+		tin.setTempNodesCacheRem(inf.getTempNodesCacheRem());
 		tin.setUseSpoutTexturePack(inf.isUseSpoutTexturePack());
 		tin.setVelocityWarp(inf.getVelocityWarp());
 		tin.setWarp(inf.getWarp());

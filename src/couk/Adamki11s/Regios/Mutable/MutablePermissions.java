@@ -81,12 +81,12 @@ public class MutablePermissions {
 		File file = r.getConfigFile();
 		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
 		Map<String, Object> all = c.getValues(true);
-		String current = (String) all.get("Region.Permissions.TemporaryCache.AddNodes");
-		all.remove("Region.Permissions.TemporaryCache.AddNodes");
+		String current = (String) all.get("Region.Permissions.TemporaryCache.RemoveNodes");
+		all.remove("Region.Permissions.TemporaryCache.RemoveNodes");
 		for (Entry<String, Object> entry : all.entrySet()) {
 			c.set(entry.getKey(), entry.getValue());
 		}
-		c.set("Region.Permissions.TemporaryCache.AddNodes", current.trim() + message.trim() + ",");
+		c.set("Region.Permissions.TemporaryCache.RemoveNodes", current.trim() + message.trim() + ",");
 		r.setTempNodesCacheAdd((current.trim() + "," + message.trim()).split(","));
 		try {
 			c.save(r.getConfigFile());
