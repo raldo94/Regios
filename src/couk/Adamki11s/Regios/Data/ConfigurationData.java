@@ -7,7 +7,7 @@ public class ConfigurationData {
 	public static String defaultWelcomeMessage, defaultLeaveMessage, defaultProtectionMessage, defaultPreventEntryMessage, defaultPreventExitMessage, password,
 			defaultAuthenticationMessage, defaultAuthenticationSuccessMessage, defaulSpoutEntryMessage, defaulSpoutExitMessage;
 
-	public static String[] defaultCustomMusicUrl, commandSet, temporaryNodesCacheAdd, permanentNodesCacheAdd, permanentNodesCacheRemove;
+	public static String[] defaultCustomMusicUrl, commandSet, temporaryNodesCacheAdd, temporaryNodesCacheRem, permanentNodesCacheAdd, permanentNodesCacheRemove;
 
 	public static Material defaultSpoutWelcomeMaterial, defaultSpoutLeaveMaterial, defaultSelectionTool;
 
@@ -25,7 +25,7 @@ public class ConfigurationData {
 			String dam, String dasm, Material welcome, Material leave, boolean welcomeMsg, boolean leaveMsg, boolean protectMsg, boolean preventEntryMsg, boolean preventExitMsg,
 			boolean fireProt, String[] music, boolean playmusic, boolean permWipeOnEnter1, boolean permWipeOnExit1,
 			boolean wipeAndCacheOnEnter1, boolean wipeAndCacheOnExit1, boolean forceCommand1, String[] commandSet1, String[] tempAddCache, String[] permAddCache,
-			String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt) {
+			String[] tempRemCache, String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt) {
 		defaultWelcomeMessage = a;
 		defaultLeaveMessage = b;
 		defaultProtectionMessage = c;
@@ -74,6 +74,7 @@ public class ConfigurationData {
 		forceCommand = forceCommand1;
 		commandSet = commandSet1;
 		temporaryNodesCacheAdd = tempAddCache;
+		temporaryNodesCacheRem = tempRemCache;
 		permanentNodesCacheAdd = permAddCache;
 		permanentNodesCacheRemove = permRemoveCache;
 		blockForm = form;

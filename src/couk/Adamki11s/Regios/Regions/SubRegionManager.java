@@ -31,22 +31,22 @@ public class SubRegionManager {
 	private int get3DBlockArea(Region r){
 		int xVAL, zVAL, yVAL;
 		
-		if(r.getL1().toBukkitLocation().getBlockX() > r.getL2().toBukkitLocation().getBlockX()){
-			xVAL = r.getL1().toBukkitLocation().getBlockX() - r.getL2().toBukkitLocation().getBlockX();
+		if(r.getL1().getBlockX() > r.getL2().getBlockX()){
+			xVAL = r.getL1().getBlockX() - r.getL2().getBlockX();
 		} else {
-			xVAL = r.getL2().toBukkitLocation().getBlockX() - r.getL1().toBukkitLocation().getBlockX();
+			xVAL = r.getL2().getBlockX() - r.getL1().getBlockX();
 		}
 		
-		if(r.getL1().toBukkitLocation().getBlockZ() > r.getL2().toBukkitLocation().getBlockZ()){
-			zVAL = r.getL1().toBukkitLocation().getBlockZ() - r.getL2().toBukkitLocation().getBlockZ();
+		if(r.getL1().getBlockZ() > r.getL2().getBlockZ()){
+			zVAL = r.getL1().getBlockZ() - r.getL2().getBlockZ();
 		} else {
-			zVAL = r.getL2().toBukkitLocation().getBlockZ() - r.getL1().toBukkitLocation().getBlockZ();
+			zVAL = r.getL2().getBlockZ() - r.getL1().getBlockZ();
 		}
 		
-		if(r.getL1().toBukkitLocation().getBlockY() > r.getL2().toBukkitLocation().getBlockY()){
-			yVAL = r.getL1().toBukkitLocation().getBlockY() - r.getL2().toBukkitLocation().getBlockY();
+		if(r.getL1().getBlockY() > r.getL2().getBlockY()){
+			yVAL = r.getL1().getBlockY() - r.getL2().getBlockY();
 		} else {
-			yVAL = r.getL2().toBukkitLocation().getBlockY() - r.getL1().toBukkitLocation().getBlockY();
+			yVAL = r.getL2().getBlockY() - r.getL1().getBlockY();
 		}
 		
 		if(xVAL == 0)
@@ -62,16 +62,16 @@ public class SubRegionManager {
 	private int getHorizontalBlockArea(Region r){
 		int xVAL, zVAL;
 		
-		if(r.getL1().toBukkitLocation().getBlockX() > r.getL2().toBukkitLocation().getBlockX()){
-			xVAL = r.getL1().toBukkitLocation().getBlockX() - r.getL2().toBukkitLocation().getBlockX();
+		if(r.getL1().getBlockX() > r.getL2().getBlockX()){
+			xVAL = r.getL1().getBlockX() - r.getL2().getBlockX();
 		} else {
-			xVAL = r.getL2().toBukkitLocation().getBlockX() - r.getL1().toBukkitLocation().getBlockX();
+			xVAL = r.getL2().getBlockX() - r.getL1().getBlockX();
 		}
 		
-		if(r.getL1().toBukkitLocation().getBlockZ() > r.getL2().toBukkitLocation().getBlockZ()){
-			zVAL = r.getL1().toBukkitLocation().getBlockZ() - r.getL2().toBukkitLocation().getBlockZ();
+		if(r.getL1().getBlockZ() > r.getL2().getBlockZ()){
+			zVAL = r.getL1().getBlockZ() - r.getL2().getBlockZ();
 		} else {
-			zVAL = r.getL2().toBukkitLocation().getBlockZ() - r.getL1().toBukkitLocation().getBlockZ();
+			zVAL = r.getL2().getBlockZ() - r.getL1().getBlockZ();
 		}
 		
 		if(xVAL == 0)

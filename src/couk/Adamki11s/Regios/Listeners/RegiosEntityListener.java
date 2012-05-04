@@ -37,6 +37,7 @@ public class RegiosEntityListener implements Listener {
 
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	private static final SubRegionManager srm = new SubRegionManager();
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent evt) {
 
@@ -51,7 +52,7 @@ public class RegiosEntityListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -72,7 +73,7 @@ public class RegiosEntityListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -151,7 +152,7 @@ public class RegiosEntityListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -173,7 +174,7 @@ public class RegiosEntityListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -224,7 +225,7 @@ public class RegiosEntityListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -246,7 +247,7 @@ public class RegiosEntityListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -303,7 +304,7 @@ public class RegiosEntityListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -319,7 +320,7 @@ public class RegiosEntityListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			Location rl1 = reg.getL1().toBukkitLocation(), rl2 = reg.getL2().toBukkitLocation();
+			Location rl1 = reg.getL1(), rl2 = reg.getL2();
 			if (rl1.getX() > rl2.getX()) {
 				rl2.subtract(6, 0, 0);
 				rl1.add(6, 0, 0);
@@ -352,7 +353,7 @@ public class RegiosEntityListener implements Listener {
 			return;
 		} else {
 			for (Region r : currentRegionSet) {
-				if (r.is_protection() || !r.isTNTEnabled()) {
+				if (r.isProtected() || !r.isTNTEnabled()) {
 					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Entity explosion was prevented."));
 					evt.setCancelled(true);
 					evt.setRadius(0);
@@ -383,7 +384,7 @@ public class RegiosEntityListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -399,7 +400,7 @@ public class RegiosEntityListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			Location rl1 = reg.getL1().toBukkitLocation(), rl2 = reg.getL2().toBukkitLocation();
+			Location rl1 = reg.getL1(), rl2 = reg.getL2();
 			if (extReg.isInsideCuboid(l, rl1, rl2)) {
 				currentRegionSet.add(reg);
 			}
@@ -429,7 +430,7 @@ public class RegiosEntityListener implements Listener {
 			return;
 		}
 
-		if (!r.isPvpEnabled()) {
+		if (!r.isPvp()) {
 			if (evt instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent edevt = (EntityDamageByEntityEvent) evt;
 				Entity damager;
@@ -469,9 +470,4 @@ public class RegiosEntityListener implements Listener {
 			}
 		}
 	}
-
-	public boolean areChunksEqual(Chunk c1, Chunk c2) {
-		return (c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
-	}
-
 }

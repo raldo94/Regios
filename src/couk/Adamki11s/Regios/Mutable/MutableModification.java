@@ -19,7 +19,6 @@ import couk.Adamki11s.Regios.CustomExceptions.RegionExistanceException;
 import couk.Adamki11s.Regios.Data.LoaderCore;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
-import couk.Adamki11s.Regios.Regions.RegionLocation;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
 
 public class MutableModification {
@@ -44,8 +43,8 @@ public class MutableModification {
 		}
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
-		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
-		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
+		r.setL1(new Location(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
+		r.setL2(new Location(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {
@@ -72,8 +71,8 @@ public class MutableModification {
 		}
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
-		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
-		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
+		r.setL1(new Location(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
+		r.setL2(new Location(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {
@@ -100,8 +99,8 @@ public class MutableModification {
 		}
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
-		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
-		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
+		r.setL1(new Location(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
+		r.setL2(new Location(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {
@@ -128,8 +127,8 @@ public class MutableModification {
 		}
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
-		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
-		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
+		r.setL1(new Location(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
+		r.setL2(new Location(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {
@@ -151,8 +150,8 @@ public class MutableModification {
 		}
 		r.getL1().setY(0);
 		r.getL2().setY(256);
-		c.set("Region.Essentials.Points.Point1", convertLocation(r.getL1().toBukkitLocation()));
-		c.set("Region.Essentials.Points.Point2", convertLocation(r.getL2().toBukkitLocation()));
+		c.set("Region.Essentials.Points.Point1", convertLocation(r.getL1()));
+		c.set("Region.Essentials.Points.Point2", convertLocation(r.getL2()));
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {
@@ -174,8 +173,8 @@ public class MutableModification {
 		}
 		c.set("Region.Essentials.Points.Point1", convertLocation(l1));
 		c.set("Region.Essentials.Points.Point2", convertLocation(l2));
-		r.setL1(l1.getWorld(), l1.getX(), l1.getY(), l1.getY());
-		r.setL1(l2.getWorld(), l2.getX(), l2.getY(), l2.getY());
+		r.setL1(l1.getWorld(), l1.getX(), l1.getY(), l1.getZ());
+		r.setL2(l2.getWorld(), l2.getX(), l2.getY(), l2.getZ());
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {
@@ -203,8 +202,8 @@ public class MutableModification {
 		}
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
-		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
-		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
+		r.setL1(new Location(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
+		r.setL2(new Location(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {
@@ -232,8 +231,8 @@ public class MutableModification {
 		}
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
-		r.setL1(new RegionLocation(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
-		r.setL2(new RegionLocation(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
+		r.setL1(new Location(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ()));
+		r.setL2(new Location(bigger.getWorld(), bigger.getBlockX(), bigger.getBlockY(), bigger.getBlockZ()));
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {

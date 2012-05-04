@@ -23,10 +23,6 @@ public class MiscCommands extends PermissionsCore {
 
 	MutableMisc mutable = new MutableMisc();
 	
-	private boolean areChunksEqual(Chunk c1, Chunk c2) {
-		return (c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
-	}
-	
 	private final ExtrasRegions extReg = new ExtrasRegions();
 	private final SubRegionManager srm = new SubRegionManager();
 	private final MutableModification mods = new MutableModification();
@@ -84,7 +80,7 @@ public class MiscCommands extends PermissionsCore {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -101,7 +97,7 @@ public class MiscCommands extends PermissionsCore {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}

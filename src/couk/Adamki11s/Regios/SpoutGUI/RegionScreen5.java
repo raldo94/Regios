@@ -86,13 +86,13 @@ public class RegionScreen5 {
 			}
 			break;
 		case PERM_ADD:
-			if (currentPage.get(sp) >= getExceptionPages(r.getPermanentNodesCacheAdd().length)) {
+			if (currentPage.get(sp) >= getExceptionPages(r.getPermAddNodes().length)) {
 				sp.sendNotification(ChatColor.RED + "Error!", "No next page!", Material.FIRE);
 				return;
 			}
 			break;
 		case PERM_REMOVE:
-			if (currentPage.get(sp) >= getExceptionPages(r.getPermanentNodesCacheRemove().length)) {
+			if (currentPage.get(sp) >= getExceptionPages(r.getPermRemoveNodes().length)) {
 				sp.sendNotification(ChatColor.RED + "Error!", "No next page!", Material.FIRE);
 				return;
 			}
@@ -330,8 +330,8 @@ public class RegionScreen5 {
 			sortedAddNodes.add(s);
 		}
 		}
-		if(r.getPermanentNodesCacheRemove() != null){
-		for(String s : r.getPermanentNodesCacheRemove()){
+		if(r.getPermRemoveNodes() != null){
+		for(String s : r.getPermRemoveNodes()){
 			sortedRemNodes.add(s);
 		}
 		}
@@ -393,7 +393,7 @@ public class RegionScreen5 {
 				}
 				break;
 			case PERM_REMOVE:
-				((GenericLabel) sh.page5Widgets[8]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getPermanentNodesCacheRemove().length));
+				((GenericLabel) sh.page5Widgets[8]).setText("Page " + currentPage.get(sp) + " / " + getExceptionPages(r.getPermRemoveNodes().length));
 				((GenericLabel) sh.page5Widgets[8]).setDirty(true);
 				((GenericContainer) sh.page5Widgets[11]).setDirty(true);
 				if ((exc < sortedRemNodes.size()) && sortedRemNodes.get(exc).length() >= 2) {

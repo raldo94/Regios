@@ -1,4 +1,4 @@
-package couk.Adamki11s.Regios.Checks;
+package couk.Adamki11s.Regios.Regions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import couk.Adamki11s.Regios.Regions.Region;
 
 public class ChunkGrid {
 	

@@ -143,7 +143,7 @@ public class MutablePermissions {
 	}
 
 	public boolean checkPermAdd(Region r, String match) {
-		for (String s : r.getPermanentNodesCacheAdd()) {
+		for (String s : r.getPermAddNodes()) {
 			if (s.trim().equalsIgnoreCase(match.trim())) {
 				return true;
 			}
@@ -152,7 +152,7 @@ public class MutablePermissions {
 	}
 	
 	public boolean checkPermRemove(Region r, String match) {
-		for (String s : r.getPermanentNodesCacheRemove()) {
+		for (String s : r.getPermRemoveNodes()) {
 			if (s.trim().equalsIgnoreCase(match.trim())) {
 				return true;
 			}

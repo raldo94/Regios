@@ -10,7 +10,6 @@ import org.bukkit.World;
 
 import couk.Adamki11s.Regios.CustomEvents.RegionLightningStrikeEvent;
 import couk.Adamki11s.Regios.Regions.Region;
-import couk.Adamki11s.Regios.Regions.RegionLocation;
 
 public class LightningRunner {
 
@@ -49,7 +48,7 @@ public class LightningRunner {
 
 	private static void fireStrike(Region r) {
 		resetCounter(r);
-		RegionLocation rl1 = r.getL1(), rl2 = r.getL2();
+		Location rl1 = r.getL1(), rl2 = r.getL2();
 		strike(rl1.getX(), rl2.getX(), rl1.getZ(), rl2.getZ(), rl1.getY(), rl2.getY(), rl1.getWorld(), r);
 	}
 

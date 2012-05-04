@@ -150,11 +150,11 @@ public class MutableExceptions {
 		}
 		r.getItems().clear();
 	}
-	
+
 	/*
 	 * Sub Owners
 	 */
-	
+
 	public void addSubOwner(Region r, String message){
 		File file = r.getConfigFile();
 		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
@@ -167,12 +167,12 @@ public class MutableExceptions {
 		c.set("Region.Essentials.SubOwners", current.trim() + message.trim() + ",");
 		r.setSubOwners((current.trim() + "," + message.trim()).split(","));
 		try {
-	c.save(r.getConfigFile());
-} catch (IOException e) {
-	e.printStackTrace();
-}
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public void removeSubOwner(Region r, String message){
 		File file = r.getConfigFile();
 		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
@@ -188,12 +188,12 @@ public class MutableExceptions {
 		c.set("Region.Essentials.SubOwners", current.trim());
 		r.setSubOwners((current.trim()).split(","));
 		try {
-	c.save(r.getConfigFile());
-} catch (IOException e) {
-	e.printStackTrace();
-}
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public String listSubOwnersExceptions(Region r) {
 		StringBuilder sb = new StringBuilder();
 		for (String s : r.getSubOwners()) {
@@ -201,7 +201,7 @@ public class MutableExceptions {
 		}
 		return sb.toString();
 	}
-	
+
 	public void eraseAllSubOwners(Region r){
 		File file = r.getConfigFile();
 		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
@@ -213,17 +213,19 @@ public class MutableExceptions {
 		c.set("Region.Essentials.SubOwners", "");
 		r.setSubOwners(("").split(","));
 		try {
-	c.save(r.getConfigFile());
-} catch (IOException e) {
-	e.printStackTrace();
-}
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public boolean checkSubOwnerException(Region r, String ex) {
-		for (String owner : r.getSubOwners()) {
-			if(ex.trim().equals(owner.trim())){
-				return true;
-			}
+		if (r.getSubOwners() != null) {
+			for (String owner : r.getSubOwners()) {
+				if(ex.trim().equals(owner.trim())){
+					return true;
+				}
+			} 
 		}
 		return false;
 	}

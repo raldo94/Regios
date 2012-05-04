@@ -343,7 +343,7 @@ public class OldRegiosPatch {
 				+ r.getWarp().getBlockZ());
 		c.set("Region.Messages.ShowWelcomeMessage", r.isShowWelcomeMessage());
 		c.set("Region.Messages.ShowLeaveMessage", r.isShowLeaveMessage());
-		c.set("Region.General.Protected", r.is_protection());
+		c.set("Region.General.Protected", r.isProtected());
 		c.set("Region.General.PreventEntry", r.isPreventEntry());
 		c.set("Region.General.PreventExit", r.isPreventExit());
 		c.set("Region.Other.HealthEnabled", r.isHealthEnabled());

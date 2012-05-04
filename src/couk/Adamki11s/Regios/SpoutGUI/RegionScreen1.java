@@ -67,18 +67,18 @@ public class RegionScreen1 {
 				((GenericButton) b).setDirty(true);
 				break;
 			case 4:
-				((GenericButton) b).setTextColor(getColourToken(r.isPreventingInteraction()));
-				((GenericButton) b).setTooltip(getStatus(r.isPreventingInteraction()));
+				((GenericButton) b).setTextColor(getColourToken(r.isPreventInteraction()));
+				((GenericButton) b).setTooltip(getStatus(r.isPreventInteraction()));
 				((GenericButton) b).setDirty(true);
 				break;
 			case 5:
-				((GenericButton) b).setTextColor(getColourToken(r.isDoorsLocked()));
-				((GenericButton) b).setTooltip(getStatus(r.isDoorsLocked()));
+				((GenericButton) b).setTextColor(getColourToken(r.areDoorsLocked()));
+				((GenericButton) b).setTooltip(getStatus(r.areDoorsLocked()));
 				((GenericButton) b).setDirty(true);
 				break;
 			case 6:
-				((GenericButton) b).setTextColor(getColourToken(r.isChestsLocked()));
-				((GenericButton) b).setTooltip(getStatus(r.isChestsLocked()));
+				((GenericButton) b).setTextColor(getColourToken(r.areChestsLocked()));
+				((GenericButton) b).setTooltip(getStatus(r.areChestsLocked()));
 				((GenericButton) b).setDirty(true);
 				break;
 			case 7:
@@ -92,13 +92,13 @@ public class RegionScreen1 {
 				((GenericButton) b).setDirty(true);
 				break;
 			case 9:
-				((GenericButton) b).setTextColor(getColourToken(r.isMobSpawns()));
-				((GenericButton) b).setTooltip(getStatus(r.isMobSpawns()));
+				((GenericButton) b).setTextColor(getColourToken(r.canMobsSpawn()));
+				((GenericButton) b).setTooltip(getStatus(r.canMobsSpawn()));
 				((GenericButton) b).setDirty(true);
 				break;
 			case 10:
-				((GenericButton) b).setTextColor(getColourToken(r.isMonsterSpawns()));
-				((GenericButton) b).setTooltip(getStatus(r.isMonsterSpawns()));
+				((GenericButton) b).setTextColor(getColourToken(r.canMonstersSpawn()));
+				((GenericButton) b).setTooltip(getStatus(r.canMonstersSpawn()));
 				((GenericButton) b).setDirty(true);
 				break;
 			case 11:
@@ -162,13 +162,13 @@ public class RegionScreen1 {
 				((GenericButton) b).setDirty(true);
 				break;
 			case 23:
-				((GenericButton) b).setTextColor(getColourToken(r.isForcingCommand()));
-				((GenericButton) b).setTooltip(getStatus(r.isForcingCommand()));
+				((GenericButton) b).setTextColor(getColourToken(r.isForceCommand()));
+				((GenericButton) b).setTooltip(getStatus(r.isForceCommand()));
 				((GenericButton) b).setDirty(true);
 				break;
 			case 24:
-				((GenericButton) b).setTextColor(getColourToken(r.is_protection()));
-				((GenericButton) b).setTooltip(getStatus(r.is_protection()));
+				((GenericButton) b).setTextColor(getColourToken(r.isProtected()));
+				((GenericButton) b).setTooltip(getStatus(r.isProtected()));
 				((GenericButton) b).setDirty(true);
 				break;
 			}
@@ -185,8 +185,8 @@ public class RegionScreen1 {
 		((GenericButton) (sh.page1Widgets[24])).setY(218);
 		((GenericButton) (sh.page1Widgets[24])).setHeight(20);
 		((GenericButton) (sh.page1Widgets[24])).setWidth(100);
-		((GenericButton) (sh.page1Widgets[24])).setTooltip(RegionScreenManager.getStatus(r.is_protectionPlace() || r.is_protection()));
-		((GenericButton) (sh.page1Widgets[24])).setTextColor(RegionScreenManager.getColourToken(r.is_protectionPlace() || r.is_protection()));
+		((GenericButton) (sh.page1Widgets[24])).setTooltip(RegionScreenManager.getStatus(r.is_protectionPlace() || r.isProtected()));
+		((GenericButton) (sh.page1Widgets[24])).setTextColor(RegionScreenManager.getColourToken(r.is_protectionPlace() || r.isProtected()));
 		((GenericButton) (sh.page1Widgets[24])).setDirty(true);
 		
 		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page1Widgets[24])) {

@@ -36,10 +36,6 @@ public class RegiosBlockListener implements Listener {
 
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	private static final SubRegionManager srm = new SubRegionManager();
-	
-	public boolean areChunksEqual(Chunk c1, Chunk c2) {
-		return (c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
-	}
 
 	public void extinguish(Block b) {
 		if (b.getType() == Material.FIRE) {
@@ -60,7 +56,7 @@ public class RegiosBlockListener implements Listener {
 			for (Region region : GlobalRegionManager.getRegions()) {
 				for (Chunk chunk : region.getChunkGrid().getChunks()) {
 					if (chunk.getWorld() == w) {
-						if (areChunksEqual(chunk, c)) {
+						if (extReg.areChunksEqual(chunk, c)) {
 							if (!regionSet.contains(region)) {
 								regionSet.add(region);
 							}
@@ -92,7 +88,7 @@ public class RegiosBlockListener implements Listener {
 				return;
 			} else {
 				for (Region r : currentRegionSet) {
-					if (r.is_protection()) {
+					if (r.isProtected()) {
 						if (!r.canBypassProtection(p)) {
 							LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 									+ (" Player '" + p.getName() + "' tried to place " + evt.getBlock().getType().toString() + " but was prevented."));
@@ -182,7 +178,7 @@ public class RegiosBlockListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -198,7 +194,7 @@ public class RegiosBlockListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -246,7 +242,7 @@ public class RegiosBlockListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -267,7 +263,7 @@ public class RegiosBlockListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -309,7 +305,7 @@ public class RegiosBlockListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -335,7 +331,7 @@ public class RegiosBlockListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -445,7 +441,7 @@ public class RegiosBlockListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -470,7 +466,7 @@ public class RegiosBlockListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}

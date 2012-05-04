@@ -3,6 +3,7 @@ package couk.Adamki11s.Extras.Regions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
@@ -88,4 +89,12 @@ public abstract class RegionMethods {
 	 */
 	public abstract ArrayList<Block> getBlocksInRegion(Location point1, Location point2);
 
+	/**
+	 * Checks if chunks are equal
+	 * @param c1 Chunk 1
+	 * @param c2 Chunk 2
+	 * @return Returns whether or not chunks are equal
+	 */
+	
+	public abstract boolean areChunksEqual(Chunk c1, Chunk c2);
 }

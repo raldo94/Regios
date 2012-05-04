@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import couk.Adamki11s.Regios.Checks.ChunkGrid;
 
 public class GlobalRegionManager {
 	
-	private static ArrayList<Region> regions = new ArrayList<Region>();
+	private static ArrayList<Region> regions = new ArrayList<Region>()
+			, regionsInWorld = new ArrayList<Region>();
+	
 	private static ArrayList<GlobalWorldSetting> worldSettings = new ArrayList<GlobalWorldSetting>();
-	private static ArrayList<Region> regionsInWorld = new ArrayList<Region>();
 	
 	public static ArrayList<Region> getRegions(){
 		return regions;

@@ -264,7 +264,7 @@ public class RegiosPlayerListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -280,7 +280,7 @@ public class RegiosPlayerListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -297,7 +297,7 @@ public class RegiosPlayerListener implements Listener {
 			r = currentRegionSet.get(0);
 		}
 
-		if (r.isPreventingInteraction()) {
+		if (r.isPreventInteraction()) {
 			if (!r.canBypassProtection(p)) {
 				if (isSendable(p, MSG.PROTECTION)) {
 					p.sendMessage(ChatColor.RED + "[Regios] You cannot interact within this region!");
@@ -308,7 +308,7 @@ public class RegiosPlayerListener implements Listener {
 			}
 		}
 
-		if (b.getTypeId() == 71 || b.getTypeId() == 64) {
+		if (b.getTypeId() == 64 || b.getTypeId() == 71 || b.getTypeId() == 96) {
 			if (r.areDoorsLocked()) {
 				if (!r.canBypassProtection(p)) {
 					if (isSendable(p, MSG.PROTECTION)) {
@@ -321,12 +321,22 @@ public class RegiosPlayerListener implements Listener {
 				}
 			}
 		}
+		
+		if (b.getTypeId() == 54 || b.getTypeId() == 95) {
+			if (r.areChestsLocked()) {
+				if (!r.canBypassProtection(p)) {
+					if (isSendable(p, MSG.PROTECTION)) {
+						p.sendMessage(ChatColor.RED + "[Regios] Chests are locked for this region!");
+					}
+					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to open a locked chest but did not have permissions."));
+					p.closeInventory();
+					evt.setCancelled(true);
+				}
+			}
+		}
 
 	}
 
-	public boolean areChunksEqual(Chunk c1, Chunk c2) {
-		return (c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
-	}
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketFill(PlayerBucketFillEvent evt) {
 		Location l = evt.getBlockClicked().getLocation();
@@ -339,7 +349,7 @@ public class RegiosPlayerListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -371,7 +381,7 @@ public class RegiosPlayerListener implements Listener {
 			return;
 		} else {
 			for (Region r : currentRegionSet) {
-				if (r.is_protection()) {
+				if (r.isProtected()) {
 					if (!r.canBypassProtection(p)) {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 								+ (" Player '" + p.getName() + "' tried to fill a " + evt.getBucket().toString() + " but was prevented."));
@@ -395,7 +405,7 @@ public class RegiosPlayerListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -427,7 +437,7 @@ public class RegiosPlayerListener implements Listener {
 			return;
 		} else {
 			for (Region r : currentRegionSet) {
-				if (r.is_protection()) {
+				if (r.isProtected()) {
 					if (!r.canBypassProtection(p)) {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 								+ (" Player '" + p.getName() + "' tried to empty a " + evt.getBucket().toString() + " but was prevented."));
@@ -456,7 +466,7 @@ public class RegiosPlayerListener implements Listener {
 		for (Region region : GlobalRegionManager.getRegions()) {
 			for (Chunk chunk : region.getChunkGrid().getChunks()) {
 				if (chunk.getWorld() == w) {
-					if (areChunksEqual(chunk, c)) {
+					if (extReg.areChunksEqual(chunk, c)) {
 						if (!regionSet.contains(region)) {
 							regionSet.add(region);
 						}
@@ -466,16 +476,7 @@ public class RegiosPlayerListener implements Listener {
 		}
 
 		if (regionSet.isEmpty()) {
-			if (evt.getFrom().getBlockY() == evt.getTo().getBlockY()) { // To
-																		// prevent
-																		// people
-																		// getting
-																		// stuck
-																		// if
-																		// jumping
-																		// into
-																		// a
-																		// region
+			if (evt.getFrom().getBlockY() == evt.getTo().getBlockY()) { // To prevent people getting stuck if jumping into a region
 				outsideRegionLocation.put(p, p.getLocation());
 			}
 			return;
@@ -488,7 +489,7 @@ public class RegiosPlayerListener implements Listener {
 			if (binding == null) {
 				return;
 			}
-			if (binding.isPreventingEntry() && extReg.isInsideCuboid(p, binding.getL1().toBukkitLocation(), binding.getL2().toBukkitLocation())) {
+			if (binding.isPreventEntry() && extReg.isInsideCuboid(p, binding.getL1(), binding.getL2())) {
 				if (!binding.canEnter(p, binding)) {
 					if (!binding.isPasswordEnabled()) {
 						if (outsideRegionLocation.containsKey(p)) {
@@ -514,7 +515,7 @@ public class RegiosPlayerListener implements Listener {
 				}
 			}
 
-			if (binding.isPreventingExit() && !extReg.isInsideCuboid(p, binding.getL1().toBukkitLocation(), binding.getL2().toBukkitLocation())) {
+			if (binding.isPreventExit() && !extReg.isInsideCuboid(p, binding.getL1(), binding.getL2())) {
 				if (!binding.canExit(p, binding)) {
 					if (!binding.isPasswordEnabled()) {
 						if (insideRegionLocation.containsKey(p)) {
@@ -540,7 +541,7 @@ public class RegiosPlayerListener implements Listener {
 				}
 			}
 
-			if (!extReg.isInsideCuboid(p, binding.getL1().toBukkitLocation(), binding.getL2().toBukkitLocation())) {
+			if (!extReg.isInsideCuboid(p, binding.getL1(), binding.getL2())) {
 				binding.sendLeaveMessage(p);
 			}
 
@@ -549,7 +550,7 @@ public class RegiosPlayerListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(p, reg.getL1().toBukkitLocation(), reg.getL2().toBukkitLocation())) {
+			if (extReg.isInsideCuboid(p, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 				if (insideRegionLocation.containsKey(p)) {
 					insideRegionLocation.put(p, p.getLocation());
@@ -560,16 +561,7 @@ public class RegiosPlayerListener implements Listener {
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
 											// inside region then cancel the
 											// check.
-			if (evt.getFrom().getBlockY() == evt.getTo().getBlockY()) { // To
-																		// prevent
-																		// people
-																		// getting
-																		// stuck
-																		// if
-																		// jumping
-																		// into
-																		// a
-																		// region
+			if (evt.getFrom().getBlockY() == evt.getTo().getBlockY()) { // To prevent people getting stuck if jumping into a region
 				outsideRegionLocation.put(p, p.getLocation());
 			}
 			return;
@@ -594,7 +586,7 @@ public class RegiosPlayerListener implements Listener {
 			return;
 		}
 
-		if (r.isPreventingEntry() && !authenticated) {
+		if (r.isPreventEntry() && !authenticated) {
 			if (!r.canEnter(p)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to enter but did not have permissions."));
 				if (outsideRegionLocation.containsKey(p)) {

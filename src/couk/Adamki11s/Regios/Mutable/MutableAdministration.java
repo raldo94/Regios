@@ -66,12 +66,12 @@ public class MutableAdministration extends Saveable {
 	}
 
 	public void inherit(Region tin, Region inf) {
-		tin.set_protection(inf.is_protection());
+		tin.set_protection(inf.isProtected());
 		tin.setBlockForm(inf.isBlockForm());
-		tin.setChestsLocked(inf.isChestsLocked());
+		tin.setChestsLocked(inf.areChestsLocked());
 		tin.setCommandSet(inf.getCommandSet());
 		tin.setCustomSoundUrl(inf.getCustomSoundUrl());
-		tin.setDoorsLocked(inf.isDoorsLocked());
+		tin.setDoorsLocked(inf.areDoorsLocked());
 		tin.setExceptions(inf.getExceptions());
 		tin.setFireProtection(inf.isFireProtection());
 		tin.setForceCommand(inf.isForceCommand());
@@ -82,13 +82,13 @@ public class MutableAdministration extends Saveable {
 		tin.setItems(inf.getItems());
 		tin.setLeaveMessage(inf.getLeaveMessage());
 		tin.setLSPS(inf.getLSPS());
-		tin.setMobSpawns(inf.isMobSpawns());
-		tin.setMonsterSpawns(inf.isMonsterSpawns());
+		tin.setMobSpawns(inf.canMobsSpawn());
+		tin.setMonsterSpawns(inf.canMonstersSpawn());
 		tin.setNodes(inf.getNodes());
 		tin.setPassword(inf.getPassword());
 		tin.setPasswordEnabled(inf.isPasswordEnabled());
-		tin.setPermanentNodesCacheAdd(inf.getPermanentNodesCacheAdd());
-		tin.setPermanentNodesCacheRemove(inf.getPermanentNodesCacheRemove());
+		tin.setPermanentNodesCacheAdd(inf.getPermAddNodes());
+		tin.setPermanentNodesCacheRemove(inf.getPermRemoveNodes());
 		tin.setPermWipeOnEnter(inf.isPermWipeOnEnter());
 		tin.setPermWipeOnExit(inf.isPermWipeOnExit());
 		tin.setPlayCustomSoundUrl(inf.isPlayCustomSoundUrl());
@@ -110,10 +110,10 @@ public class MutableAdministration extends Saveable {
 		tin.setShowProtectionMessage(inf.isShowProtectionMessage());
 		tin.setShowPvpWarning(inf.isShowPvpWarning());
 		tin.setShowWelcomeMessage(inf.isShowWelcomeMessage());
-		tin.setSpoutEntryMaterial(inf.getSpoutEntryMaterial());
-		tin.setSpoutEntryMessage(inf.getSpoutEntryMessage());
-		tin.setSpoutExitMaterial(inf.getSpoutExitMaterial());
-		tin.setSpoutExitMessage(inf.getSpoutExitMessage());
+		tin.setSpoutEntryMaterial(inf.getSpoutWelcomeMaterial());
+		tin.setSpoutEntryMessage(inf.getSpoutWelcomeMessage());
+		tin.setSpoutExitMaterial(inf.getSpoutLeaveMaterial());
+		tin.setSpoutExitMessage(inf.getSpoutLeaveMessage());
 		tin.setSpoutTexturePack(inf.getSpoutTexturePack());
 		tin.setSubOwners(inf.getSubOwners());
 		tin.setTempNodesCacheAdd(inf.getTempNodesCacheAdd());

@@ -3,6 +3,7 @@ package couk.Adamki11s.Extras.Regions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -298,6 +299,9 @@ public class ExtrasRegions extends RegionMethods {
 		return al;
 	}
 
-	
+	@Override
+	public boolean areChunksEqual(Chunk c1, Chunk c2) {
+		return (c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
+	}
 
 }

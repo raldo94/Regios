@@ -30,7 +30,7 @@ public class WarpCommands{
 			p.sendMessage(ChatColor.RED + "[Regios] No warp has been set for region : " + ChatColor.BLUE + r.getName());
 			return;
 		} else {
-			if(r.isPreventingEntry() && !r.canEnter(p)){
+			if(r.isPreventEntry() && !r.canEnter(p)){
 				p.sendMessage(ChatColor.RED + "[Regios] No are not permitted to warp to region : " + ChatColor.BLUE + r.getName());
 				return;
 			} else {

@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
 import couk.Adamki11s.Extras.Cryptography.ExtrasCryptography;
-import couk.Adamki11s.Regios.Checks.ChunkGrid;
 import couk.Adamki11s.Regios.CustomEvents.RegionCreateEvent;
 import couk.Adamki11s.Regios.CustomEvents.RegionEnterEvent;
 import couk.Adamki11s.Regios.CustomEvents.RegionExitEvent;
@@ -33,11 +32,19 @@ import couk.Adamki11s.Regios.SpoutInterface.SpoutRegion;
 
 public class Region extends PermChecks {
 
-	protected RegionLocation l1;
+	public static GlobalRegionManager getGrm() {
+		return grm;
+	}
 
-	protected RegionLocation l2;
+	public static Saveable getSaveable() {
+		return saveable;
+	}
+
+	protected Location l1;
+	protected Location l2;
 
 	protected static final GlobalRegionManager grm = new GlobalRegionManager();
+
 	protected static final Saveable saveable = new Saveable();
 
 	protected ChunkGrid chunkGrid;
@@ -47,15 +54,16 @@ public class Region extends PermChecks {
 	protected Location warp = null;
 
 	protected String[] customSoundUrl
-	, commandSet
-	, temporaryNodesCacheAdd
-	, temporaryNodesCacheRem
-	, permanentNodesCacheAdd
-	, permanentNodesCacheRemove
-	, subOwners;
+			, commandSet
+			, temporaryNodesCacheAdd
+			, temporaryNodesCacheRem
+			, permanentNodesCacheAdd
+			, permanentNodesCacheRemove
+			, subOwners;
 
-	protected ArrayList<String> exceptions = new ArrayList<String>();
-	protected ArrayList<String> nodes = new ArrayList<String>();
+	protected ArrayList<String> exceptions = new ArrayList<String>()
+			, nodes = new ArrayList<String>();
+
 	protected ArrayList<Integer> items = new ArrayList<Integer>();
 
 	protected String welcomeMessage = ""
@@ -70,7 +78,8 @@ public class Region extends PermChecks {
 			, spoutExitMessage = ""
 			, spoutTexturePack = "";
 
-	protected Material spoutEntryMaterial = Material.GRASS, spoutExitMaterial = Material.DIRT;
+	protected Material spoutEntryMaterial = Material.GRASS
+			, spoutExitMaterial = Material.DIRT;
 
 	protected boolean _protection = false
 			, _protectionPlace = false
@@ -101,11 +110,15 @@ public class Region extends PermChecks {
 			, blockForm = true
 			, forSale = false
 			, useSpoutTexturePack = false
-			, spoutWelcomeEnabled
-			, spoutLeaveEnabled
+			, spoutWelcomeEnabled = false
+			, spoutLeaveEnabled = false
 			, TNTEnabled = true;
 
-	protected int LSPS = 0, healthRegen = 0, playerCap = 0, salePrice = 0;
+	protected int LSPS = 0
+			, healthRegen = 0
+			, playerCap = 0
+			, salePrice = 0;
+
 	protected double velocityWarp = 0;
 
 	protected MODE protectionMode = MODE.Whitelist
@@ -113,11 +126,14 @@ public class Region extends PermChecks {
 			, preventExitMode = MODE.Whitelist
 			, itemMode = MODE.Whitelist;
 
-	protected HashMap<Player, Boolean> authentication = new HashMap<Player, Boolean>();
+	protected HashMap<Player, Boolean> authentication = new HashMap<Player, Boolean>()
+			, welcomeMessageSent = new HashMap<Player, Boolean>()
+			, leaveMessageSent = new HashMap<Player, Boolean>();
+
 	protected HashMap<Player, Long> timeStamps = new HashMap<Player, Long>();
+
 	protected ArrayList<Player> playersInRegion = new ArrayList<Player>();
-	protected HashMap<Player, Boolean> welcomeMessageSent = new HashMap<Player, Boolean>();
-	protected HashMap<Player, Boolean> leaveMessageSent = new HashMap<Player, Boolean>();
+
 	protected HashMap<Player, PlayerInventory> inventoryCache = new HashMap<Player, PlayerInventory>();
 
 	protected ExtrasCryptography exCrypt = new ExtrasCryptography();
@@ -125,11 +141,11 @@ public class Region extends PermChecks {
 	public Region(String owner, String name, World world, Player p, boolean save) {
 		this.owner = owner;
 		this.name = name;
-		
+
 		if (world != null) {
 			this.world = world;
 		} else {
-			this.world = Bukkit.getServer().getWorlds().get(0);
+			world = Bukkit.getServer().getWorlds().get(0);
 		}
 
 		if (save) {
@@ -142,445 +158,96 @@ public class Region extends PermChecks {
 			Bukkit.getServer().getPluginManager().callEvent(event);
 		}
 
-		this.welcomeMessage = ConfigurationData.defaultWelcomeMessage.toString();
+		welcomeMessage = ConfigurationData.defaultWelcomeMessage.toString();
 
-		this.leaveMessage = ConfigurationData.defaultLeaveMessage.toString();
-		this.protectionMessage = (ConfigurationData.defaultProtectionMessage.toString());
-		this.preventEntryMessage = (ConfigurationData.defaultPreventEntryMessage.toString());
-		this.preventExitMessage = (ConfigurationData.defaultPreventExitMessage.toString());
+		leaveMessage = ConfigurationData.defaultLeaveMessage.toString();
+		protectionMessage = (ConfigurationData.defaultProtectionMessage.toString());
+		preventEntryMessage = (ConfigurationData.defaultPreventEntryMessage.toString());
+		preventExitMessage = (ConfigurationData.defaultPreventExitMessage.toString());
 		if (ConfigurationData.passwordEnabled) {
-			this.passwordEnabled = true;
-			this.password = ConfigurationData.password;
+			passwordEnabled = true;
+			password = ConfigurationData.password;
 		} else {
-			this.passwordEnabled = false;
-			this.password = "";
+			passwordEnabled = false;
+			password = "";
 		}
-		this._protection = ConfigurationData.regionProtected;
-		this._protectionBreak = ConfigurationData.regionProtectedBreak;
-		this._protectionPlace = ConfigurationData.regionPlaceProtected;
-		this.preventEntry = ConfigurationData.regionPreventEntry;
-		this.mobSpawns = ConfigurationData.mobSpawns;
-		this.monsterSpawns = ConfigurationData.monsterSpawns;
-		this.healthEnabled = ConfigurationData.healthEnabled;
-		this.pvp = ConfigurationData.pvp;
-		this.doorsLocked = ConfigurationData.doorsLocked;
-		this.chestsLocked = ConfigurationData.chestsLocked;
-		this.preventInteraction = ConfigurationData.preventInteraction;
-		this.showPvpWarning = ConfigurationData.showPvpWarning;
-		this.LSPS = ConfigurationData.LSPS;
-		this.healthRegen = ConfigurationData.healthRegen;
-		this.velocityWarp = ConfigurationData.velocityWarp;
-		this.protectionMode = ConfigurationData.protectionMode;
-		this.preventEntryMode = ConfigurationData.preventEntryMode;
-		this.preventExitMode = ConfigurationData.preventExitMode;
-		this.preventExit = ConfigurationData.regionPreventExit;
-		this.spoutEntryMaterial = ConfigurationData.defaultSpoutWelcomeMaterial;
-		this.spoutExitMaterial = ConfigurationData.defaultSpoutLeaveMaterial;
-		this.spoutEntryMessage = "Welcome to [NAME]";
-		this.spoutExitMessage = "You left [NAME]";
-		this.showWelcomeMessage = ConfigurationData.showWelcomeMessage;
-		this.showLeaveMessage = ConfigurationData.showLeaveMessage;
-		this.showProtectionMessage = ConfigurationData.showProtectionMessage;
-		this.showPreventEntryMessage = ConfigurationData.showPreventEntryMessage;
-		this.showPreventExitMessage = ConfigurationData.showPreventExitMessage;
-		this.fireProtection = ConfigurationData.fireProtection;
-		this.permWipeOnEnter = ConfigurationData.permWipeOnEnter;
-		this.permWipeOnExit = ConfigurationData.permWipeOnExit;
-		this.wipeAndCacheOnEnter = ConfigurationData.wipeAndCacheOnEnter;
-		this.wipeAndCacheOnExit = ConfigurationData.wipeAndCacheOnExit;
-		this.forceCommand = ConfigurationData.forceCommand;
-		this.commandSet = ConfigurationData.commandSet;
-		this.temporaryNodesCacheAdd = ConfigurationData.temporaryNodesCacheAdd;
-		this.spoutTexturePack = "";
-		this.useSpoutTexturePack = false;
-		this.forSale = ConfigurationData.forSale;
-		this.salePrice = ConfigurationData.salePrice;
-		this.blockForm = ConfigurationData.blockForm;
-		this.TNTEnabled = ConfigurationData.tntEnabled;
-		if (this.LSPS > 0 && !LightningRunner.doesStrikesContain(this)) {
+		_protection = ConfigurationData.regionProtected;
+		_protectionBreak = ConfigurationData.regionProtectedBreak;
+		_protectionPlace = ConfigurationData.regionPlaceProtected;
+		preventEntry = ConfigurationData.regionPreventEntry;
+		mobSpawns = ConfigurationData.mobSpawns;
+		monsterSpawns = ConfigurationData.monsterSpawns;
+		healthEnabled = ConfigurationData.healthEnabled;
+		pvp = ConfigurationData.pvp;
+		doorsLocked = ConfigurationData.doorsLocked;
+		chestsLocked = ConfigurationData.chestsLocked;
+		preventInteraction = ConfigurationData.preventInteraction;
+		showPvpWarning = ConfigurationData.showPvpWarning;
+		LSPS = ConfigurationData.LSPS;
+		healthRegen = ConfigurationData.healthRegen;
+		velocityWarp = ConfigurationData.velocityWarp;
+		protectionMode = ConfigurationData.protectionMode;
+		preventEntryMode = ConfigurationData.preventEntryMode;
+		preventExitMode = ConfigurationData.preventExitMode;
+		preventExit = ConfigurationData.regionPreventExit;
+		spoutEntryMaterial = ConfigurationData.defaultSpoutWelcomeMaterial;
+		spoutExitMaterial = ConfigurationData.defaultSpoutLeaveMaterial;
+		spoutEntryMessage = "Welcome to [NAME]";
+		spoutExitMessage = "You left [NAME]";
+		showWelcomeMessage = ConfigurationData.showWelcomeMessage;
+		showLeaveMessage = ConfigurationData.showLeaveMessage;
+		showProtectionMessage = ConfigurationData.showProtectionMessage;
+		showPreventEntryMessage = ConfigurationData.showPreventEntryMessage;
+		showPreventExitMessage = ConfigurationData.showPreventExitMessage;
+		fireProtection = ConfigurationData.fireProtection;
+		permWipeOnEnter = ConfigurationData.permWipeOnEnter;
+		permWipeOnExit = ConfigurationData.permWipeOnExit;
+		wipeAndCacheOnEnter = ConfigurationData.wipeAndCacheOnEnter;
+		wipeAndCacheOnExit = ConfigurationData.wipeAndCacheOnExit;
+		forceCommand = ConfigurationData.forceCommand;
+		commandSet = ConfigurationData.commandSet;
+		temporaryNodesCacheAdd = ConfigurationData.temporaryNodesCacheAdd;
+		spoutTexturePack = "";
+		useSpoutTexturePack = false;
+		forSale = ConfigurationData.forSale;
+		salePrice = ConfigurationData.salePrice;
+		blockForm = ConfigurationData.blockForm;
+		TNTEnabled = ConfigurationData.tntEnabled;
+		if (LSPS > 0 && !LightningRunner.doesStrikesContain(this)) {
 			LightningRunner.addRegion(this);
-		} else if (this.LSPS == 0 && LightningRunner.doesStrikesContain(this)) {
+		} else if (LSPS == 0 && LightningRunner.doesStrikesContain(this)) {
 			LightningRunner.removeRegion(this);
 		}
 	}
 
-	public File getLogFile() {
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + "Logs" + File.separator
-				+ this.name + ".log");
-	}
-
-	public File getConfigFile() {
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + this.name
-				+ ".rz");
-	}
-
-	public File getRawConfigFile(){
-		return new File(("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + this.name
-				+ ".rz"));
-	}
-
-	public File getExceptionDirectory() {
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + "Exceptions");
-	}
-
-	public File getBackupsDirectory() {
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name + File.separator + "Backups");
-	}
-
-	public File getDirectory(){
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + this.name);
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public String getOwner() {
-		return this.owner;
-	}
-
-	public ChunkGrid getChunkGrid() {
-		return this.chunkGrid;
-	}
-
-	public void addItemException(int id) {
-		this.items.add(id);
-	}
-
-	public void removeItemException(int id) {
-		if (this.items.contains((Object) id)) {
-			this.items.remove((Object) id);
-		}
-	}
-
-	private boolean isWelcomeMessageSent(Player p) {
-		if (!welcomeMessageSent.containsKey(p)) {
-			return false;
-		} else {
-			return welcomeMessageSent.get(p);
-		}
-	}
-
-	private boolean isLeaveMessageSent(Player p) {
-		if (!leaveMessageSent.containsKey(p)) {
-			return false;
-		} else {
-			return leaveMessageSent.get(p);
-		}
-	}
-
-	private void setTimestamp(Player p) {
-		timeStamps.put(p, System.currentTimeMillis());
-	}
-
-	public boolean isSendable(Player p) {
-		boolean outcome = (timeStamps.containsKey(p) ? (System.currentTimeMillis() > timeStamps.get(p) + 5000) : true);
-		if (outcome) {
-			setTimestamp(p);
-		}
-		return outcome;
-	}
-
-	public void sendLeaveMessage(Player p) {
-		if (!isLeaveMessageSent(p)) {
-			this.registerExitEvent(p);
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
-			if (RegiosPlayerListener.currentRegion.containsKey(p)) {
-				RegiosPlayerListener.currentRegion.remove(p);
-			}
-			leaveMessageSent.put(p, true);
-			welcomeMessageSent.remove(p);
-			removePlayer(p);
-			if (HealthRegeneration.isRegenerator(p)) {
-				HealthRegeneration.removeRegenerator(p);
-			}
-			if (this.permWipeOnExit) {
-				if (!this.canBypassProtection(p)) {
-					InventoryCacheManager.wipeInventory(p);
-				}
-			}
-			if (this.wipeAndCacheOnEnter) {
-				if (!this.canBypassProtection(p)) {
-					if (InventoryCacheManager.doesCacheContain(p)) {
-						InventoryCacheManager.restoreInventory(p);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon exit"));
-					}
-				}
-			}
-			if (this.wipeAndCacheOnExit) {
-				if (!this.canBypassProtection(p)) {
-					if (!InventoryCacheManager.doesCacheContain(p)) {
-						InventoryCacheManager.cacheInventory(p);
-						InventoryCacheManager.wipeInventory(p);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory cached upon exit"));
-					}
-				}
-			}
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
-
-			try {
-				if (this.temporaryNodesCacheAdd != null) {
-					if (this.temporaryNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.unCacheAddNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add node caches wiped upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-				if (this.temporaryNodesCacheRem != null) {
-					if (this.temporaryNodesCacheRem.length > 0) {
-						PermissionsCacheManager.unCacheRemNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove node caches restored upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-				if (this.permanentNodesCacheRemove != null) {
-					if (this.permanentNodesCacheRemove.length > 0) {
-						PermissionsCacheManager.permRemoveNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes wiped upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-			} catch (Exception ex) {
-				// Fail silently if the operation is unsupported
-			}
-			if (this.showLeaveMessage) {
-				p.sendMessage(this.colourFormat(this.liveFormat(leaveMessage, p)));
-			}
-			if (SpoutInterface.doesPlayerHaveSpout(p)) {
-				if (this.spoutLeaveEnabled) {
-					SpoutRegion.sendLeaveMessage(p, this);
-				}
-				if (this.playCustomSoundUrl) {
-					SpoutRegion.stopMusicPlaying(p, this);
-				}
-				if (this.useSpoutTexturePack) {
-					SpoutRegion.resetTexturePack(p);
-				}
-			}
-		}
-	}
-
-	private void registerExitEvent(Player p) {
-		RegionExitEvent event = new RegionExitEvent("RegionExitEvent");
-		event.setProperties(p, this);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-	}
-
-	private void registerWelcomeEvent(Player p) {
-		RegionEnterEvent event = new RegionEnterEvent("RegionEnterEvent");
-		event.setProperties(p, this);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-	}
-
-	public void sendWelcomeMessage(Player p) {
-		if (!isWelcomeMessageSent(p)) {
-			this.registerWelcomeEvent(p);
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' entered region."));
-			if (this.useSpoutTexturePack && SpoutInterface.doesPlayerHaveSpout(p)) {
-				SpoutRegion.forceTexturePack(p, this);
-			}
-			RegiosPlayerListener.currentRegion.put(p, this);
-			welcomeMessageSent.put(p, true);
-			leaveMessageSent.remove(p);
-			addPlayer(p);
-			if (!HealthRegeneration.isRegenerator(p)) {
-				if (this.healthRegen < 0 && !this.canBypassProtection(p)) {
-					HealthRegeneration.addRegenerator(p, this.healthRegen);
-				} else if (this.healthRegen > 0) {
-					HealthRegeneration.addRegenerator(p, this.healthRegen);
-				}
-			}
-			if (this.permWipeOnEnter) {
-				if (!this.canBypassProtection(p)) {
-					InventoryCacheManager.wipeInventory(p);
-				}
-			}
-			if (this.wipeAndCacheOnEnter) {
-				if (!this.canBypassProtection(p)) {
-					if (!InventoryCacheManager.doesCacheContain(p)) {
-						InventoryCacheManager.cacheInventory(p);
-						InventoryCacheManager.wipeInventory(p);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory cached upon entry"));
-					}
-				}
-			}
-			if (this.wipeAndCacheOnExit) {
-				if (!this.canBypassProtection(p)) {
-					if (InventoryCacheManager.doesCacheContain(p)) {
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon entry"));
-						InventoryCacheManager.restoreInventory(p);
-					}
-				}
-			}
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' entered region."));
-			if (this.commandSet != null) {
-				if (this.commandSet.length > 0) {
-					for (String s : commandSet) {
-						if (s.length() > 1) {
-							LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player forced command '" + s + "' upon enter."));
-							p.performCommand(s.trim());
-						}
-					}
-				}
-			}
-			try {
-				if (this.temporaryNodesCacheAdd != null) {
-					if (this.temporaryNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.cacheAddNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add node caches added upon region enter for player '" + p.getName() + "'"));
-					}
-
-				}
-				if (this.temporaryNodesCacheRem != null) {
-					if (this.temporaryNodesCacheRem.length > 0) {
-						PermissionsCacheManager.cacheRemNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove node caches wiped upon region enter for player '" + p.getName() + "'"));
-					}
-
-				}
-				if (this.permanentNodesCacheAdd != null) {
-					if (this.permanentNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.permAddNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes added upon region enter for player '" + p.getName() + "'"));
-					}
-				}
-			} catch (Exception ex) {
-				// Fail silently if the operation is unsupported
-			}
-			if (this.showWelcomeMessage) {
-				p.sendMessage(this.colourFormat(this.liveFormat(welcomeMessage, p)));
-			}
-			if (SpoutInterface.doesPlayerHaveSpout(p)) {
-				if (this.spoutWelcomeEnabled) {
-					SpoutRegion.sendWelcomeMessage(p, this);
-				}
-				if (this.playCustomSoundUrl) {
-					SpoutRegion.playToPlayerMusicFromUrl(p, this);
-				}
-				if (this.useSpoutTexturePack) {
-					SpoutRegion.forceTexturePack(p, this);
-				}
-			}
-		}
-	}
-
-	public boolean isRegionFull(Player p) {
-		if (this.playerCap > 0) {
-			if (this.playersInRegion.size() > this.playerCap) {
-				if (!this.canBypassProtection(p)) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-
-	public String liveFormat(String original, Player p) {
-		original = original.replaceAll("\\[", "");
-		original = original.replaceAll("\\]", "");
-		if (original.contains("PLAYER-COUNT")) {
-			original = original.replaceAll("PLAYER-COUNT", "" + this.getPlayersInRegion().size());
-		}
-		if (original.contains("BUILD-RIGHTS")) {
-			original = original.replaceAll("BUILD-RIGHTS", "" + this.canBuild(p));
-		}
-		if (original.contains("PLAYER")) {
-			original = original.replaceAll("PLAYER", "" + p.getName());
-		}
-		if (original.contains("PLAYER-LIST")) {
-			StringBuilder builder = new StringBuilder();
-			builder.append("");
-			for (Player play : this.playersInRegion) {
-				builder.append(ChatColor.WHITE).append(play.getName()).append(ChatColor.BLUE).append(", ");
-			}
-			original = original.replaceAll("PLAYER-LIST", "" + builder.toString());
-		}
-		return original;
-	}
-
 	public void addException(String exception) {
-		this.exceptions.add(exception);
+		exceptions.add(exception);
 		LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception '" + exception + "' added."));
 	}
 
-	public void removeException(String exception) {
-		if (this.exceptions.contains(exception)) {
-			this.exceptions.remove(exception);
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception '" + exception + "' removed."));
-		}
-	}
-
 	public void addExceptionNode(String node) {
-		this.nodes.add(node);
+		nodes.add(node);
 		LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception node '" + node + "' added."));
 	}
 
-	public void removeExceptionNode(String node) {
-		if (this.nodes.contains(node)) {
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception node '" + node + "' removed."));
-			this.nodes.remove(node);
-		}
-	}
-
-	public ArrayList<String> getExceptionNodes() {
-		return this.nodes;
-	}
-
-	public ArrayList<Player> getPlayersInRegion() {
-		return this.playersInRegion;
-	}
-
-	public void sendBuildMessage(Player p) {
-		if (this.showProtectionMessage && isSendable(p)) {
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to build but did not have permissions."));
-			p.sendMessage(this.colourFormat(this.liveFormat(protectionMessage, p)));
-		}
-	}
-
-	public void sendPreventEntryMessage(Player p) {
-		if (this.showPreventEntryMessage && isSendable(p)) {
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to enter but did not have permissions."));
-			p.sendMessage(this.colourFormat(this.liveFormat(preventEntryMessage, p)));
-		}
-	}
-
-	public void sendPreventExitMessage(Player p) {
-		if (this.showPreventExitMessage && isSendable(p)) {
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to leave but did not have permissions."));
-			p.sendMessage(this.colourFormat(this.liveFormat(preventExitMessage, p)));
-		}
+	public void addItemException(int id) {
+		items.add(id);
 	}
 
 	public void addPlayer(Player p) {
 		playersInRegion.add(p);
 	}
 
-	public void removePlayer(Player p) {
-		if (playersInRegion.contains(p)) {
-			playersInRegion.remove(p);
-		}
+	public boolean areChestsLocked() {
+		return chestsLocked;
 	}
 
-	public boolean isPlayerInRegion(Player p) {
-		if (playersInRegion.contains(p)) {
-			return true;
-		} else {
-			return false;
-		}
+	public boolean areDoorsLocked() {
+		return doorsLocked;
 	}
 
-	public void setL1(World w, double x, double y, double z) {
-		this.l1 = new RegionLocation(w, x, y, z);
-	}
-
-	public void setL2(World w, double x, double y, double z) {
-		this.l2 = new RegionLocation(w, x, y, z);
-	}
-
-	public boolean canBuild(Player p) {
-		return super.canBypassProtection(p, this);
+	public void cacheInventory(Player p) {
+		inventoryCache.put(p, p.getInventory());
 	}
 
 	public boolean canBypassProtection(Player p) {
@@ -595,202 +262,16 @@ public class Region extends PermChecks {
 		return super.canExit(p, this);
 	}
 
+	public boolean canMobsSpawn() {
+		return mobSpawns;
+	}
+
 	public boolean canModify(Player p) {
 		return super.canOverride(p, this);
 	}
 
-	public boolean isProtected() {
-		return this._protection;
-	}
-
-	public boolean isPreventingEntry() {
-		return this.preventEntry;
-	}
-
-	public boolean isPreventingExit() {
-		return this.preventExit;
-	}
-
-	public boolean canMobsSpawn() {
-		return this.mobSpawns;
-	}
-
-	public String getWelcomeMessage() {
-		return this.welcomeMessage;
-	}
-
-	public String getLeaveMessage() {
-		return this.leaveMessage;
-	}
-
-	public String getPreventEntryMessage() {
-		return this.preventEntryMessage;
-	}
-
-	public String getPreventExitMessage() {
-		return this.preventExitMessage;
-	}
-
-	public Material getSpoutWelcomeMaterial() {
-		return this.spoutEntryMaterial;
-	}
-
-	public Material getSpoutLeaveMaterial() {
-		return this.spoutExitMaterial;
-	}
-
-	public String getSpoutWelcomeMessage() {
-		return this.spoutEntryMessage;
-	}
-
-	public String getSpoutLeaveMessage() {
-		return this.spoutExitMessage;
-	}
-
 	public boolean canMonstersSpawn() {
-		return this.monsterSpawns;
-	}
-
-	public boolean isPasswordEnabled() {
-		return this.passwordEnabled;
-	}
-
-	public boolean areChestsLocked() {
-		return this.chestsLocked;
-	}
-
-	public boolean areDoorsLocked() {
-		return this.doorsLocked;
-	}
-
-	public boolean isHealthEnabled() {
-		return this.healthEnabled;
-	}
-
-	public int getHealthRegen() {
-		return this.healthRegen;
-	}
-
-	public double getVelocityWarp() {
-		return this.velocityWarp;
-	}
-
-	public int getLSPS() {
-		return this.LSPS;
-	}
-
-	public boolean isPreventingInteraction() {
-		return this.preventInteraction;
-	}
-
-	public boolean isPvpEnabled() {
-		return this.pvp;
-	}
-
-	public String getPassword() {
-		return this.password;
-	}
-
-	public boolean isForcingCommand() {
-		return this.forceCommand;
-	}
-
-	public String[] getCommandSets() {
-		return this.commandSet;
-	}
-
-	public String[] getSubOwners() {
-		return this.subOwners;
-	}
-
-	public String[] getPermAddNodes() {
-		return this.permanentNodesCacheAdd;
-	}
-
-	public String[] getPermRemoveNodes() {
-		return this.permanentNodesCacheRemove;
-	}
-
-	public ArrayList<String> getExceptions() {
-		return this.exceptions;
-	}
-
-	public ArrayList<Integer> getItems() {
-		return this.items;
-	}
-
-	public Location getWarp() {
-		return this.warp;
-	}
-
-	public MODE getProtectionMode() {
-		return this.protectionMode;
-	}
-
-	public MODE getPreventEntryMode() {
-		return this.preventEntryMode;
-	}
-
-	public MODE getPreventExitMode() {
-		return this.preventExitMode;
-	}
-
-	public MODE getItemMode() {
-		return this.itemMode;
-	}
-
-	public boolean permWipeOnEnter() {
-		return this.permWipeOnEnter;
-	}
-
-	public boolean permWipeOnExit() {
-		return this.permWipeOnExit;
-	}
-
-	public boolean wipeAndCacheOnEnter() {
-		return this.wipeAndCacheOnEnter;
-	}
-
-	public boolean wipeAndCacheOnExit() {
-		return this.wipeAndCacheOnExit;
-	}
-
-	public void cacheInventory(Player p) {
-		inventoryCache.put(p, p.getInventory());
-	}
-
-	public PlayerInventory getInventoryCache(Player p) {
-		return inventoryCache.containsKey(p) ? inventoryCache.get(p) : null;
-	}
-
-	public boolean getAuthentication(String password, Player p) {
-		if (exCrypt.compareHashes(exCrypt.computeSHA2_384BitHash(password), this.password)) {
-			authentication.put(p, true);
-			return true;
-		} else {
-			authentication.put(p, false);
-			return false;
-		}
-	}
-
-	public boolean isAuthenticated(Player p) {
-		if (authentication.containsKey(p)) {
-			return authentication.get(p);
-		} else {
-			return false;
-		}
-	}
-
-	public void resetAuthentication(Player p) {
-		authentication.put(p, false);
-	}
-
-	public RegionLocation getL1() {
-		return this.l1;
-	}
-
-	public RegionLocation getL2() {
-		return this.l2;
+		return monsterSpawns;
 	}
 
 	public String colourFormat(String message) {
@@ -910,535 +391,971 @@ public class Region extends PermChecks {
 
 		message = message.replaceAll("\\[", "");
 		message = message.replaceAll("\\]", "");
-		message = message.replaceAll("OWNER", this.getOwner());
-		message = message.replaceAll("NAME", this.getName());
+		message = message.replaceAll("OWNER", getOwner());
+		message = message.replaceAll("NAME", getName());
 
 		return message;
-	}
-
-
-	public World getWorld() {
-		return world;
-	}
-
-	public void setWorld(World world) {
-		this.world = world;
-	}
-
-	public String[] getCustomSoundUrl() {
-		return customSoundUrl;
-	}
-
-	public void setCustomSoundUrl(String[] customSoundUrl) {
-		this.customSoundUrl = customSoundUrl;
-	}
-
-	public String[] getCommandSet() {
-		return commandSet;
-	}
-
-	public void setCommandSet(String[] commandSet) {
-		this.commandSet = commandSet;
-	}
-
-	public String[] getTempNodesCacheAdd() {
-		return temporaryNodesCacheAdd;
-	}
-
-	public void setTempNodesCacheAdd(String[] temporaryNodesCacheAdd) {
-		this.temporaryNodesCacheAdd = temporaryNodesCacheAdd;
-	}
-	
-	public String[] getTempNodesCacheRem() {
-		return this.temporaryNodesCacheRem;
-	}
-	
-	public void setTempNodesCacheRem(String[] temporaryNodesCacheRem) {
-		this.temporaryNodesCacheRem = temporaryNodesCacheRem;
-	}
-
-	public String[] getPermanentNodesCacheAdd() {
-		return permanentNodesCacheAdd;
-	}
-
-	public void setPermanentNodesCacheAdd(String[] permanentNodesCacheAdd) {
-		this.permanentNodesCacheAdd = permanentNodesCacheAdd;
-	}
-
-	public String[] getPermanentNodesCacheRemove() {
-		return permanentNodesCacheRemove;
-	}
-
-	public void setPermanentNodesCacheRemove(String[] permanentNodesCacheRemove) {
-		this.permanentNodesCacheRemove = permanentNodesCacheRemove;
-	}
-
-	public ArrayList<String> getNodes() {
-		return nodes;
-	}
-
-	public void setNodes(ArrayList<String> nodes) {
-		this.nodes = nodes;
-	}
-
-	public String getProtectionMessage() {
-		return protectionMessage;
-	}
-
-	public void setProtectionMessage(String protectionMessage) {
-		this.protectionMessage = protectionMessage;
-	}
-
-	public String getSpoutEntryMessage() {
-		return spoutEntryMessage;
-	}
-
-	public void setSpoutEntryMessage(String spoutEntryMessage) {
-		this.spoutEntryMessage = spoutEntryMessage;
-	}
-
-	public String getSpoutExitMessage() {
-		return spoutExitMessage;
-	}
-
-	public void setSpoutExitMessage(String spoutExitMessage) {
-		this.spoutExitMessage = spoutExitMessage;
-	}
-
-	public Material getSpoutEntryMaterial() {
-		return spoutEntryMaterial;
-	}
-
-	public void setSpoutEntryMaterial(Material spoutEntryMaterial) {
-		this.spoutEntryMaterial = spoutEntryMaterial;
-	}
-
-	public Material getSpoutExitMaterial() {
-		return spoutExitMaterial;
-	}
-
-	public void setSpoutExitMaterial(Material spoutExitMaterial) {
-		this.spoutExitMaterial = spoutExitMaterial;
-	}
-
-	public boolean is_protection() {
-		return _protection;
-	}
-
-	public void set_protection(boolean _protection) {
-		this._protection = _protection;
-	}
-
-	public boolean isPreventEntry() {
-		return preventEntry;
-	}
-
-	public void setPreventEntry(boolean preventEntry) {
-		this.preventEntry = preventEntry;
-	}
-
-	public boolean isPreventExit() {
-		return preventExit;
-	}
-
-	public void setPreventExit(boolean preventExit) {
-		this.preventExit = preventExit;
-	}
-
-	public boolean isMobSpawns() {
-		return mobSpawns;
-	}
-
-	public void setMobSpawns(boolean mobSpawns) {
-		this.mobSpawns = mobSpawns;
-	}
-
-	public boolean isMonsterSpawns() {
-		return monsterSpawns;
-	}
-
-	public void setMonsterSpawns(boolean monsterSpawns) {
-		this.monsterSpawns = monsterSpawns;
-	}
-
-	public boolean isPvp() {
-		return pvp;
-	}
-
-	public void setPvp(boolean pvp) {
-		this.pvp = pvp;
-	}
-
-	public boolean isDoorsLocked() {
-		return doorsLocked;
-	}
-
-	public void setDoorsLocked(boolean doorsLocked) {
-		this.doorsLocked = doorsLocked;
-	}
-
-	public boolean isChestsLocked() {
-		return chestsLocked;
-	}
-
-	public void setChestsLocked(boolean chestsLocked) {
-		this.chestsLocked = chestsLocked;
-	}
-
-	public boolean isPreventInteraction() {
-		return preventInteraction;
-	}
-
-	public void setPreventInteraction(boolean preventInteraction) {
-		this.preventInteraction = preventInteraction;
-	}
-
-	public boolean isShowPvpWarning() {
-		return showPvpWarning;
-	}
-
-	public void setShowPvpWarning(boolean showPvpWarning) {
-		this.showPvpWarning = showPvpWarning;
-	}
-
-	public boolean isShowWelcomeMessage() {
-		return showWelcomeMessage;
-	}
-
-	public void setShowWelcomeMessage(boolean showWelcomeMessage) {
-		this.showWelcomeMessage = showWelcomeMessage;
-	}
-
-	public boolean isShowLeaveMessage() {
-		return showLeaveMessage;
-	}
-
-	public void setShowLeaveMessage(boolean showLeaveMessage) {
-		this.showLeaveMessage = showLeaveMessage;
-	}
-
-	public boolean isShowProtectionMessage() {
-		return showProtectionMessage;
-	}
-
-	public void setShowProtectionMessage(boolean showProtectionMessage) {
-		this.showProtectionMessage = showProtectionMessage;
-	}
-
-	public boolean isShowPreventEntryMessage() {
-		return showPreventEntryMessage;
-	}
-
-	public void setShowPreventEntryMessage(boolean showPreventEntryMessage) {
-		this.showPreventEntryMessage = showPreventEntryMessage;
-	}
-
-	public boolean isShowPreventExitMessage() {
-		return showPreventExitMessage;
-	}
-
-	public void setShowPreventExitMessage(boolean showPreventExitMessage) {
-		this.showPreventExitMessage = showPreventExitMessage;
-	}
-
-	public boolean isFireProtection() {
-		return fireProtection;
-	}
-
-	public void setFireProtection(boolean fireProtection) {
-		this.fireProtection = fireProtection;
-	}
-
-	public boolean isPlayCustomSoundUrl() {
-		return playCustomSoundUrl;
-	}
-
-	public void setPlayCustomSoundUrl(boolean playCustomSoundUrl) {
-		this.playCustomSoundUrl = playCustomSoundUrl;
-	}
-
-	public boolean isPermWipeOnEnter() {
-		return permWipeOnEnter;
-	}
-
-	public void setPermWipeOnEnter(boolean permWipeOnEnter) {
-		this.permWipeOnEnter = permWipeOnEnter;
-	}
-
-	public boolean isPermWipeOnExit() {
-		return permWipeOnExit;
-	}
-
-	public void setPermWipeOnExit(boolean permWipeOnExit) {
-		this.permWipeOnExit = permWipeOnExit;
-	}
-
-	public boolean isWipeAndCacheOnEnter() {
-		return wipeAndCacheOnEnter;
-	}
-
-	public void setWipeAndCacheOnEnter(boolean wipeAndCacheOnEnter) {
-		this.wipeAndCacheOnEnter = wipeAndCacheOnEnter;
-	}
-
-	public boolean isWipeAndCacheOnExit() {
-		return wipeAndCacheOnExit;
-	}
-
-	public void setWipeAndCacheOnExit(boolean wipeAndCacheOnExit) {
-		this.wipeAndCacheOnExit = wipeAndCacheOnExit;
-	}
-
-	public boolean isForceCommand() {
-		return forceCommand;
-	}
-
-	public void setForceCommand(boolean forceCommand) {
-		this.forceCommand = forceCommand;
-	}
-
-	public boolean isBlockForm() {
-		return blockForm;
-	}
-
-	public void setBlockForm(boolean blockForm) {
-		this.blockForm = blockForm;
-	}
-
-	public boolean isForSale() {
-		return forSale;
-	}
-
-	public void setForSale(boolean forSale) {
-		this.forSale = forSale;
-	}
-
-	public int getPlayerCap() {
-		return playerCap;
-	}
-
-	public void setPlayerCap(int playerCap) {
-		this.playerCap = playerCap;
-	}
-
-	public int getSalePrice() {
-		return salePrice;
-	}
-
-	public void setSalePrice(int salePrice) {
-		this.salePrice = salePrice;
 	}
 
 	public HashMap<Player, Boolean> getAuthentication() {
 		return authentication;
 	}
 
-	public void setAuthentication(HashMap<Player, Boolean> authentication) {
-		this.authentication = authentication;
+	public boolean getAuthentication(String password, Player p) {
+		if (exCrypt.compareHashes(exCrypt.computeSHA2_384BitHash(password), password)) {
+			authentication.put(p, true);
+			return true;
+		} else {
+			authentication.put(p, false);
+			return false;
+		}
 	}
 
-	public HashMap<Player, Long> getTimeStamps() {
-		return timeStamps;
+	public File getBackupsDirectory() {
+		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + "Backups");
 	}
 
-	public void setTimeStamps(HashMap<Player, Long> timeStamps) {
-		this.timeStamps = timeStamps;
+	public ChunkGrid getChunkGrid() {
+		return chunkGrid;
 	}
 
-	public HashMap<Player, Boolean> getWelcomeMessageSent() {
-		return welcomeMessageSent;
+	public String[] getCommandSet() {
+		return commandSet;
 	}
 
-	public void setWelcomeMessageSent(HashMap<Player, Boolean> welcomeMessageSent) {
-		this.welcomeMessageSent = welcomeMessageSent;
+	public File getConfigFile() {
+		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + name
+				+ ".rz");
 	}
 
-	public HashMap<Player, Boolean> getLeaveMessageSent() {
-		return leaveMessageSent;
+	public String[] getCustomSoundUrl() {
+		return customSoundUrl;
 	}
 
-	public void setLeaveMessageSent(HashMap<Player, Boolean> leaveMessageSent) {
-		this.leaveMessageSent = leaveMessageSent;
+	public File getDirectory(){
+		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name);
 	}
 
-	public HashMap<Player, PlayerInventory> getInventoryCache() {
-		return inventoryCache;
+	public File getExceptionDirectory() {
+		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + "Exceptions");
 	}
 
-	public void setInventoryCache(HashMap<Player, PlayerInventory> inventoryCache) {
-		this.inventoryCache = inventoryCache;
+	public ArrayList<String> getExceptionNodes() {
+		return nodes;
+	}
+
+	public ArrayList<String> getExceptions() {
+		return exceptions;
 	}
 
 	public ExtrasCryptography getExCrypt() {
 		return exCrypt;
 	}
 
-	public void setExCrypt(ExtrasCryptography exCrypt) {
-		this.exCrypt = exCrypt;
+	public int getHealthRegen() {
+		return healthRegen;
+	}
+
+	public HashMap<Player, PlayerInventory> getInventoryCache() {
+		return inventoryCache;
+	}
+
+	public PlayerInventory getInventoryCache(Player p) {
+		return inventoryCache.containsKey(p) ? inventoryCache.get(p) : null;
+	}
+
+	public MODE getItemMode() {
+		return itemMode;
+	}
+
+	public ArrayList<Integer> getItems() {
+		return items;
+	}
+
+	public Location getL1() {
+		return l1;
+	}
+
+	public Location getL2() {
+		return l2;
+	}
+
+	public String getLeaveMessage() {
+		return leaveMessage;
+	}
+
+	public HashMap<Player, Boolean> getLeaveMessageSent() {
+		return leaveMessageSent;
+	}
+
+	public File getLogFile() {
+		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + "Logs" + File.separator
+				+ name + ".log");
+	}
+
+	public int getLSPS() {
+		return LSPS;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public ArrayList<String> getNodes() {
+		return nodes;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String[] getPermAddNodes() {
+		return permanentNodesCacheAdd;
+	}
+
+	public String[] getPermRemoveNodes() {
+		return permanentNodesCacheRemove;
+	}
+
+	public int getPlayerCap() {
+		return playerCap;
+	}
+
+	public ArrayList<Player> getPlayersInRegion() {
+		return playersInRegion;
+	}
+
+	public String getPreventEntryMessage() {
+		return preventEntryMessage;
+	}
+
+	public MODE getPreventEntryMode() {
+		return preventEntryMode;
+	}
+
+	public String getPreventExitMessage() {
+		return preventExitMessage;
+	}
+
+	public MODE getPreventExitMode() {
+		return preventExitMode;
+	}
+
+	public String getProtectionMessage() {
+		return protectionMessage;
+	}
+
+	public MODE getProtectionMode() {
+		return protectionMode;
+	}
+
+	public File getRawConfigFile(){
+		return new File(("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + name + ".rz"));
 	}
 
 	public Region getRegion() {
 		return this;
 	}
 
-	public static GlobalRegionManager getGrm() {
-		return grm;
+	public int getSalePrice() {
+		return salePrice;
 	}
 
-	public static Saveable getSaveable() {
-		return saveable;
+	public Material getSpoutLeaveMaterial() {
+		return spoutExitMaterial;
 	}
 
-	public void setL1(RegionLocation l1) {
-		this.l1 = l1;
-	}
-
-	public void setL2(RegionLocation l2) {
-		this.l2 = l2;
-	}
-
-	public void setChunkGrid(ChunkGrid chunkGrid) {
-		this.chunkGrid = chunkGrid;
-	}
-
-	public void setWarp(Location warp) {
-		this.warp = warp;
-	}
-
-	public void setSubOwners(String[] subOwners) {
-		this.subOwners = subOwners;
-	}
-
-	public void setExceptions(ArrayList<String> exceptions) {
-		this.exceptions = exceptions;
-	}
-
-	public void setItems(ArrayList<Integer> items) {
-		this.items = items;
-	}
-
-	public void setWelcomeMessage(String welcomeMessage) {
-		this.welcomeMessage = welcomeMessage;
-	}
-
-	public void setLeaveMessage(String leaveMessage) {
-		this.leaveMessage = leaveMessage;
-	}
-
-	public void setPreventEntryMessage(String preventEntryMessage) {
-		this.preventEntryMessage = preventEntryMessage;
-	}
-
-	public void setPreventExitMessage(String preventExitMessage) {
-		this.preventExitMessage = preventExitMessage;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
-	public void setHealthEnabled(boolean healthEnabled) {
-		this.healthEnabled = healthEnabled;
-	}
-
-	public void setPasswordEnabled(boolean passwordEnabled) {
-		this.passwordEnabled = passwordEnabled;
-	}
-
-	public void setLSPS(int lSPS) {
-		LSPS = lSPS;
-	}
-
-	public void setHealthRegen(int healthRegen) {
-		this.healthRegen = healthRegen;
-	}
-
-	public void setVelocityWarp(double velocityWarp) {
-		this.velocityWarp = velocityWarp;
-	}
-
-	public void setProtectionMode(MODE protectionMode) {
-		this.protectionMode = protectionMode;
-	}
-
-	public void setPreventEntryMode(MODE preventEntryMode) {
-		this.preventEntryMode = preventEntryMode;
-	}
-
-	public void setPreventExitMode(MODE preventExitMode) {
-		this.preventExitMode = preventExitMode;
-	}
-
-	public void setItemMode(MODE itemMode) {
-		this.itemMode = itemMode;
-	}
-
-	public void setPlayersInRegion(ArrayList<Player> playersInRegion) {
-		this.playersInRegion = playersInRegion;
+	public String getSpoutLeaveMessage() {
+		return spoutExitMessage;
 	}
 
 	public String getSpoutTexturePack() {
 		return spoutTexturePack;
 	}
 
-	public void setSpoutTexturePack(String spoutTexturePack) {
-		this.spoutTexturePack = spoutTexturePack;
+	public Material getSpoutWelcomeMaterial() {
+		return spoutEntryMaterial;
 	}
 
-	public boolean isUseSpoutTexturePack() {
-		return useSpoutTexturePack;
+	public String getSpoutWelcomeMessage() {
+		return spoutEntryMessage;
 	}
 
-	public void setUseSpoutTexturePack(boolean useSpoutTexturePack) {
-		this.useSpoutTexturePack = useSpoutTexturePack;
+	public String[] getSubOwners() {
+		return subOwners;
 	}
 
-	public boolean is_protectionPlace() {
-		return _protectionPlace;
+	public String[] getTempNodesCacheAdd() {
+		return temporaryNodesCacheAdd;
 	}
 
-	public void set_protectionPlace(boolean _protectionPlace) {
-		this._protectionPlace = _protectionPlace;
+	public String[] getTempNodesCacheRem() {
+		return temporaryNodesCacheRem;
+	}
+
+	public HashMap<Player, Long> getTimeStamps() {
+		return timeStamps;
+	}
+
+	public double getVelocityWarp() {
+		return velocityWarp;
+	}
+
+	public Location getWarp() {
+		return warp;
+	}
+
+	public String getWelcomeMessage() {
+		return welcomeMessage;
+	}
+
+	public HashMap<Player, Boolean> getWelcomeMessageSent() {
+		return welcomeMessageSent;
+	}
+
+	public World getWorld() {
+		return world;
 	}
 
 	public boolean is_protectionBreak() {
 		return _protectionBreak;
 	}
 
-	public void set_protectionBreak(boolean _protectionBreak) {
-		this._protectionBreak = _protectionBreak;
+	public boolean is_protectionPlace() {
+		return _protectionPlace;
 	}
 
-	public boolean isSpoutWelcomeEnabled() {
-		return spoutWelcomeEnabled;
+	public boolean isAuthenticated(Player p) {
+		if (authentication.containsKey(p)) {
+			return authentication.get(p);
+		} else {
+			return false;
+		}
 	}
 
-	public void setSpoutWelcomeEnabled(boolean spoutWelcomeEnabled) {
-		this.spoutWelcomeEnabled = spoutWelcomeEnabled;
+	public boolean isBlockForm() {
+		return blockForm;
+	}
+
+	public boolean isFireProtection() {
+		return fireProtection;
+	}
+
+	public boolean isForceCommand() {
+		return forceCommand;
+	}
+
+	public boolean isForSale() {
+		return forSale;
+	}
+
+	public boolean isHealthEnabled() {
+		return healthEnabled;
+	}
+
+	private boolean isLeaveMessageSent(Player p) {
+		if (!leaveMessageSent.containsKey(p)) {
+			return false;
+		} else {
+			return leaveMessageSent.get(p);
+		}
+	}
+
+	public boolean isPasswordEnabled() {
+		return passwordEnabled;
+	}
+
+	public boolean isPermWipeOnEnter() {
+		return permWipeOnEnter;
+	}
+
+	public boolean isPermWipeOnExit() {
+		return permWipeOnExit;
+	}
+
+	public boolean isPlayCustomSoundUrl() {
+		return playCustomSoundUrl;
+	}
+
+	public boolean isPlayerInRegion(Player p) {
+		if (playersInRegion.contains(p)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isPreventEntry() {
+		return preventEntry;
+	}
+
+	public boolean isPreventExit() {
+		return preventExit;
+	}
+
+	public boolean isPreventInteraction() {
+		return preventInteraction;
+	}
+
+	public boolean isProtected() {
+		return _protection;
+	}
+
+	public boolean isPvp() {
+		return pvp;
+	}
+
+	public boolean isRegionFull(Player p) {
+		if (playerCap > 0) {
+			if (playersInRegion.size() > playerCap) {
+				if (!canBypassProtection(p)) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isSendable(Player p) {
+		boolean outcome = (timeStamps.containsKey(p) ? (System.currentTimeMillis() > timeStamps.get(p) + 5000) : true);
+		if (outcome) {
+			setTimestamp(p);
+		}
+		return outcome;
+	}
+
+	public boolean isShowLeaveMessage() {
+		return showLeaveMessage;
+	}
+
+	public boolean isShowPreventEntryMessage() {
+		return showPreventEntryMessage;
+	}
+
+	public boolean isShowPreventExitMessage() {
+		return showPreventExitMessage;
+	}
+
+	public boolean isShowProtectionMessage() {
+		return showProtectionMessage;
+	}
+
+	public boolean isShowPvpWarning() {
+		return showPvpWarning;
+	}
+
+	public boolean isShowWelcomeMessage() {
+		return showWelcomeMessage;
 	}
 
 	public boolean isSpoutLeaveEnabled() {
 		return spoutLeaveEnabled;
 	}
 
-	public void setSpoutLeaveEnabled(boolean spoutLeaveEnabled) {
-		this.spoutLeaveEnabled = spoutLeaveEnabled;
+	public boolean isSpoutWelcomeEnabled() {
+		return spoutWelcomeEnabled;
 	}
 
 	public boolean isTNTEnabled() {
 		return TNTEnabled;
 	}
 
+	public boolean isUseSpoutTexturePack() {
+		return useSpoutTexturePack;
+	}
+
+	private boolean isWelcomeMessageSent(Player p) {
+		if (!welcomeMessageSent.containsKey(p)) {
+			return false;
+		} else {
+			return welcomeMessageSent.get(p);
+		}
+	}
+
+	public boolean isWipeAndCacheOnEnter() {
+		return wipeAndCacheOnEnter;
+	}
+
+	public boolean isWipeAndCacheOnExit() {
+		return wipeAndCacheOnExit;
+	}
+
+	public String liveFormat(String original, Player p) {
+		original = original.replaceAll("\\[", "");
+		original = original.replaceAll("\\]", "");
+		if (original.contains("PLAYER-COUNT")) {
+			original = original.replaceAll("PLAYER-COUNT", "" + getPlayersInRegion().size());
+		}
+		if (original.contains("BUILD-RIGHTS")) {
+			original = original.replaceAll("BUILD-RIGHTS", "" + canBypassProtection(p));
+		}
+		if (original.contains("PLAYER")) {
+			original = original.replaceAll("PLAYER", "" + p.getName());
+		}
+		if (original.contains("PLAYER-LIST")) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("");
+			for (Player play : playersInRegion) {
+				builder.append(ChatColor.WHITE).append(play.getName()).append(ChatColor.BLUE).append(", ");
+			}
+			original = original.replaceAll("PLAYER-LIST", "" + builder.toString());
+		}
+		return original;
+	}
+
+	private void registerExitEvent(Player p) {
+		RegionExitEvent event = new RegionExitEvent("RegionExitEvent");
+		event.setProperties(p, this);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+	}
+
+	private void registerWelcomeEvent(Player p) {
+		RegionEnterEvent event = new RegionEnterEvent("RegionEnterEvent");
+		event.setProperties(p, this);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+	}
+
+	public void removeException(String exception) {
+		if (exceptions.contains(exception)) {
+			exceptions.remove(exception);
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception '" + exception + "' removed."));
+		}
+	}
+
+	public void removeExceptionNode(String node) {
+		if (nodes.contains(node)) {
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception node '" + node + "' removed."));
+			nodes.remove(node);
+		}
+	}
+
+	public void removeItemException(int id) {
+		if (items.contains((Object) id)) {
+			items.remove((Object) id);
+		}
+	}
+
+	public void removePlayer(Player p) {
+		if (playersInRegion.contains(p)) {
+			playersInRegion.remove(p);
+		}
+	}
+
+	public void resetAuthentication(Player p) {
+		authentication.put(p, false);
+	}
+
+	public void sendBuildMessage(Player p) {
+		if (showProtectionMessage && isSendable(p)) {
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to build but did not have permissions."));
+			p.sendMessage(colourFormat(liveFormat(protectionMessage, p)));
+		}
+	}
+
+	public void sendLeaveMessage(Player p) {
+		if (!isLeaveMessageSent(p)) {
+			registerExitEvent(p);
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
+			if (RegiosPlayerListener.currentRegion.containsKey(p)) {
+				RegiosPlayerListener.currentRegion.remove(p);
+			}
+			leaveMessageSent.put(p, true);
+			welcomeMessageSent.remove(p);
+			removePlayer(p);
+			if (HealthRegeneration.isRegenerator(p)) {
+				HealthRegeneration.removeRegenerator(p);
+			}
+			if (permWipeOnExit) {
+				if (!canBypassProtection(p)) {
+					InventoryCacheManager.wipeInventory(p);
+				}
+			}
+			if (wipeAndCacheOnEnter) {
+				if (!canBypassProtection(p)) {
+					if (InventoryCacheManager.doesCacheContain(p)) {
+						InventoryCacheManager.restoreInventory(p);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon exit"));
+					}
+				}
+			}
+			if (wipeAndCacheOnExit) {
+				if (!canBypassProtection(p)) {
+					if (!InventoryCacheManager.doesCacheContain(p)) {
+						InventoryCacheManager.cacheInventory(p);
+						InventoryCacheManager.wipeInventory(p);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory cached upon exit"));
+					}
+				}
+			}
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
+
+			try {
+				if (temporaryNodesCacheAdd != null) {
+					if (temporaryNodesCacheAdd.length > 0) {
+						PermissionsCacheManager.unCacheAddNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add node caches wiped upon region exit for player '" + p.getName() + "'"));
+					}
+				}
+				if (temporaryNodesCacheRem != null) {
+					if (temporaryNodesCacheRem.length > 0) {
+						PermissionsCacheManager.unCacheRemNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove node caches restored upon region exit for player '" + p.getName() + "'"));
+					}
+				}
+				if (permanentNodesCacheRemove != null) {
+					if (permanentNodesCacheRemove.length > 0) {
+						PermissionsCacheManager.permRemoveNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes wiped upon region exit for player '" + p.getName() + "'"));
+					}
+				}
+			} catch (Exception ex) {
+				// Fail silently if the operation is unsupported
+			}
+			if (showLeaveMessage) {
+				p.sendMessage(colourFormat(liveFormat(leaveMessage, p)));
+			}
+			if (SpoutInterface.doesPlayerHaveSpout(p)) {
+				if (spoutLeaveEnabled) {
+					SpoutRegion.sendLeaveMessage(p, this);
+				}
+				if (playCustomSoundUrl) {
+					SpoutRegion.stopMusicPlaying(p, this);
+				}
+				if (useSpoutTexturePack) {
+					SpoutRegion.resetTexturePack(p);
+				}
+			}
+		}
+	}
+
+	public void sendPreventEntryMessage(Player p) {
+		if (showPreventEntryMessage && isSendable(p)) {
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to enter but did not have permissions."));
+			p.sendMessage(colourFormat(liveFormat(preventEntryMessage, p)));
+		}
+	}
+
+	public void sendPreventExitMessage(Player p) {
+		if (showPreventExitMessage && isSendable(p)) {
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to leave but did not have permissions."));
+			p.sendMessage(colourFormat(liveFormat(preventExitMessage, p)));
+		}
+	}
+
+	public void sendWelcomeMessage(Player p) {
+		if (!isWelcomeMessageSent(p)) {
+			registerWelcomeEvent(p);
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' entered region."));
+			if (useSpoutTexturePack && SpoutInterface.doesPlayerHaveSpout(p)) {
+				SpoutRegion.forceTexturePack(p, this);
+			}
+			RegiosPlayerListener.currentRegion.put(p, this);
+			welcomeMessageSent.put(p, true);
+			leaveMessageSent.remove(p);
+			addPlayer(p);
+			if (!HealthRegeneration.isRegenerator(p)) {
+				if (healthRegen < 0 && !canBypassProtection(p)) {
+					HealthRegeneration.addRegenerator(p, healthRegen);
+				} else if (healthRegen > 0) {
+					HealthRegeneration.addRegenerator(p, healthRegen);
+				}
+			}
+			if (permWipeOnEnter) {
+				if (!canBypassProtection(p)) {
+					InventoryCacheManager.wipeInventory(p);
+				}
+			}
+			if (wipeAndCacheOnEnter) {
+				if (!canBypassProtection(p)) {
+					if (!InventoryCacheManager.doesCacheContain(p)) {
+						InventoryCacheManager.cacheInventory(p);
+						InventoryCacheManager.wipeInventory(p);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory cached upon entry"));
+					}
+				}
+			}
+			if (wipeAndCacheOnExit) {
+				if (!canBypassProtection(p)) {
+					if (InventoryCacheManager.doesCacheContain(p)) {
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon entry"));
+						InventoryCacheManager.restoreInventory(p);
+					}
+				}
+			}
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' entered region."));
+			if (commandSet != null) {
+				if (commandSet.length > 0) {
+					for (String s : commandSet) {
+						if (s.length() > 1) {
+							LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player forced command '" + s + "' upon enter."));
+							p.performCommand(s.trim());
+						}
+					}
+				}
+			}
+			try {
+				if (temporaryNodesCacheAdd != null) {
+					if (temporaryNodesCacheAdd.length > 0) {
+						PermissionsCacheManager.cacheAddNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add node caches added upon region enter for player '" + p.getName() + "'"));
+					}
+
+				}
+				if (temporaryNodesCacheRem != null) {
+					if (temporaryNodesCacheRem.length > 0) {
+						PermissionsCacheManager.cacheRemNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove node caches wiped upon region enter for player '" + p.getName() + "'"));
+					}
+
+				}
+				if (permanentNodesCacheAdd != null) {
+					if (permanentNodesCacheAdd.length > 0) {
+						PermissionsCacheManager.permAddNodes(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes added upon region enter for player '" + p.getName() + "'"));
+					}
+				}
+			} catch (Exception ex) {
+				// Fail silently if the operation is unsupported
+			}
+			if (showWelcomeMessage) {
+				p.sendMessage(colourFormat(liveFormat(welcomeMessage, p)));
+			}
+			if (SpoutInterface.doesPlayerHaveSpout(p)) {
+				if (spoutWelcomeEnabled) {
+					SpoutRegion.sendWelcomeMessage(p, this);
+				}
+				if (playCustomSoundUrl) {
+					SpoutRegion.playToPlayerMusicFromUrl(p, this);
+				}
+				if (useSpoutTexturePack) {
+					SpoutRegion.forceTexturePack(p, this);
+				}
+			}
+		}
+	}
+
+	public void set_protection(boolean _protection) {
+		this._protection = _protection;
+	}
+
+	public void set_protectionBreak(boolean _protectionBreak) {
+		this._protectionBreak = _protectionBreak;
+	}
+
+	public void set_protectionPlace(boolean _protectionPlace) {
+		this._protectionPlace = _protectionPlace;
+	}
+
+	public void setAuthentication(HashMap<Player, Boolean> authentication) {
+		this.authentication = authentication;
+	}
+
+	public void setBlockForm(boolean blockForm) {
+		this.blockForm = blockForm;
+	}
+
+	public void setChestsLocked(boolean chestsLocked) {
+		this.chestsLocked = chestsLocked;
+	}
+
+	public void setChunkGrid(ChunkGrid chunkGrid) {
+		this.chunkGrid = chunkGrid;
+	}
+
+	public void setCommandSet(String[] commandSet) {
+		this.commandSet = commandSet;
+	}
+
+	public void setCustomSoundUrl(String[] customSoundUrl) {
+		this.customSoundUrl = customSoundUrl;
+	}
+
+	public void setDoorsLocked(boolean doorsLocked) {
+		this.doorsLocked = doorsLocked;
+	}
+
+	public void setExceptions(ArrayList<String> exceptions) {
+		this.exceptions = exceptions;
+	}
+
+	public void setExCrypt(ExtrasCryptography exCrypt) {
+		this.exCrypt = exCrypt;
+	}
+
+	public void setFireProtection(boolean fireProtection) {
+		this.fireProtection = fireProtection;
+	}
+
+	public void setForceCommand(boolean forceCommand) {
+		this.forceCommand = forceCommand;
+	}
+
+	public void setForSale(boolean forSale) {
+		this.forSale = forSale;
+	}
+
+	public void setHealthEnabled(boolean healthEnabled) {
+		this.healthEnabled = healthEnabled;
+	}
+
+	public void setHealthRegen(int healthRegen) {
+		this.healthRegen = healthRegen;
+	}
+
+	public void setInventoryCache(HashMap<Player, PlayerInventory> inventoryCache) {
+		this.inventoryCache = inventoryCache;
+	}
+
+	public void setItemMode(MODE itemMode) {
+		this.itemMode = itemMode;
+	}
+
+	public void setItems(ArrayList<Integer> items) {
+		this.items = items;
+	}
+
+	public void setL1(Location l1) {
+		this.l1 = l1;
+	}
+
+	public void setL1(World w, double x, double y, double z) {
+		l1 = new Location(w, x, y, z);
+	}
+
+	public void setL2(Location l2) {
+		this.l2 = l2;
+	}
+
+	public void setL2(World w, double x, double y, double z) {
+		l2 = new Location(w, x, y, z);
+	}
+
+	public void setLeaveMessage(String leaveMessage) {
+		this.leaveMessage = leaveMessage;
+	}
+
+	public void setLeaveMessageSent(HashMap<Player, Boolean> leaveMessageSent) {
+		this.leaveMessageSent = leaveMessageSent;
+	}
+
+	public void setLSPS(int lSPS) {
+		LSPS = lSPS;
+	}
+
+	public void setMobSpawns(boolean mobSpawns) {
+		this.mobSpawns = mobSpawns;
+	}
+
+	public void setMonsterSpawns(boolean monsterSpawns) {
+		this.monsterSpawns = monsterSpawns;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setNodes(ArrayList<String> nodes) {
+		this.nodes = nodes;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setPasswordEnabled(boolean passwordEnabled) {
+		this.passwordEnabled = passwordEnabled;
+	}
+
+	public void setPermanentNodesCacheAdd(String[] permanentNodesCacheAdd) {
+		this.permanentNodesCacheAdd = permanentNodesCacheAdd;
+	}
+
+	public void setPermanentNodesCacheRemove(String[] permanentNodesCacheRemove) {
+		this.permanentNodesCacheRemove = permanentNodesCacheRemove;
+	}
+
+	public void setPermWipeOnEnter(boolean permWipeOnEnter) {
+		this.permWipeOnEnter = permWipeOnEnter;
+	}
+
+	public void setPermWipeOnExit(boolean permWipeOnExit) {
+		this.permWipeOnExit = permWipeOnExit;
+	}
+
+	public void setPlayCustomSoundUrl(boolean playCustomSoundUrl) {
+		this.playCustomSoundUrl = playCustomSoundUrl;
+	}
+
+	public void setPlayerCap(int playerCap) {
+		this.playerCap = playerCap;
+	}
+
+	public void setPlayersInRegion(ArrayList<Player> playersInRegion) {
+		this.playersInRegion = playersInRegion;
+	}
+
+	public void setPreventEntry(boolean preventEntry) {
+		this.preventEntry = preventEntry;
+	}
+
+	public void setPreventEntryMessage(String preventEntryMessage) {
+		this.preventEntryMessage = preventEntryMessage;
+	}
+
+	public void setPreventEntryMode(MODE preventEntryMode) {
+		this.preventEntryMode = preventEntryMode;
+	}
+
+	public void setPreventExit(boolean preventExit) {
+		this.preventExit = preventExit;
+	}
+
+	public void setPreventExitMessage(String preventExitMessage) {
+		this.preventExitMessage = preventExitMessage;
+	}
+
+	public void setPreventExitMode(MODE preventExitMode) {
+		this.preventExitMode = preventExitMode;
+	}
+
+	public void setPreventInteraction(boolean preventInteraction) {
+		this.preventInteraction = preventInteraction;
+	}
+
+	public void setProtectionMessage(String protectionMessage) {
+		this.protectionMessage = protectionMessage;
+	}
+
+	public void setProtectionMode(MODE protectionMode) {
+		this.protectionMode = protectionMode;
+	}
+
+	public void setPvp(boolean pvp) {
+		this.pvp = pvp;
+	}
+
+	public void setSalePrice(int salePrice) {
+		this.salePrice = salePrice;
+	}
+
+	public void setShowLeaveMessage(boolean showLeaveMessage) {
+		this.showLeaveMessage = showLeaveMessage;
+	}
+
+	public void setShowPreventEntryMessage(boolean showPreventEntryMessage) {
+		this.showPreventEntryMessage = showPreventEntryMessage;
+	}
+
+	public void setShowPreventExitMessage(boolean showPreventExitMessage) {
+		this.showPreventExitMessage = showPreventExitMessage;
+	}
+
+	public void setShowProtectionMessage(boolean showProtectionMessage) {
+		this.showProtectionMessage = showProtectionMessage;
+	}
+
+	public void setShowPvpWarning(boolean showPvpWarning) {
+		this.showPvpWarning = showPvpWarning;
+	}
+
+	public void setShowWelcomeMessage(boolean showWelcomeMessage) {
+		this.showWelcomeMessage = showWelcomeMessage;
+	}
+
+	public void setSpoutEntryMaterial(Material spoutEntryMaterial) {
+		this.spoutEntryMaterial = spoutEntryMaterial;
+	}
+
+	public void setSpoutEntryMessage(String spoutEntryMessage) {
+		this.spoutEntryMessage = spoutEntryMessage;
+	}
+
+	public void setSpoutExitMaterial(Material spoutExitMaterial) {
+		this.spoutExitMaterial = spoutExitMaterial;
+	}
+
+	public void setSpoutExitMessage(String spoutExitMessage) {
+		this.spoutExitMessage = spoutExitMessage;
+	}
+
+	public void setSpoutLeaveEnabled(boolean spoutLeaveEnabled) {
+		this.spoutLeaveEnabled = spoutLeaveEnabled;
+	}
+
+	public void setSpoutTexturePack(String spoutTexturePack) {
+		this.spoutTexturePack = spoutTexturePack;
+	}
+
+	public void setSpoutWelcomeEnabled(boolean spoutWelcomeEnabled) {
+		this.spoutWelcomeEnabled = spoutWelcomeEnabled;
+	}
+
+	public void setSubOwners(String[] subOwners) {
+		this.subOwners = subOwners;
+	}
+
+	public void setTempNodesCacheAdd(String[] temporaryNodesCacheAdd) {
+		this.temporaryNodesCacheAdd = temporaryNodesCacheAdd;
+	}
+
+	public void setTempNodesCacheRem(String[] temporaryNodesCacheRem) {
+		this.temporaryNodesCacheRem = temporaryNodesCacheRem;
+	}
+
+	private void setTimestamp(Player p) {
+		timeStamps.put(p, System.currentTimeMillis());
+	}
+
+	public void setTimeStamps(HashMap<Player, Long> timeStamps) {
+		this.timeStamps = timeStamps;
+	}
+
 	public void setTNTEnabled(boolean TNTEnabled) {
 		this.TNTEnabled = TNTEnabled;
 	}
 
+	public void setUseSpoutTexturePack(boolean useSpoutTexturePack) {
+		this.useSpoutTexturePack = useSpoutTexturePack;
+	}
+
+	public void setVelocityWarp(double velocityWarp) {
+		this.velocityWarp = velocityWarp;
+	}
+
+	public void setWarp(Location warp) {
+		this.warp = warp;
+	}
+
+	public void setWelcomeMessage(String welcomeMessage) {
+		this.welcomeMessage = welcomeMessage;
+	}
+
+	public void setWelcomeMessageSent(HashMap<Player, Boolean> welcomeMessageSent) {
+		this.welcomeMessageSent = welcomeMessageSent;
+	}
+
+	public void setWipeAndCacheOnEnter(boolean wipeAndCacheOnEnter) {
+		this.wipeAndCacheOnEnter = wipeAndCacheOnEnter;
+	}
+
+	public void setWipeAndCacheOnExit(boolean wipeAndCacheOnExit) {
+		this.wipeAndCacheOnExit = wipeAndCacheOnExit;
+	}
+
+	public void setWorld(World world) {
+		this.world = world;
+	}
 }

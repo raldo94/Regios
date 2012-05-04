@@ -21,7 +21,7 @@ public class VersionPatcher {
 	static final File patch5021F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.21.rv");
 
 	public static void runPatch(String version) throws IOException {
-		if (version.equalsIgnoreCase("5.0.38")) {
+		if (version.equalsIgnoreCase("5.0.4")) {
 			if (!patch4057F.exists()) {
 				patch4057(version);
 				patch4057F.createNewFile();

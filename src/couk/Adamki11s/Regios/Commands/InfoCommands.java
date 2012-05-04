@@ -14,7 +14,9 @@ public class InfoCommands {
 		} else {
 			p.sendMessage(ChatColor.GREEN + "[Regios] Info for region " + ChatColor.BLUE + region);
 			p.sendMessage(ChatColor.BLUE + "Owner : " + ChatColor.GREEN + r.getOwner());
-			p.sendMessage(ChatColor.BLUE + "Protected : " + ChatColor.GREEN + r.is_protection());
+			p.sendMessage(ChatColor.BLUE + "Protected : " + ChatColor.GREEN + r.isProtected());
+			p.sendMessage(ChatColor.BLUE + "Protected-BB : " + ChatColor.GREEN + r.is_protectionBreak());
+			p.sendMessage(ChatColor.BLUE + "Protected-BP : " + ChatColor.GREEN + r.is_protectionPlace());
 			p.sendMessage(ChatColor.BLUE + "Prevent-Entry : " + ChatColor.GREEN + r.isPreventEntry());
 			p.sendMessage(ChatColor.BLUE + "Prevent-Exit : " + ChatColor.GREEN + r.isPreventExit());
 			p.sendMessage(ChatColor.BLUE + "Player Cap : " + ChatColor.GREEN + r.getPlayerCap());

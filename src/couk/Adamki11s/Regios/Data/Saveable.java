@@ -3,18 +3,18 @@ package couk.Adamki11s.Regios.Data;
 import java.io.File;
 import java.io.IOException;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import couk.Adamki11s.Regios.Regions.Region;
-import couk.Adamki11s.Regios.Regions.RegionLocation;
 
 public class Saveable {
 	
 	private final File root = new File("plugins" + File.separator + "Regios"),
 	 db_root = new File(root + File.separator + "Database");
 	
-	public synchronized void saveRegion(Region r, RegionLocation rl1, RegionLocation rl2){
+	public synchronized void saveRegion(Region r, Location rl1, Location rl2){
 		
 		File region_root = new File(db_root + File.separator + r.getName());
 		File region_core = new File(region_root + File.separator + r.getName() + ".rz");
@@ -62,7 +62,7 @@ public class Saveable {
 		c.set("Region.Permissions.PermanentCache.AddNodes", "");
 		c.set("Region.Permissions.PermanentCache.RemoveNodes", "");
 		
-		c.set("Region.General.Protected.General", Boolean.valueOf(r.is_protection()));
+		c.set("Region.General.Protected.General", Boolean.valueOf(r.isProtected()));
 		c.set("Region.General.Protected.BlockBreak", Boolean.valueOf(r.is_protectionBreak()));
 		c.set("Region.General.Protected.BlockPlace", Boolean.valueOf(r.is_protectionPlace()));
 		c.set("Region.General.FireProtection", Boolean.valueOf(r.isFireProtection()));
@@ -70,8 +70,8 @@ public class Saveable {
 		c.set("Region.General.PreventEntry", Boolean.valueOf(r.isPreventEntry()));
 		c.set("Region.General.PreventExit", Boolean.valueOf(r.isPreventExit()));
 		c.set("Region.General.PreventInteraction", Boolean.valueOf(r.isPreventInteraction()));
-		c.set("Region.General.DoorsLocked", Boolean.valueOf(r.isDoorsLocked()));
-		c.set("Region.General.ChestsLocked", Boolean.valueOf(r.isChestsLocked()));
+		c.set("Region.General.DoorsLocked", Boolean.valueOf(r.areDoorsLocked()));
+		c.set("Region.General.ChestsLocked", Boolean.valueOf(r.areChestsLocked()));
 		c.set("Region.General.Password.Enabled", Boolean.valueOf(r.isPasswordEnabled()));
 		
 		if(r.getPassword().length() > 3){
@@ -80,8 +80,8 @@ public class Saveable {
 			c.set("Region.General.Password.Password", "");
 		}
 		
-		c.set("Region.Other.MobSpawns", Boolean.valueOf(r.isMobSpawns()));
-		c.set("Region.Other.MonsterSpawns", Boolean.valueOf(r.isMonsterSpawns()));
+		c.set("Region.Other.MobSpawns", Boolean.valueOf(r.canMobsSpawn()));
+		c.set("Region.Other.MonsterSpawns", Boolean.valueOf(r.canMonstersSpawn()));
 		c.set("Region.Other.PvP", Boolean.valueOf(r.isPvp()));
 		c.set("Region.Other.HealthEnabled", Boolean.valueOf(r.isHealthEnabled()));
 		c.set("Region.Other.HealthRegen", r.getHealthRegen());
@@ -97,10 +97,10 @@ public class Saveable {
 		
 		c.set("Region.Spout.Welcome.Enabled", r.isSpoutWelcomeEnabled());
 		c.set("Region.Spout.Leave.Enabled", r.isSpoutWelcomeEnabled());
-		c.set("Region.Spout.Welcome.Message", r.getSpoutEntryMessage());
-		c.set("Region.Spout.Welcome.IconID", r.getSpoutEntryMaterial().getId());	
-		c.set("Region.Spout.Leave.Message", r.getSpoutExitMessage());
-		c.set("Region.Spout.Leave.IconID", r.getSpoutExitMaterial().getId());
+		c.set("Region.Spout.Welcome.Message", r.getSpoutWelcomeMessage());
+		c.set("Region.Spout.Welcome.IconID", r.getSpoutWelcomeMaterial().getId());	
+		c.set("Region.Spout.Leave.Message", r.getSpoutLeaveMessage());
+		c.set("Region.Spout.Leave.IconID", r.getSpoutLeaveMaterial().getId());
 		c.set("Region.Spout.Sound.PlayCustomMusic", r.isPlayCustomSoundUrl());
 		c.set("Region.Spout.Sound.CustomMusicURL", r.getCustomSoundUrl());
 		c.set("Region.Spout.Texture.UseTexture", r.isUseSpoutTexturePack());
@@ -141,7 +141,7 @@ public class Saveable {
 		System.out.println("Region '" + r.getName() + "' saved successfully!");
 	}
 	
-	public synchronized void updateInheritedRegion(Region r, RegionLocation rl1, RegionLocation rl2) throws IOException{
+	public synchronized void updateInheritedRegion(Region r, Location rl1, Location rl2) throws IOException{
 		
 		this.deleteRegion(r.getName());
 		
@@ -205,28 +205,28 @@ public class Saveable {
 		c.set("Region.Permissions.TemporaryCache.RemoveNodes", sb.toString());
 		sb.replace(0, sb.length(), "");
 		
-		for(String s : r.getPermanentNodesCacheAdd()){
+		for(String s : r.getPermAddNodes()){
 			sb.append(s).append(",");
 		}
 		
 		c.set("Region.Permissions.PermanentCache.AddNodes", sb.toString());
 		sb.replace(0, sb.length(), "");
 		
-		for(String s : r.getPermanentNodesCacheRemove()){
+		for(String s : r.getPermRemoveNodes()){
 			sb.append(s).append(",");
 		}
 		
 		c.set("Region.Permissions.PermanentCache.RemoveNodes", sb.toString());
 		sb.replace(0, sb.length(), "");
 		
-		c.set("Region.General.Protected", Boolean.valueOf(r.is_protection()));
+		c.set("Region.General.Protected", Boolean.valueOf(r.isProtected()));
 		c.set("Region.General.FireProtection", Boolean.valueOf(r.isFireProtection()));
 		c.set("Region.General.TNTEnabled", Boolean.valueOf(r.isTNTEnabled()));
 		c.set("Region.General.PreventEntry", Boolean.valueOf(r.isPreventEntry()));
 		c.set("Region.General.PreventExit", Boolean.valueOf(r.isPreventExit()));
 		c.set("Region.General.PreventInteraction", Boolean.valueOf(r.isPreventInteraction()));
-		c.set("Region.General.DoorsLocked", Boolean.valueOf(r.isDoorsLocked()));
-		c.set("Region.General.ChestsLocked", Boolean.valueOf(r.isChestsLocked()));
+		c.set("Region.General.DoorsLocked", Boolean.valueOf(r.areDoorsLocked()));
+		c.set("Region.General.ChestsLocked", Boolean.valueOf(r.areChestsLocked()));
 		c.set("Region.General.Password.Enabled", Boolean.valueOf(r.isPasswordEnabled()));
 		
 		if(r.getPassword().length() > 3){
@@ -235,8 +235,8 @@ public class Saveable {
 			c.set("Region.General.Password.Password", "");
 		}
 		
-		c.set("Region.Other.MobSpawns", Boolean.valueOf(r.isMobSpawns()));
-		c.set("Region.Other.MonsterSpawns", Boolean.valueOf(r.isMonsterSpawns()));
+		c.set("Region.Other.MobSpawns", Boolean.valueOf(r.canMobsSpawn()));
+		c.set("Region.Other.MonsterSpawns", Boolean.valueOf(r.canMonstersSpawn()));
 		c.set("Region.Other.PvP", Boolean.valueOf(r.isPvp()));
 		c.set("Region.Other.HealthEnabled", Boolean.valueOf(r.isHealthEnabled()));
 		c.set("Region.Other.HealthRegen", r.getHealthRegen());
@@ -257,10 +257,10 @@ public class Saveable {
 		c.set("Region.Essentials.Points.Point1", convertLocation(rl1));
 		c.set("Region.Essentials.Points.Point2", convertLocation(rl2));
 		
-		c.set("Region.Spout.Welcome.Message", r.getSpoutEntryMessage());
-		c.set("Region.Spout.Welcome.IconID", r.getSpoutEntryMaterial().getId());	
-		c.set("Region.Spout.Leave.Message", r.getSpoutExitMessage());
-		c.set("Region.Spout.Leave.IconID", r.getSpoutExitMaterial().getId());
+		c.set("Region.Spout.Welcome.Message", r.getSpoutWelcomeMessage());
+		c.set("Region.Spout.Welcome.IconID", r.getSpoutWelcomeMaterial().getId());	
+		c.set("Region.Spout.Leave.Message", r.getSpoutLeaveMessage());
+		c.set("Region.Spout.Leave.IconID", r.getSpoutLeaveMaterial().getId());
 		c.set("Region.Spout.Sound.PlayCustomMusic", r.isPlayCustomSoundUrl());
 		c.set("Region.Spout.Sound.CustomMusicURL", r.getCustomSoundUrl());
 		c.set("Region.Spout.Texture.UseTexture", r.isUseSpoutTexturePack());
@@ -313,7 +313,7 @@ public class Saveable {
 		System.out.println("Region '" + r.getName() + "' saved successfully!");
 	}
 	
-	public String convertLocation(RegionLocation l){
+	public String convertLocation(Location l){
 		return l.getWorld().getName() + "," + l.getX() + "," + l.getY() + "," + l.getZ();
 	}
 	

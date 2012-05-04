@@ -296,15 +296,15 @@ public class Screen_Listener implements Listener {
 			if (!PermissionsCore.canModify(r, (Player) sp)) {
 				PermissionsCore.sendInvalidPermsPopup(sp);
 			}
-			if (r.is_protection()) {
+			if (r.isProtected()) {
 				protection.editUnprotect(r);
 				sp.sendNotification("General Protection", ChatColor.RED + "Protection Disabled", Material.DIAMOND_BLOCK);
 			} else {
 				protection.editProtect(r);
 				sp.sendNotification("General Protection", ChatColor.GREEN + "Protection Enabled", Material.DIAMOND_BLOCK);
 			}
-			((GenericButton) (sh.page1Widgets[24])).setTooltip(RegionScreenManager.getStatus(r.is_protection()));
-			((GenericButton) (sh.page1Widgets[24])).setTextColor(RegionScreenManager.getColourToken(r.is_protection()));
+			((GenericButton) (sh.page1Widgets[24])).setTooltip(RegionScreenManager.getStatus(r.isProtected()));
+			((GenericButton) (sh.page1Widgets[24])).setTextColor(RegionScreenManager.getColourToken(r.isProtected()));
 			((GenericButton) (sh.page1Widgets[24])).setDirty(true);
 			return;
 		}
@@ -383,15 +383,15 @@ public class Screen_Listener implements Listener {
 			if (!PermissionsCore.canModify(r, (Player) sp)) {
 				PermissionsCore.sendInvalidPermsPopup(sp);
 			}
-			if (r.isPreventingInteraction()) {
+			if (r.isPreventInteraction()) {
 				miscProtection.editInteraction(r, false);
 				sp.sendNotification("Prevent Interaction", ChatColor.RED + "Interaction Disabled", Material.SHEARS);
 			} else {
 				miscProtection.editInteraction(r, true);
 				sp.sendNotification("Prevent Interaction", ChatColor.GREEN + "Interaction Enabled", Material.SHEARS);
 			}
-			((GenericButton) (sh.page1Widgets[4])).setTooltip(RegionScreenManager.getStatus(r.isPreventingInteraction()));
-			((GenericButton) (sh.page1Widgets[4])).setTextColor(RegionScreenManager.getColourToken(r.isPreventingInteraction()));
+			((GenericButton) (sh.page1Widgets[4])).setTooltip(RegionScreenManager.getStatus(r.isPreventInteraction()));
+			((GenericButton) (sh.page1Widgets[4])).setTextColor(RegionScreenManager.getColourToken(r.isPreventInteraction()));
 			((GenericButton) (sh.page1Widgets[4])).setDirty(true);
 			return;
 		}
@@ -417,15 +417,15 @@ public class Screen_Listener implements Listener {
 			if (!PermissionsCore.canModify(r, (Player) sp)) {
 				PermissionsCore.sendInvalidPermsPopup(sp);
 			}
-			if (r.isChestsLocked()) {
+			if (r.areChestsLocked()) {
 				miscProtection.editChestsLocked(r, false);
 				sp.sendNotification("Chests Locked", ChatColor.RED + "Chest Locking Disabled", Material.CHEST);
 			} else {
 				miscProtection.editChestsLocked(r, true);
 				sp.sendNotification("Chests Locked", ChatColor.GREEN + "Chest Locking Enabled", Material.CHEST);
 			}
-			((GenericButton) (sh.page1Widgets[6])).setTooltip(RegionScreenManager.getStatus(r.isChestsLocked()));
-			((GenericButton) (sh.page1Widgets[6])).setTextColor(RegionScreenManager.getColourToken(r.isChestsLocked()));
+			((GenericButton) (sh.page1Widgets[6])).setTooltip(RegionScreenManager.getStatus(r.areChestsLocked()));
+			((GenericButton) (sh.page1Widgets[6])).setTextColor(RegionScreenManager.getColourToken(r.areChestsLocked()));
 			((GenericButton) (sh.page1Widgets[6])).setDirty(true);
 			return;
 		}
@@ -465,7 +465,7 @@ public class Screen_Listener implements Listener {
 		}
 
 		if (buttonID == mobspawn) {
-			if (r.isMobSpawns()) {
+			if (r.canMobsSpawn()) {
 				if (!PermissionsCore.canModify(r, (Player) sp)) {
 					PermissionsCore.sendInvalidPermsPopup(sp);
 				}
@@ -475,14 +475,14 @@ public class Screen_Listener implements Listener {
 				mob.editMobSpawn(r, true);
 				sp.sendNotification("Mob Spawns", ChatColor.GREEN + "Mob Spawns Enabled", Material.RAW_FISH);
 			}
-			((GenericButton) (sh.page1Widgets[9])).setTooltip(RegionScreenManager.getStatus(r.isMobSpawns()));
-			((GenericButton) (sh.page1Widgets[9])).setTextColor(RegionScreenManager.getColourToken(r.isMobSpawns()));
+			((GenericButton) (sh.page1Widgets[9])).setTooltip(RegionScreenManager.getStatus(r.canMobsSpawn()));
+			((GenericButton) (sh.page1Widgets[9])).setTextColor(RegionScreenManager.getColourToken(r.canMobsSpawn()));
 			((GenericButton) (sh.page1Widgets[9])).setDirty(true);
 			return;
 		}
 
 		if (buttonID == monsterspawn) {
-			if (r.isMonsterSpawns()) {
+			if (r.canMonstersSpawn()) {
 				if (!PermissionsCore.canModify(r, (Player) sp)) {
 					PermissionsCore.sendInvalidPermsPopup(sp);
 				}
@@ -492,8 +492,8 @@ public class Screen_Listener implements Listener {
 				mob.editMonsterSpawn(r, true);
 				sp.sendNotification("Monster Spawns", ChatColor.GREEN + "Monster Spawns Enabled", Material.RAW_FISH);
 			}
-			((GenericButton) (sh.page1Widgets[10])).setTooltip(RegionScreenManager.getStatus(r.isMonsterSpawns()));
-			((GenericButton) (sh.page1Widgets[10])).setTextColor(RegionScreenManager.getColourToken(r.isMonsterSpawns()));
+			((GenericButton) (sh.page1Widgets[10])).setTooltip(RegionScreenManager.getStatus(r.canMonstersSpawn()));
+			((GenericButton) (sh.page1Widgets[10])).setTextColor(RegionScreenManager.getColourToken(r.canMonstersSpawn()));
 			((GenericButton) (sh.page1Widgets[10])).setDirty(true);
 			return;
 		}
@@ -706,15 +706,15 @@ public class Screen_Listener implements Listener {
 			if (!PermissionsCore.canModify(r, (Player) sp)) {
 				PermissionsCore.sendInvalidPermsPopup(sp);
 			}
-			if (r.isForcingCommand()) {
+			if (r.isForceCommand()) {
 				misc.editSetForceCommand(r, false);
 				sp.sendNotification("Force Command", ChatColor.RED + "Force Command Disabled", Material.GOLDEN_APPLE);
 			} else {
 				misc.editSetForceCommand(r, true);
 				sp.sendNotification("Force Command", ChatColor.GREEN + "Force Command Enabled", Material.GOLDEN_APPLE);
 			}
-			((GenericButton) (sh.page1Widgets[23])).setTooltip(RegionScreenManager.getStatus(r.isForcingCommand()));
-			((GenericButton) (sh.page1Widgets[23])).setTextColor(RegionScreenManager.getColourToken(r.isForcingCommand()));
+			((GenericButton) (sh.page1Widgets[23])).setTooltip(RegionScreenManager.getStatus(r.isForceCommand()));
+			((GenericButton) (sh.page1Widgets[23])).setTextColor(RegionScreenManager.getColourToken(r.isForceCommand()));
 			((GenericButton) (sh.page1Widgets[23])).setDirty(true);
 			return;
 		}

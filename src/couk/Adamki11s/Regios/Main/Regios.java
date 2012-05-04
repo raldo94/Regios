@@ -31,7 +31,6 @@ import couk.Adamki11s.Regios.SpoutGUI.CacheHandler;
 import couk.Adamki11s.Regios.SpoutGUI.Screen_Listener;
 import couk.Adamki11s.Regios.SpoutInterface.SpoutCraftListener;
 import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutInventoryListener;
 import couk.Adamki11s.Regios.Versions.VersionTracker;
 
 public class Regios extends JavaPlugin {
@@ -119,7 +118,6 @@ public class Regios extends JavaPlugin {
 		if (SpoutInterface.global_spoutEnabled) {
 			CacheHandler.cacheObjects();
 			pm.registerEvents(new SpoutCraftListener(), this);
-			pm.registerEvents(new SpoutInventoryListener(), this);
 			pm.registerEvents(new Screen_Listener(), this);
 		}
 
