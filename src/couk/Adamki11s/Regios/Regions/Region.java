@@ -473,11 +473,11 @@ public class Region extends PermChecks {
 	}
 
 	public Location getL1() {
-		return l1;
+		return new Location(world, l1.getX(), l1.getY(), l1.getZ());
 	}
 
 	public Location getL2() {
-		return l2;
+		return new Location(world, l2.getX(), l2.getY(), l2.getZ());
 	}
 
 	public String getLeaveMessage() {
