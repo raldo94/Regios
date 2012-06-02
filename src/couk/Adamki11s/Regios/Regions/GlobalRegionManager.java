@@ -2,14 +2,19 @@ package couk.Adamki11s.Regios.Regions;
 
 import java.util.ArrayList;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 
 
 public class GlobalRegionManager {
 	
 	private static ArrayList<Region> regions = new ArrayList<Region>()
-			, regionsInWorld = new ArrayList<Region>();
+							, regionsInWorld = new ArrayList<Region>()
+							, regionsAtLocation = new ArrayList<Region>();
+	private static final ExtrasRegions extReg = new ExtrasRegions();
 	
 	private static ArrayList<GlobalWorldSetting> worldSettings = new ArrayList<GlobalWorldSetting>();
 	
@@ -25,6 +30,16 @@ public class GlobalRegionManager {
 			}
 		}
 		return regionsInWorld;
+	}
+	
+	public static ArrayList<Region> getRegions(Location l){
+		regionsAtLocation.clear();
+		for(Region r : regions) {
+			if(extReg.isInsideCuboid(l, r.getL1(), r.getL2())) {
+				regionsAtLocation.add(r);
+			}
+		}
+		return regionsAtLocation;
 	}
 	
 	public static ArrayList<GlobalWorldSetting> getWorldSettings(){
@@ -61,6 +76,15 @@ public class GlobalRegionManager {
 	public static Region getRegion(Player p){
 		for(Region r : regions){
 			if(r.getPlayersInRegion().contains(p)){
+				return r;
+			}
+		}
+		return null;
+	}
+	
+	public static Region getRegion(Location l){
+		for(Region r : regions){
+			if(extReg.isInsideCuboid(l, r.getL1(), r.getL2())){
 				return r;
 			}
 		}

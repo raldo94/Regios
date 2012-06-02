@@ -97,7 +97,14 @@ public class SpoutRegion {
 		}
 		lastSong.put(p, shuffled);
 		SoundManager sm = SpoutManager.getSoundManager();
-		sm.playCustomMusic(Regios.regios, (SpoutPlayer) p, shuffled, true);
+		if (shuffled.length() > 5){
+			sm.playCustomMusic(Regios.regios, (SpoutPlayer) p, shuffled, true);
+		} else {
+			if (p.getName() == r.getOwner())
+			{
+				p.sendMessage("Music list is empty. Please use '/regios use-music-url " + r.getName() + " false' to disable playing music.");
+			}
+		}
 	}
 
 	public static void stopMusicPlaying(Player p, Region r) {

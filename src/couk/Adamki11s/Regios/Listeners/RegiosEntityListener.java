@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -20,6 +21,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
@@ -37,7 +39,18 @@ public class RegiosEntityListener implements Listener {
 
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	private static final SubRegionManager srm = new SubRegionManager();
-	
+
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onEntityExplode(EntityExplodeEvent evt)
+	{
+		if ((evt.getEntity() instanceof EnderDragon))
+			if(GlobalRegionManager.getGlobalWorldSetting(evt.getLocation().getWorld()).dragonProtect)
+			{
+				evt.setCancelled(true);
+			}
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent evt) {
 
@@ -400,8 +413,7 @@ public class RegiosEntityListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			Location rl1 = reg.getL1(), rl2 = reg.getL2();
-			if (extReg.isInsideCuboid(l, rl1, rl2)) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}

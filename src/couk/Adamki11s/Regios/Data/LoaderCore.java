@@ -75,6 +75,7 @@ public class LoaderCore {
 				, ShowPvP = c.getBoolean("DefaultSettings.Messages.ShowPvPWarning", true)
 				, pe = c.getBoolean("DefaultSettings.Password.PasswordProtection", false)
 				, fireProtection = c.getBoolean("DefaultSettings.Protection.FireProtection", false)
+				, fireSpread = c.getBoolean("DefaultSettings.Protection.FireSpread", true)
 				, TNTEnabled = c.getBoolean("DefaultSettings.Protection.TNTEnabled", false)
 				, playmusic = c.getBoolean("DefaultSettings.Spout.Sound.PlayCustomMusic", false)
 				, permWipeOnEnter = c.getBoolean("DefaultSettings.Inventory.PermWipeOnEnter", false)
@@ -154,6 +155,7 @@ public class LoaderCore {
 							, ShowPrevEntryMessage
 							, ShowPrevExitMessage
 							, fireProtection
+							, fireSpread
 							, musicUrl
 							, playmusic
 							, permWipeOnEnter
@@ -181,6 +183,9 @@ public class LoaderCore {
 
 		int id = c.getInt("Region.Tools.Setting.ID", Material.WOOD_AXE.getId());
 		ConfigurationData.defaultSelectionTool = Material.getMaterial(id);
+		
+		boolean useWE = c.getBoolean("Region.UseWorldEdit", false);
+		ConfigurationData.useWorldEdit = useWE;
 
 		boolean econ = c.getBoolean("Region.UseEconomy", false)
 				, logs = c.getBoolean("Region.LogsEnabled", true);
@@ -283,8 +288,9 @@ public class LoaderCore {
 						, doorsLocked = c.getBoolean("Region.General.DoorsLocked", false)
 						, chestsLocked = c.getBoolean("Region.General.ChestsLocked", false)
 						, passwordEnabled = c.getBoolean("Region.General.Password.Enabled", false)
-						, fireProtection = c.getBoolean("DefaultSettings.Protection.FireProtection", false)
-						, TNTEnabled = c.getBoolean("DefaultSettings.Protection.TNTEnabled", false)
+						, fireProtection = c.getBoolean("Region.General.FireProtection", false)
+						, fireSpread = c.getBoolean("Region.General.FireSpread", true)
+						, TNTEnabled = c.getBoolean("Region.General.TNTEnabled", false)
 						, mobSpawns = c.getBoolean("Region.Other.MobSpawns", true)
 						, monsterSpawns = c.getBoolean("Region.Other.MonsterSpawns", true)
 						, pvp = c.getBoolean("Region.Other.PvP", true)
@@ -390,6 +396,7 @@ public class LoaderCore {
 				r.setWelcomeMessage((welcomeMessage));
 
 				r.setFireProtection(fireProtection);
+				r.setFireSpread(fireSpread);
 				r.setTNTEnabled(TNTEnabled);
 
 				r.setPlayCustomSoundUrl(playmusic);

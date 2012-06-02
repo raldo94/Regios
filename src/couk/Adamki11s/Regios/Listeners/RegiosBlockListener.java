@@ -14,8 +14,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -36,6 +39,7 @@ public class RegiosBlockListener implements Listener {
 
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	private static final SubRegionManager srm = new SubRegionManager();
+	final CreationCommands cc = new CreationCommands();
 
 	public void extinguish(Block b) {
 		if (b.getType() == Material.FIRE) {
@@ -43,9 +47,19 @@ public class RegiosBlockListener implements Listener {
 		}
 	}
 
+	public void extinguishAround(Block b) {
+		if (b.getType() == Material.FIRE) {
+			extinguish(b.getRelative(1, 0, 0));
+			extinguish(b.getRelative(-1, 0, 0));
+			extinguish(b.getRelative(0, 1, 0));
+			extinguish(b.getRelative(0, -1, 0));
+			extinguish(b.getRelative(0, 0, 1));
+			extinguish(b.getRelative(0, 0, -1));
+		}
+	}
+
 	public void forceBucketEvent(BlockPlaceEvent evt) {
-		if (evt.getBlock().getType() == Material.LAVA || evt.getBlock().getType() == Material.STATIONARY_LAVA || evt.getBlock().getType() == Material.STATIONARY_WATER
-				|| evt.getBlock().getType() == Material.WATER) {
+		if (evt.getBlock().getType() == Material.LAVA || evt.getBlock().getType() == Material.STATIONARY_LAVA || evt.getBlock().getType() == Material.STATIONARY_WATER || evt.getBlock().getType() == Material.WATER) {
 			Location l = evt.getBlock().getLocation();
 			Player p = evt.getPlayer();
 			World w = l.getWorld();
@@ -72,19 +86,12 @@ public class RegiosBlockListener implements Listener {
 			ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 			for (Region reg : regionSet) {
-				Location max = new Location(w, Math.max(reg.getL1().getX(), reg.getL2().getX()), Math.max(reg.getL1().getY(), reg.getL2().getY()), Math.max(reg.getL1().getZ(),
-						reg.getL2().getZ())), min = new Location(w, Math.min(reg.getL1().getX(), reg.getL2().getX()), Math.min(reg.getL1().getY(), reg.getL2().getY()), Math.min(
-						reg.getL1().getZ(), reg.getL2().getZ()));
-				min.subtract(8, 8, 8);
-				max.add(8, 8, 8);
-				if (extReg.isInsideCuboid(l, min, max)) {
+				if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 					currentRegionSet.add(reg);
 				}
 			}
 
-			if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-												// inside region then cancel the
-												// check.
+			if (currentRegionSet.isEmpty()) { // If player is in chunk range but not inside region then cancel the check.
 				return;
 			} else {
 				for (Region r : currentRegionSet) {
@@ -101,6 +108,7 @@ public class RegiosBlockListener implements Listener {
 			}
 		}
 	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onSignChange(SignChangeEvent evt) {
 		if (!EconomyCore.isEconomySupportEnabled()) {
@@ -152,6 +160,7 @@ public class RegiosBlockListener implements Listener {
 			}
 		}
 	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockIgnite(BlockIgniteEvent evt) {
 		World w = evt.getBlock().getWorld();
@@ -160,12 +169,11 @@ public class RegiosBlockListener implements Listener {
 		if (GlobalRegionManager.getGlobalWorldSetting(w) != null) {
 			if (!GlobalRegionManager.getGlobalWorldSetting(w).fireEnabled) {
 				Block b = evt.getBlock();
-				extinguish(b.getRelative(1, 0, 0));
-				extinguish(b.getRelative(-1, 0, 0));
-				extinguish(b.getRelative(0, 1, 0));
-				extinguish(b.getRelative(0, -1, 0));
-				extinguish(b.getRelative(0, 0, 1));
-				extinguish(b.getRelative(0, 0, -1));
+				extinguishAround(b);
+				evt.setCancelled(true);
+				return;
+			}
+			if (!GlobalRegionManager.getGlobalWorldSetting(w).fireSpreadEnabled && evt.getCause() == IgniteCause.SPREAD) {
 				evt.setCancelled(true);
 				return;
 			}
@@ -199,10 +207,7 @@ public class RegiosBlockListener implements Listener {
 			}
 		}
 
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but
-											// not
-											// inside region then cancel the
-											// check.
+		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not inside region then cancel the check.
 			return;
 		}
 
@@ -214,16 +219,81 @@ public class RegiosBlockListener implements Listener {
 
 		if (r.isFireProtection()) {
 			Block b = evt.getBlock();
-			extinguish(b.getRelative(1, 0, 0));
-			extinguish(b.getRelative(-1, 0, 0));
-			extinguish(b.getRelative(0, 1, 0));
-			extinguish(b.getRelative(0, -1, 0));
-			extinguish(b.getRelative(0, 0, 1));
-			extinguish(b.getRelative(0, 0, -1));
+			extinguishAround(b);
 			evt.setCancelled(true);
 			return;
 		}
 
+		if (!r.isFireSpread() && evt.getCause() == IgniteCause.SPREAD) {
+			evt.setCancelled(true);
+			return;
+		}
+
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onBlockBurn(BlockBurnEvent evt)
+	{
+		Location l = evt.getBlock().getLocation();
+		World w = l.getWorld();
+		Chunk c = w.getChunkAt(l);
+
+		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
+
+		Region r;
+
+		ArrayList<Region> regionSet = new ArrayList<Region>();
+
+		for (Region region : GlobalRegionManager.getRegions()) {
+			for (Chunk chunk : region.getChunkGrid().getChunks()) {
+				if (chunk.getWorld() == w) {
+					if (extReg.areChunksEqual(chunk, c)) {
+						if (!regionSet.contains(region)) {
+							regionSet.add(region);
+						}
+					}
+				}
+			}
+		}
+
+		if (regionSet.isEmpty()) {
+			if (gws != null) {
+				if (!gws.blockForm_enabled) {
+					evt.setCancelled(true);
+				}
+			}
+			return;
+		}
+
+		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
+
+		for (Region reg : regionSet) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
+				currentRegionSet.add(reg);
+			}
+		}
+
+		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not inside region then cancel the check.
+			return;
+		}
+
+		if (currentRegionSet.size() > 1) {
+			r = srm.getCurrentRegion(null, currentRegionSet);
+		} else {
+			r = currentRegionSet.get(0);
+		}
+
+		if (r.isFireProtection()) {
+			Block b = evt.getBlock();
+			extinguishAround(b);
+			evt.setCancelled(true);
+			return;
+		}
+
+		if (!r.isFireSpread()) {
+			evt.setCancelled(true);
+			return;
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -269,8 +339,8 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
+			// inside region then cancel the
+			// check.
 			if (!GlobalRegionManager.getGlobalWorldSetting(w).blockForm_enabled) {
 				evt.setCancelled(true);
 			}
@@ -288,6 +358,7 @@ public class RegiosBlockListener implements Listener {
 			return;
 		}
 	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent evt) {
 		Player p = evt.getPlayer();
@@ -337,7 +408,7 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
+			// inside region then cancel the
 			// check.
 			if (gws != null) {
 				if (gws.invert_protection) {
@@ -379,7 +450,7 @@ public class RegiosBlockListener implements Listener {
 				}
 			}
 		}
-		
+
 		if (r.is_protectionPlace()) {
 			if (!r.canBypassProtection(p)) {
 				evt.setCancelled(true);
@@ -390,8 +461,6 @@ public class RegiosBlockListener implements Listener {
 
 	}
 
-	final CreationCommands cc = new CreationCommands();
-	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent evt) {
 		Player p = evt.getPlayer();
@@ -471,9 +540,7 @@ public class RegiosBlockListener implements Listener {
 			}
 		}
 
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
+		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not inside region then cancel the check.
 			if (gws != null) {
 				if (gws.invert_protection) {
 					if (!gws.canBypassWorldChecks(p)) {
@@ -502,4 +569,60 @@ public class RegiosBlockListener implements Listener {
 
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onBlockFromTo(BlockFromToEvent evt)
+	{
+		Block blockFrom = evt.getBlock();
+
+		boolean isWater = blockFrom.getTypeId() == 8 || blockFrom.getTypeId() == 9;
+		boolean isLava = blockFrom.getTypeId() == 10 || blockFrom.getTypeId() == 11;
+
+		if(!isWater && !isLava)
+		{
+			return;
+		}
+
+		//TODO change when region priorities are implemented
+		
+		ArrayList<Region> afr = GlobalRegionManager.getRegions(blockFrom.getLocation());
+		ArrayList<Region> atr = GlobalRegionManager.getRegions(evt.getToBlock().getLocation());
+
+		if(!afr.isEmpty())
+		{
+			if(!atr.isEmpty())
+			{
+				for(Region fr : afr)
+				{
+					if (atr.contains(fr) && atr.size() == 1)
+					{
+						return;
+					}
+					else
+					{
+						atr.remove(fr);
+					}
+				}
+				
+				for(Region tr : atr)
+				{
+					if(tr.isProtected())
+					{
+						evt.setCancelled(true);
+					}
+				}
+			}
+		}
+
+		if(!atr.isEmpty())
+		{
+			for(Region tr: atr)
+			{
+				if (tr.isProtected())
+				{
+					evt.setCancelled(true);
+					return;
+				}
+			}
+		}
+	}
 }

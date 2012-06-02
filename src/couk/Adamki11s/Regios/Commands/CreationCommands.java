@@ -9,6 +9,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.sk89q.minecraft.util.commands.CommandException;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
+import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
+import com.sk89q.worldedit.bukkit.selections.Selection;
+
 import couk.Adamki11s.Regios.API.RegionDataSet;
 import couk.Adamki11s.Regios.CustomExceptions.InvalidDataSetException;
 import couk.Adamki11s.Regios.CustomExceptions.RegionNameExistsException;
@@ -22,6 +28,7 @@ import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.Regios.Restrictions.RestrictionManager;
 import couk.Adamki11s.Regios.Restrictions.RestrictionParameters;
+import couk.Adamki11s.Regios.WorldEditInterface.WEInterface;
 
 public class CreationCommands {
 
@@ -76,7 +83,7 @@ public class CreationCommands {
 		}
 		p.sendMessage(ChatColor.GREEN + "[Regios] Left and right click to select points.");
 	}
-	
+
 	public static void createRegion(RegionDataSet rds) throws InvalidDataSetException{
 		String errors = "";
 		if (rds.getPlugin() == null) {
@@ -109,7 +116,7 @@ public class CreationCommands {
 			p.sendMessage(ChatColor.RED + "[Regios] A region with name : " + ChatColor.BLUE + name + ChatColor.RED + " already exists!");
 			throw new RegionNameExistsException(name);
 		}
-		if (!point1.containsKey(p) || !point2.containsKey(p)) {
+		if (!arePointsSet(p)) {
 			p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points!");
 			throw new RegionPointsNotSetException(name);
 		}
@@ -139,27 +146,27 @@ public class CreationCommands {
 				point2.get(p).getY()) - Math.min(point1.get(p).getY(), point2.get(p).getY()), length = Math.max(point1.get(p).getZ(), point2.get(p).getZ())
 				- Math.min(point1.get(p).getZ(), point2.get(p).getZ());
 		int rCount = GlobalRegionManager.getOwnedRegions(p.getName());
-		
+
 		RestrictionParameters params = RestrictionManager.getRestriction(p);
-		
+
 		if(width > params.getRegionWidthLimit()){
 			p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this width!");
 			p.sendMessage(ChatColor.RED + "[Regios] Maximum width : " + ChatColor.BLUE + params.getRegionWidthLimit() + ChatColor.RED + ", your width : " + ChatColor.BLUE + width);
 			return;
 		}
-		
+
 		if(height > params.getRegionHeightLimit()){
 			p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this height!");
 			p.sendMessage(ChatColor.RED + "[Regios] Maximum height : " + ChatColor.BLUE + params.getRegionHeightLimit() + ChatColor.RED + ", your height : " + ChatColor.BLUE + height);
 			return;
 		}
-		
+
 		if(length > params.getRegionLengthLimit()){
 			p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this length!");
 			p.sendMessage(ChatColor.RED + "[Regios] Maximum length : " + ChatColor.BLUE + params.getRegionLengthLimit() + ChatColor.RED + ", your length : " + ChatColor.BLUE + length);
 			return;
 		}
-		
+
 		if(rCount > params.getRegionLimit()){
 			p.sendMessage(ChatColor.RED + "[Regios] You cannot create more than " + ChatColor.YELLOW + params.getRegionLimit() + ChatColor.RED + " regions!");
 			return;
@@ -173,8 +180,89 @@ public class CreationCommands {
 		PingManager.created();
 	}
 
+	public void createRegionWE(Player p, String name) throws RegionNameExistsException, CommandException {
+		if (GlobalRegionManager.doesExist(name)) {
+			p.sendMessage(ChatColor.RED + "[Regios] A region with name : " + ChatColor.BLUE + name + ChatColor.RED + " already exists!");
+			throw new RegionNameExistsException(name);
+		}
+		StringBuilder invalidName = new StringBuilder();
+		boolean integrity = true;
+		for (char ch : name.toCharArray()) {
+			boolean valid = true;
+			for (char inv : invalidModifiers) {
+				if (ch == inv) {
+					valid = false;
+					integrity = false;
+				}
+			}
+			if (!valid) {
+				invalidName.append(ChatColor.RED).append(ch);
+			} else {
+				invalidName.append(ChatColor.GREEN).append(ch);
+			}
+		}
+
+		if (!integrity) {
+			p.sendMessage(ChatColor.RED + "[Regios] Name contained  invalid characters : " + invalidName.toString());
+			return;
+		}
+
+		WorldEditPlugin worldEdit = WEInterface.getWorldEdit();
+
+		// Attempt to get the player's selection from WorldEdit
+		Selection sel = worldEdit.getSelection(p);
+
+		if(sel == null)
+		{
+			throw new CommandException("Select a region with WorldEdit first.");
+		}
+
+		// Detect the type of region from WorldEdit
+		if (sel instanceof Polygonal2DSelection) {
+			throw new CommandException("Regios doesn't support polygonal regions.... yet :D");
+		} else if (sel instanceof CuboidSelection) {
+			int rCount = GlobalRegionManager.getOwnedRegions(p.getName());
+
+			RestrictionParameters params = RestrictionManager.getRestriction(p);
+
+			if(sel.getWidth() > params.getRegionWidthLimit()){
+				p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this width!");
+				p.sendMessage(ChatColor.RED + "[Regios] Maximum width : " + ChatColor.BLUE + params.getRegionWidthLimit() + ChatColor.RED + ", your width : " + ChatColor.BLUE + sel.getWidth());
+				return;
+			}
+
+			if(sel.getHeight() > params.getRegionHeightLimit()){
+				p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this height!");
+				p.sendMessage(ChatColor.RED + "[Regios] Maximum height : " + ChatColor.BLUE + params.getRegionHeightLimit() + ChatColor.RED + ", your height : " + ChatColor.BLUE + sel.getHeight());
+				return;
+			}
+
+			if(sel.getLength() > params.getRegionLengthLimit()){
+				p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this length!");
+				p.sendMessage(ChatColor.RED + "[Regios] Maximum length : " + ChatColor.BLUE + params.getRegionLengthLimit() + ChatColor.RED + ", your length : " + ChatColor.BLUE + sel.getLength());
+				return;
+			}
+
+			if(rCount > params.getRegionLimit()){
+				p.sendMessage(ChatColor.RED + "[Regios] You cannot create more than " + ChatColor.YELLOW + params.getRegionLimit() + ChatColor.RED + " regions!");
+				return;
+			}
+
+			new CubeRegion(p.getName(), name, sel.getMinimumPoint(), sel.getMaximumPoint(), p.getWorld(), null, true);
+			p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + name + ChatColor.GREEN + " created successfully!");
+			clearPoints(p);
+			modding.put(p, false);
+			setting.put(p, false);
+			PingManager.created();
+		} else {
+			throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+		}
+
+
+	}
+
 	public void createBlueprint(Player p, String name) {
-		if (!point1.containsKey(p) || !point2.containsKey(p)) {
+		if (!arePointsSet(p)) {
 			p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points!");
 			return;
 		}
@@ -205,7 +293,49 @@ public class CreationCommands {
 		modding.put(p, false);
 		setting.put(p, false);
 	}
-	
+
+	public void createBlueprintWE(Player p, String name)  throws CommandException {
+		StringBuilder invalidName = new StringBuilder();
+		boolean integrity = true;
+		for (char ch : name.toCharArray()) {
+			boolean valid = true;
+			for (char inv : invalidModifiers) {
+				if (ch == inv) {
+					valid = false;
+					integrity = false;
+				}
+			}
+			if (!valid) {
+				invalidName.append(ChatColor.RED).append(ch);
+			} else {
+				invalidName.append(ChatColor.GREEN).append(ch);
+			}
+		}
+
+		if (!integrity) {
+			p.sendMessage(ChatColor.RED + "[Regios] Name contained  invalid characters : " + invalidName.toString());
+			return;
+		}
+
+		WorldEditPlugin worldEdit = WEInterface.getWorldEdit();
+
+		// Attempt to get the player's selection from WorldEdit
+		Selection sel = worldEdit.getSelection(p);
+
+		if(sel == null)
+		{
+			throw new CommandException("Select a region with WorldEdit first.");
+		}
+
+		if (sel instanceof Polygonal2DSelection) {
+			throw new CommandException("Regios doesn't support polygonal regions.... yet :D");
+		} else if (sel instanceof CuboidSelection) {
+			RBF_Core.rbf_save.startSave(null, sel.getMinimumPoint(), sel.getMaximumPoint(), name, p, true);
+		} else {
+			throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+		}
+	}
+
 	public static void createBlueprint(String name, Location l1, Location l2) {
 		if (l1 == null || l2 == null) {
 			return;
@@ -243,14 +373,19 @@ public class CreationCommands {
 	}
 
 	public void expandMaxSelection(Player p) {
-		if (point1.containsKey(p) && point2.containsKey(p)) {
+		if (ConfigurationData.useWorldEdit)
+		{
+			p.sendMessage("Command unavailable while WorldEdit mode is true.");
+			return;
+		}
+		else if (arePointsSet(p)) {
 			point1.put(p, (new Location(p.getWorld(), point1.get(p).getX(), 0, point1.get(p).getZ())));
-			point2.put(p, (new Location(p.getWorld(), point2.get(p).getX(), 256, point2.get(p).getZ())));
+			point2.put(p, (new Location(p.getWorld(), point2.get(p).getX(), p.getWorld().getMaxHeight(), point2.get(p).getZ())));
 			p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
 			return;
-		} else if (mod1.containsKey(p) && mod2.containsKey(p)) {
+		} else if (areModPointsSet(p)) {
 			mod1.put(p, (new Location(p.getWorld(), mod1.get(p).getX(), 0, mod1.get(p).getZ())));
-			mod2.put(p, (new Location(p.getWorld(), mod2.get(p).getX(), 256, mod2.get(p).getZ())));
+			mod2.put(p, (new Location(p.getWorld(), mod2.get(p).getX(), p.getWorld().getMaxHeight(), mod2.get(p).getZ())));
 			p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
 			return;
 		} else {

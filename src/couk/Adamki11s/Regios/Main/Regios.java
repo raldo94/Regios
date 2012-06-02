@@ -15,6 +15,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
 import couk.Adamki11s.Regios.Commands.CommandCore;
 import couk.Adamki11s.Regios.Data.CreationCore;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
@@ -157,6 +158,4 @@ public class Regios extends JavaPlugin {
 		}
 		return false;
 	}
-
-
 }

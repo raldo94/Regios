@@ -19,9 +19,10 @@ public class VersionPatcher {
 	static final File patch4063F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "4.0.63.rv");
 	static final File patch4071F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "4.0.71.rv");
 	static final File patch5021F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.21.rv");
+	static final File patch5045F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.45.rv");
 
 	public static void runPatch(String version) throws IOException {
-		if (version.equalsIgnoreCase("5.0.41")) {
+		if (version.equalsIgnoreCase("5.0.45")) {
 			if (!patch4057F.exists()) {
 				patch4057(version);
 				patch4057F.createNewFile();
@@ -37,6 +38,10 @@ public class VersionPatcher {
 			if (!patch5021F.exists()) {
 				patch5021(version);
 				patch5021F.createNewFile();
+			}
+			if (!patch5045F.exists()) {
+				patch5045(version);
+				patch5045F.createNewFile();
 			}
 		}
 	}
@@ -134,6 +139,44 @@ public class VersionPatcher {
 		}
 		ConfigurationData.logs = true;
 		outstream.println("[Regios][Patch] Region.UseEconomy property modified from Region.Economy.");
+		outstream.println("[Regios][Patch] Patch completed!");
+	}
+
+	private static void patch5045(String v) {
+		outstream.println("[Regios][Patch] Patching files for version : " + v);
+		outstream.println("[Regios][Patch] Modifying general configuration file...");
+		File generalconfig = new File(config_root + File.separator + "GeneralSettings.config");
+		FileConfiguration c = YamlConfiguration.loadConfiguration(generalconfig);
+		boolean value = c.getBoolean("Region.UseWorldEdit", false);
+		c = YamlConfiguration.loadConfiguration(generalconfig);
+		c.set("Region.UseWorldEdit", value);
+		try {
+			c.save(generalconfig);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		outstream.println("[Regios][Patch] Modifying World configuration files...");
+		File worldfolder = new File(config_root + File.separator + "WorldConfigurations" + File.separator);
+		for (File w : worldfolder.listFiles())
+		{
+			int pos = w.getName().lastIndexOf(".");
+			FileConfiguration wc = YamlConfiguration.loadConfiguration(w);
+			boolean wvalue = wc.getBoolean(w.getName().substring(0, pos) + ".Protection.FireSpreadEnabled", true);
+			boolean dragon = wc.getBoolean(w.getName().substring(0, pos) + ".Protection.DragonProtect", true);
+			wc = YamlConfiguration.loadConfiguration(w);
+			wc.set(w.getName().substring(0, pos) + ".Protection.FireSpreadEnabled", wvalue);
+			wc.set(w.getName().substring(0, pos) + ".Protection.DragonProtect", dragon);
+			try {
+				wc.save(w);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		ConfigurationData.logs = true;
+		outstream.println("[Regios][Patch] Region.UseWorldEdit property added.");
+		outstream.println("[Regios][Patch] FireSpreadEnabled added to world configurations.");
+		outstream.println("[Regios][Patch] DragonProtect added to world configurations.");
 		outstream.println("[Regios][Patch] Patch completed!");
 	}
 

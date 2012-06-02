@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -110,6 +111,7 @@ public class RegiosPlayerListener implements Listener {
 		}
 		return outcome;
 	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuit(PlayerQuitEvent evt) {
 		Player p = evt.getPlayer();
@@ -125,6 +127,7 @@ public class RegiosPlayerListener implements Listener {
 			}
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent evt) {
 		SpoutInterface.spoutEnabled.put(evt.getPlayer(), false);
@@ -132,6 +135,7 @@ public class RegiosPlayerListener implements Listener {
 			EconomyPending.loadAndSendPending(evt.getPlayer());
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent evt) {
 
@@ -365,12 +369,7 @@ public class RegiosPlayerListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			Location max = new Location(w, Math.max(reg.getL1().getX(), reg.getL2().getX()), Math.max(reg.getL1().getY(), reg.getL2().getY()), Math.max(reg.getL1().getZ(),
-					reg.getL2().getZ())), min = new Location(w, Math.min(reg.getL1().getX(), reg.getL2().getX()), Math.min(reg.getL1().getY(), reg.getL2().getY()), Math.min(
-					reg.getL1().getZ(), reg.getL2().getZ()));
-			min.subtract(8, 8, 8);
-			max.add(8, 8, 8);
-			if (extReg.isInsideCuboid(l, min, max)) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -393,9 +392,35 @@ public class RegiosPlayerListener implements Listener {
 			}
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent evt) {
 		Location l = evt.getBlockClicked().getLocation();
+		BlockFace bf = evt.getBlockFace();
+		if (bf.name().equalsIgnoreCase("UP"))
+		{
+			l.setY(l.getY() + 1);
+		}
+		if (bf.name().equalsIgnoreCase("DOWN"))
+		{
+			l.setY(l.getY() - 1);
+		}
+		if (bf.name().equalsIgnoreCase("NORTH"))
+		{
+			l.setZ(l.getZ() - 1);
+		}
+		if (bf.name().equalsIgnoreCase("SOUTH"))
+		{
+			l.setZ(l.getZ() + 1);
+		}
+		if (bf.name().equalsIgnoreCase("EAST"))
+		{
+			l.setX(l.getX() + 1);
+		}
+		if (bf.name().equalsIgnoreCase("WEST"))
+		{
+			l.setX(l.getX() - 1);
+		}
 		Player p = evt.getPlayer();
 		World w = l.getWorld();
 		Chunk c = w.getChunkAt(l);
@@ -421,12 +446,7 @@ public class RegiosPlayerListener implements Listener {
 		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
 
 		for (Region reg : regionSet) {
-			Location max = new Location(w, Math.max(reg.getL1().getX(), reg.getL2().getX()), Math.max(reg.getL1().getY(), reg.getL2().getY()), Math.max(reg.getL1().getZ(),
-					reg.getL2().getZ())), min = new Location(w, Math.min(reg.getL1().getX(), reg.getL2().getX()), Math.min(reg.getL1().getY(), reg.getL2().getY()), Math.min(
-					reg.getL1().getZ(), reg.getL2().getZ()));
-			min.subtract(8, 8, 8);
-			max.add(8, 8, 8);
-			if (extReg.isInsideCuboid(l, min, max)) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
 			}
 		}
@@ -449,6 +469,7 @@ public class RegiosPlayerListener implements Listener {
 			}
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerMove(PlayerMoveEvent evt) {
 

@@ -15,7 +15,6 @@ public class ExtrasRegions extends RegionMethods {
 
 	@Override
 	public boolean isInsideCuboid(Player p, Location point1, Location point2) {
-		// TODO Auto-generated method stub
 		double x1 = point1.getX(), x2 = point2.getX(),
 		       y1 = point1.getY(), y2 = point2.getY(),
 		       z1 = point1.getZ(), z2 = point2.getZ(),
@@ -29,8 +28,8 @@ public class ExtrasRegions extends RegionMethods {
 		return (px >= min.getX() && px <= max.getX() + 1 && py >= min.getY() && py <= max.getY() && pz >= min.getZ() && pz <= max.getZ() + 1);
 	}
 	
+	@Override
 	public boolean isInsideCuboid(Location l, Location point1, Location point2) {
-		// TODO Auto-generated method stub
 		double x1 = point1.getX(), x2 = point2.getX(),
 		       y1 = point1.getY(), y2 = point2.getY(),
 		       z1 = point1.getZ(), z2 = point2.getZ(),
@@ -41,12 +40,11 @@ public class ExtrasRegions extends RegionMethods {
 		Location max = new Location(point1.getWorld(), Math.max(x1, x2), Math.max(y1, y2), Math.max(z1, z2));
 		Location min = new Location(point1.getWorld(), Math.min(x1, x2), Math.min(y1, y2), Math.min(z1, z2));
 
-		return (px >= min.getX() && px <= max.getX() + 1 && py >= min.getY() && py <= max.getY() && pz >= min.getZ() && pz <= max.getZ() + 1);
+		return (px >= min.getX() && px <= max.getX() && py >= min.getY() && py <= max.getY() && pz >= min.getZ() && pz <= max.getZ());
 	}
 
 	@Override
 	public boolean isInsideRadius(Player p, Location centre, int radius) {
-		// TODO Auto-generated method stub
 		Location point1 = new Location(centre.getWorld(), centre.getX() - radius, centre.getY() - radius, centre.getZ() - radius);
 		Location point2 = new Location(centre.getWorld(), centre.getX() + radius, centre.getY() + radius, centre.getZ() + radius);
 		
@@ -72,7 +70,7 @@ public class ExtrasRegions extends RegionMethods {
 				(((px <= x1) && 
 				(px >= x2)) || 
 				((px >= x1) && 
-				(px <= x2)))   ){
+				(px <= x2)))){
 				return true;
 			}		
 		
@@ -109,7 +107,7 @@ public class ExtrasRegions extends RegionMethods {
 					(((px <= x1) && 
 					(px >= x2)) || 
 					((px >= x1) && 
-					(px <= x2)))   ){
+					(px <= x2)))){
 					playerSet.add(p);
 				}	
 		}
@@ -119,7 +117,6 @@ public class ExtrasRegions extends RegionMethods {
 
 	@Override
 	public List<Player> getPlayersInRadius(Server s, Location centre, int radius) {
-		// TODO Auto-generated method stub
 		
 		Location point1 = new Location(centre.getWorld(), centre.getX() - radius, centre.getY() - radius, centre.getZ() - radius);
 		Location point2 = new Location(centre.getWorld(), centre.getX() + radius, centre.getY() + radius, centre.getZ() + radius);
@@ -199,7 +196,6 @@ public class ExtrasRegions extends RegionMethods {
 
 	@Override
 	public List<Entity> getEntitiesInRadius(Location centre, int radius) {
-		// TODO Auto-generated method stub
 		List<Entity> entitySet = new ArrayList<Entity>();
 		Location point1 = new Location(centre.getWorld(), centre.getX() - radius, centre.getY() - radius, centre.getZ() - radius);
 		Location point2 = new Location(centre.getWorld(), centre.getX() + radius, centre.getY() + radius, centre.getZ() + radius);
@@ -239,7 +235,6 @@ public class ExtrasRegions extends RegionMethods {
 
 	@Override
 	public int getBlockCountInCuboid(Location point1, Location point2) {
-		// TODO Auto-generated method stub
 		int x1 = point1.getBlockX(), x2 = point2.getBlockX(),
 	       y1 = point1.getBlockY(), y2 = point2.getBlockY(),
 	       z1 = point1.getBlockZ(), z2 = point2.getBlockZ();
@@ -257,7 +252,6 @@ public class ExtrasRegions extends RegionMethods {
 
 	@Override
 	public int getBlockCountInRadius(Location centre, int radius) {
-		// TODO Auto-generated method stub
 		Location point1 = new Location(centre.getWorld(), centre.getX() - radius, centre.getY() - radius, centre.getZ() - radius);
 		Location point2 = new Location(centre.getWorld(), centre.getX() + radius, centre.getY() + radius, centre.getZ() + radius);
 		

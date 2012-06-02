@@ -4,17 +4,64 @@ import org.bukkit.Material;
 
 public class ConfigurationData {
 
-	public static String defaultWelcomeMessage, defaultLeaveMessage, defaultProtectionMessage, defaultPreventEntryMessage, defaultPreventExitMessage, password,
-			defaultAuthenticationMessage, defaultAuthenticationSuccessMessage, defaulSpoutEntryMessage, defaulSpoutExitMessage;
+	public static String defaultWelcomeMessage
+		, defaultLeaveMessage
+		, defaultProtectionMessage
+		, defaultPreventEntryMessage
+		, defaultPreventExitMessage
+		, password
+		, defaultAuthenticationMessage
+		, defaultAuthenticationSuccessMessage
+		, defaulSpoutEntryMessage
+		, defaulSpoutExitMessage;
 
-	public static String[] defaultCustomMusicUrl, commandSet, temporaryNodesCacheAdd, temporaryNodesCacheRem, permanentNodesCacheAdd, permanentNodesCacheRemove;
+	public static String[] defaultCustomMusicUrl
+		, commandSet
+		, temporaryNodesCacheAdd
+		, temporaryNodesCacheRem
+		, permanentNodesCacheAdd
+		, permanentNodesCacheRemove;
 
-	public static Material defaultSpoutWelcomeMaterial, defaultSpoutLeaveMaterial, defaultSelectionTool;
+	public static Material defaultSpoutWelcomeMaterial
+		, defaultSpoutLeaveMaterial
+		, defaultSelectionTool;
 
-	public static boolean regionProtected, regionProtectedBreak, regionPlaceProtected, regionPreventEntry, regionPreventExit, mobSpawns, monsterSpawns, healthEnabled, pvp, doorsLocked, chestsLocked, preventInteraction,
-			showPvpWarning, checkForUpdates, downloadUpdatesAuto, cacheOldVersions, forceReload, passwordEnabled, showWelcomeMessage, showLeaveMessage, showProtectionMessage,
-			showPreventEntryMessage, showPreventExitMessage, fireProtection, playCustomMusic, permWipeOnEnter, permWipeOnExit,
-			wipeAndCacheOnEnter, wipeAndCacheOnExit, forceCommand, blockForm, forSale, logs, tntEnabled;
+	public static boolean regionProtected
+		, regionProtectedBreak
+		, regionPlaceProtected
+		, regionPreventEntry
+		, regionPreventExit
+		, mobSpawns
+		, monsterSpawns
+		, healthEnabled
+		, pvp
+		, doorsLocked
+		, chestsLocked
+		, preventInteraction
+		, showPvpWarning
+		, checkForUpdates
+		, downloadUpdatesAuto
+		, cacheOldVersions
+		, forceReload
+		, passwordEnabled
+		, showWelcomeMessage
+		, showLeaveMessage
+		, showProtectionMessage
+		, showPreventEntryMessage
+		, showPreventExitMessage
+		, fireProtection
+		, fireSpread
+		, playCustomMusic
+		, permWipeOnEnter
+		, permWipeOnExit
+		, wipeAndCacheOnEnter
+		, wipeAndCacheOnExit
+		, forceCommand
+		, blockForm
+		, forSale
+		, useWorldEdit
+		, logs
+		, tntEnabled;
 
 	public static int LSPS, healthRegen, velocityWarp, playerCap, salePrice;
 
@@ -23,7 +70,7 @@ public class ConfigurationData {
 	public ConfigurationData(String a, String b, String c, String d, String e, String pass, boolean f, boolean g, boolean h, boolean i, boolean j, boolean k, boolean m, boolean n,
 			boolean o, boolean v, boolean passEnabled, int p, int q, int r, MODE s, MODE t, MODE u, MODE item, boolean w, boolean x, boolean y, boolean z, boolean exit,
 			String dam, String dasm, Material welcome, Material leave, boolean welcomeMsg, boolean leaveMsg, boolean protectMsg, boolean preventEntryMsg, boolean preventExitMsg,
-			boolean fireProt, String[] music, boolean playmusic, boolean permWipeOnEnter1, boolean permWipeOnExit1,
+			boolean fireProt, boolean fireSpr, String[] music, boolean playmusic, boolean permWipeOnEnter1, boolean permWipeOnExit1,
 			boolean wipeAndCacheOnEnter1, boolean wipeAndCacheOnExit1, boolean forceCommand1, String[] commandSet1, String[] tempAddCache, String[] permAddCache,
 			String[] tempRemCache, String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt) {
 		defaultWelcomeMessage = a;
@@ -65,6 +112,7 @@ public class ConfigurationData {
 		showPreventEntryMessage = preventEntryMsg;
 		showPreventExitMessage = preventExitMsg;
 		fireProtection = fireProt;
+		fireSpread = fireSpr;
 		defaultCustomMusicUrl = music;
 		playCustomMusic = playmusic;
 		permWipeOnEnter = permWipeOnEnter1;

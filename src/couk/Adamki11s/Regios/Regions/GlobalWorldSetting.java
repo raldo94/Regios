@@ -22,9 +22,11 @@ public class GlobalWorldSetting {
 			lightning_enabled = true, 
 			stormEnabled = true, 
 			creeperExplodes = true, 
-			fireEnabled = true, 
+			fireEnabled = true,
+			fireSpreadEnabled = true,
 			blockForm_enabled = true,
-			tntEnabled = true;
+			tntEnabled = true,
+			dragonProtect = true;
 	
 	public ArrayList<EntityType> creaturesWhoSpawn = new ArrayList<EntityType>();
 
@@ -62,7 +64,9 @@ public class GlobalWorldSetting {
 				c.set(world + ".PvP.EnabledOutsideRegions", true);
 				c.set(world + ".PvP.OverrideServerPvP", false);
 				c.set(world + ".Protection.FireEnabled", true);
+				c.set(world + ".Protection.FireSpreadEnabled", true);
 				c.set(world + ".Protection.TNTEnabled", true);
+				c.set(world + ".Protection.DragonProtect", true);
 				c.set(world + ".Weather.LightningEnabled", true);
 				c.set(world + ".Mobs.Spawning.Chicken", true);
 				c.set(world + ".Mobs.Spawning.Cow", true);
@@ -110,8 +114,10 @@ public class GlobalWorldSetting {
 			FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 			GlobalWorldSetting gws = new GlobalWorldSetting(world);
 			gws.invert_protection = c.getBoolean(world + ".Protection.ProtectionEnabledOutsideRegions", false);
-			gws.fireEnabled = c.getBoolean(world + ".Protection.FireEnabled", false);
+			gws.fireEnabled = c.getBoolean(world + ".Protection.FireEnabled", true);
+			gws.fireSpreadEnabled = c.getBoolean(world + ".Protection.FireSpreadEnabled", true);
 			gws.tntEnabled = c.getBoolean(world + ".Protection.TNTEnabled", true);
+			gws.dragonProtect = c.getBoolean(world + ".Protection.DragonProtect", true);
 			gws.invert_pvp = c.getBoolean(world + ".PvP.EnabledOutsideRegions", true);
 			gws.lightning_enabled = c.getBoolean(world + ".Weather.LightningEnabled", true);
 			gws.creeperExplodes = c.getBoolean(world + ".Mobs.Creeper.DoesExplode", true);

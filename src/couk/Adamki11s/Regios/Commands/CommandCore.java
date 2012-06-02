@@ -12,12 +12,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import com.sk89q.minecraft.util.commands.CommandException;
+
 import couk.Adamki11s.Regios.CustomEvents.RegionCommandEvent;
 import couk.Adamki11s.Regios.CustomExceptions.FileExistanceException;
 import couk.Adamki11s.Regios.CustomExceptions.InvalidNBTFormat;
 import couk.Adamki11s.Regios.CustomExceptions.RegionExistanceException;
 import couk.Adamki11s.Regios.CustomExceptions.RegionNameExistsException;
 import couk.Adamki11s.Regios.CustomExceptions.RegionPointsNotSetException;
+import couk.Adamki11s.Regios.Data.ConfigurationData;
 import couk.Adamki11s.Regios.Data.OldRegiosPatch;
 import couk.Adamki11s.Regios.Listeners.RegiosPlayerListener;
 import couk.Adamki11s.Regios.Main.Regios;
@@ -94,7 +97,11 @@ public class CommandCore implements CommandExecutor {
 			}
 
 			if (args.length == 1 && args[0].equalsIgnoreCase("set")) {
-				if (PermissionsCore.doesHaveNode(p, "regios.data.create")) {
+				if(ConfigurationData.useWorldEdit)
+				{
+					p.sendMessage("Command unavailable while WorldEdit mode is true");
+				}
+				else if (PermissionsCore.doesHaveNode(p, "regios.data.create")) {
 					creation.giveTool(p);
 					return true;
 				} else {
@@ -156,9 +163,20 @@ public class CommandCore implements CommandExecutor {
 						p.sendMessage(ChatColor.RED + "[Regios] " + ChatColor.BLUE + args[1] + ChatColor.RED + " is a reserved word!");
 						return true;
 					}
+					if (ConfigurationData.useWorldEdit)
+					{
+						try {
+							creation.createRegionWE(p, args[1]);
+						} catch (RegionNameExistsException e) {
+							e.printStackTrace();
+						} catch (CommandException e) {
+							p.sendMessage(e.getMessage());
+						}
+					} else {
 					try {
 						creation.createRegion(p, args[1]);
 					} catch (RegionNameExistsException e) {} catch (RegionPointsNotSetException e) {}
+					}
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 					return true;
@@ -456,6 +474,14 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
+			
+			if (args.length == 3 && args[0].equalsIgnoreCase("expand-up")) {
+				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
+					mod.setExpandUp(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
 
 			if (args.length == 3 && args[0].equalsIgnoreCase("expand-down")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
@@ -465,6 +491,14 @@ public class CommandCore implements CommandExecutor {
 				}
 			}
 
+			if (args.length == 3 && args[0].equalsIgnoreCase("expand-out")) {
+				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
+					mod.setExpandOut(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
 			if (args.length == 2 && (args[0].equalsIgnoreCase("expand-max") || args[0].equalsIgnoreCase("expandmax"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
 					mod.setExpandMax(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -481,22 +515,6 @@ public class CommandCore implements CommandExecutor {
 				}
 			}
 
-			if (args.length == 3 && args[0].equalsIgnoreCase("expand-up")) {
-				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
-					mod.setExpandUp(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
-				} else {
-					PermissionsCore.sendInvalidPerms(p);
-				}
-			}
-
-			if (args.length == 3 && args[0].equalsIgnoreCase("expand-out")) {
-				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
-					mod.setExpandOut(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
-				} else {
-					PermissionsCore.sendInvalidPerms(p);
-				}
-			}
-
 			if (args.length == 3 && args[0].equalsIgnoreCase("rename")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.rename")) {
 					if (args[2].equalsIgnoreCase("all") || args[2].equalsIgnoreCase("placeholder") || args[2].equalsIgnoreCase("confirm")) {
@@ -508,18 +526,18 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-
-			if (args.length == 3 && args[0].equalsIgnoreCase("shrink-down")) {
+			
+			if (args.length == 3 && args[0].equalsIgnoreCase("shrink-up")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.modify.shrink")) {
-					mod.setShrinkDown(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+					mod.setShrinkUp(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
 
-			if (args.length == 3 && args[0].equalsIgnoreCase("shrink-up")) {
+			if (args.length == 3 && args[0].equalsIgnoreCase("shrink-down")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.modify.shrink")) {
-					mod.setShrinkUp(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+					mod.setShrinkDown(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -820,6 +838,14 @@ public class CommandCore implements CommandExecutor {
 			if (args.length == 3 && (args[0].equalsIgnoreCase("fireprotection") || args[0].equalsIgnoreCase("fire-protection"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.fire-protection")) {
 					misc.setFireProtection(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			if (args.length == 3 && (args[0].equalsIgnoreCase("firespread") || args[0].equalsIgnoreCase("fire-spread"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.protection.fire-spread")) {
+					misc.setFireSpread(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -1367,7 +1393,6 @@ public class CommandCore implements CommandExecutor {
 						PermissionsCore.sendInvalidPerms(p);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

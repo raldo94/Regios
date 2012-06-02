@@ -66,6 +66,7 @@ public class Saveable {
 		c.set("Region.General.Protected.BlockBreak", Boolean.valueOf(r.is_protectionBreak()));
 		c.set("Region.General.Protected.BlockPlace", Boolean.valueOf(r.is_protectionPlace()));
 		c.set("Region.General.FireProtection", Boolean.valueOf(r.isFireProtection()));
+		c.set("Region.General.FireSpread", Boolean.valueOf(r.isFireSpread()));
 		c.set("Region.General.TNTEnabled", Boolean.valueOf(r.isTNTEnabled()));
 		c.set("Region.General.PreventEntry", Boolean.valueOf(r.isPreventEntry()));
 		c.set("Region.General.PreventExit", Boolean.valueOf(r.isPreventExit()));

@@ -152,6 +152,23 @@ public class MutableProtectionMisc {
 		}
 	}
 	
+	public void editFireSpread(Region r, boolean val){
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
+		all.remove("Region.General.FireSpread");
+		for(Entry<String, Object> entry : all.entrySet()){
+			c.set(entry.getKey(), entry.getValue());
+		}
+		c.set("Region.General.FireSpread", val);
+		r.setFireSpread(val);
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void editTNTEnabled(Region r, boolean val){
 		File file = r.getConfigFile();
 		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
@@ -161,7 +178,7 @@ public class MutableProtectionMisc {
 			c.set(entry.getKey(), entry.getValue());
 		}
 		c.set("Region.General.TNT", val);
-		r.setFireProtection(val);
+		r.setTNTEnabled(val);
 		try {
 			c.save(r.getConfigFile());
 		} catch (IOException e) {

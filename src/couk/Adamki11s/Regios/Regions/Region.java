@@ -101,6 +101,7 @@ public class Region extends PermChecks {
 			, showPreventEntryMessage = true
 			, showPreventExitMessage = true
 			, fireProtection = false
+			, fireSpread = true
 			, playCustomSoundUrl = false
 			, permWipeOnEnter = false
 			, permWipeOnExit = false
@@ -200,6 +201,7 @@ public class Region extends PermChecks {
 		showPreventEntryMessage = ConfigurationData.showPreventEntryMessage;
 		showPreventExitMessage = ConfigurationData.showPreventExitMessage;
 		fireProtection = ConfigurationData.fireProtection;
+		fireSpread = ConfigurationData.fireSpread;
 		permWipeOnEnter = ConfigurationData.permWipeOnEnter;
 		permWipeOnExit = ConfigurationData.permWipeOnExit;
 		wipeAndCacheOnEnter = ConfigurationData.wipeAndCacheOnEnter;
@@ -402,7 +404,7 @@ public class Region extends PermChecks {
 	}
 
 	public boolean getAuthentication(String password, Player p) {
-		if (exCrypt.compareHashes(exCrypt.computeSHA2_384BitHash(password), password)) {
+		if (exCrypt.compareHashes(exCrypt.computeSHA2_384BitHash(password), exCrypt.computeSHA2_384BitHash(this.password))) {
 			authentication.put(p, true);
 			return true;
 		} else {
@@ -643,6 +645,10 @@ public class Region extends PermChecks {
 
 	public boolean isFireProtection() {
 		return fireProtection;
+	}
+	
+	public boolean isFireSpread() {
+		return fireSpread;
 	}
 
 	public boolean isForceCommand() {
@@ -1093,6 +1099,10 @@ public class Region extends PermChecks {
 
 	public void setFireProtection(boolean fireProtection) {
 		this.fireProtection = fireProtection;
+	}
+	
+	public void setFireSpread(boolean fireSpread) {
+		this.fireSpread = fireSpread;
 	}
 
 	public void setForceCommand(boolean forceCommand) {

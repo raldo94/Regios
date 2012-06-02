@@ -126,6 +126,7 @@ public class CreationCore {
 			generalconfig.createNewFile();
 			FileConfiguration c = YamlConfiguration.loadConfiguration(generalconfig);
 			c.set("Region.UseEconomy", false);
+			c.set("Region.UseWorldEdit", false);
 			c.set("Region.LogsEnabled", true);
 			c.set("Region.Tools.Setting.ID", Material.WOOD_AXE.getId());
 			c.save(generalconfig);
@@ -146,7 +147,8 @@ public class CreationCore {
 			c.set("DefaultSettings.General.ChestsLocked", false);
 			c.set("DefaultSettings.General.PreventInteraction", false);
 
-			c.set("DefaultSettings.Protection.FireProtection", true);
+			c.set("DefaultSettings.Protection.FireProtection", false);
+			c.set("DefaultSettings.Protection.FireSpread", true);
 			c.set("DefaultSettings.Protection.TNTEnabled", true);
 
 			c.set("DefaultSettings.Messages.WelcomeMessage", "<BGREEN>Welcome to <BLUE>[NAME] <BGREEN>owned by <YELLOW>[OWNER]");

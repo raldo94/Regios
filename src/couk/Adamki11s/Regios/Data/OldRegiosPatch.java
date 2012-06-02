@@ -29,6 +29,7 @@ public class OldRegiosPatch {
 	static sqlCore dbManage;
 	static File maindir = new File("plugins" + File.separator + "Regios");
 	static ArrayList<String> toSend = new ArrayList<String>();
+	final static MutableModification mutable = new MutableModification();
 
 	public static void runPatch(Player p) {
 		boolean filefound = false;
@@ -174,7 +175,7 @@ public class OldRegiosPatch {
 				if (integrity) {
 
 					if (GlobalRegionManager.doesExist(name)) {
-						MutableModification.editDeleteRegion(GlobalRegionManager.getRegion(name), false, p);
+						mutable.editDeleteRegion(GlobalRegionManager.getRegion(name), false, p);
 						patchMessage("Deleting existing region name : " + name, p);
 					}
 

@@ -46,6 +46,17 @@ public class RegiosAPI {
 	public Region getRegion(Player p) {
 		return GlobalRegionManager.getRegion(p);
 	}
+	
+	/**
+	 * Get the region a location is in.
+	 * 
+	 * @param l Location.
+	 * @return Returns the region that the specified location is in. Will return
+	 *         null if the location is not in a region.
+	 */
+	public Region getRegion(Location l) {
+		return GlobalRegionManager.getRegion(l);
+	}
 
 	/**
 	 * Get a list of all the Regions.
@@ -65,6 +76,17 @@ public class RegiosAPI {
 	 */
 	public ArrayList<Region> getRegions(World w) {
 		return GlobalRegionManager.getRegions(w);
+	}
+	
+	/**
+	 * Get a list of all the Regions in specified world.
+	 * 
+	 * @param w
+	 *            World
+	 * @return List of Regions.
+	 */
+	public ArrayList<Region> getRegions(Location l) {
+		return GlobalRegionManager.getRegions(l);
 	}
 
 	/**
