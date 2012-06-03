@@ -818,6 +818,14 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
+			
+			if (args.length == 3 && (args[0].equalsIgnoreCase("dispenserslocked") || args[0].equalsIgnoreCase("dispensers-locked"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.protection.dispensers-locked")) {
+					misc.setDispensersLocked(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
 
 			if (args.length == 3 && (args[0].equalsIgnoreCase("setpassword") || args[0].equalsIgnoreCase("set-password"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.set-password")) {

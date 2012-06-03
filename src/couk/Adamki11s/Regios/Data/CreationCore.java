@@ -145,6 +145,7 @@ public class CreationCore {
 			c.set("DefaultSettings.General.PvP", false);
 			c.set("DefaultSettings.General.DoorsLocked", false);
 			c.set("DefaultSettings.General.ChestsLocked", false);
+			c.set("DefaultSettings.General.DispenserLocked", false);
 			c.set("DefaultSettings.General.PreventInteraction", false);
 
 			c.set("DefaultSettings.Protection.FireProtection", false);

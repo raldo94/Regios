@@ -71,6 +71,7 @@ public class LoaderCore {
 				, PvP = c.getBoolean("DefaultSettings.General.PvP", false)
 				, Doors = c.getBoolean("DefaultSettings.General.DoorsLocked", false)
 				, Chests = c.getBoolean("DefaultSettings.General.ChestsLocked", false)
+				, Dispensers = c.getBoolean("DefaultSettings.General.DispensersLocked", false)
 				, PrevInter = c.getBoolean("DefaultSettings.General.PreventInteraction", false)
 				, ShowPvP = c.getBoolean("DefaultSettings.Messages.ShowPvPWarning", true)
 				, pe = c.getBoolean("DefaultSettings.Password.PasswordProtection", false)
@@ -130,6 +131,7 @@ public class LoaderCore {
 							, PvP
 							, Doors
 							, Chests
+							, Dispensers
 							, PrevInter
 							, ShowPvP
 							, pe
@@ -287,6 +289,7 @@ public class LoaderCore {
 						, preventInteraction = c.getBoolean("Region.General.PreventInteraction", false)
 						, doorsLocked = c.getBoolean("Region.General.DoorsLocked", false)
 						, chestsLocked = c.getBoolean("Region.General.ChestsLocked", false)
+						, dispensersLocked = c.getBoolean("Region.General.DispensersLocked", false)
 						, passwordEnabled = c.getBoolean("Region.General.Password.Enabled", false)
 						, fireProtection = c.getBoolean("Region.General.FireProtection", false)
 						, fireSpread = c.getBoolean("Region.General.FireSpread", true)
@@ -370,6 +373,7 @@ public class LoaderCore {
 				r.setPasswordEnabled(passwordEnabled);
 				r.setChestsLocked(chestsLocked);
 				r.setDoorsLocked(doorsLocked);
+				r.setDispensersLocked(dispensersLocked);
 				r.setPreventInteraction(preventInteraction);
 				r.setPreventExit(preventExit);
 				r.setPreventEntry(preventEntry);

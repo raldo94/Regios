@@ -49,6 +49,23 @@ public class MutableProtectionMisc {
 		}
 	}
 	
+	public void editDispensersLocked(Region r, boolean val){
+		File file = r.getConfigFile();
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		Map<String, Object> all = c.getValues(true);
+		all.remove("Region.General.DispensersLocked");
+		for(Entry<String, Object> entry : all.entrySet()){
+			c.set(entry.getKey(), entry.getValue());
+		}
+		c.set("Region.General.DispensersLocked", val);
+		r.setDispensersLocked(val);
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void editBlockForm(Region r, boolean val){
 		File file = r.getConfigFile();
 		FileConfiguration c = YamlConfiguration.loadConfiguration(file);

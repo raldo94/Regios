@@ -106,6 +106,31 @@ public class ProtectionMiscCommands extends PermissionsCore {
 		}
 		mutable.editChestsLocked(r, val);
 	}
+	
+	public void setDispensersLocked(Region r, String region, String input, Player p) {
+		boolean val;
+		try {
+			val = Boolean.parseBoolean(input);
+		} catch (Exception bfe) {
+			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be boolean!");
+			return;
+		}
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			if(!super.canModify(r, p)){
+				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				return;
+			}
+			if (val) {
+				p.sendMessage(ChatColor.GREEN + "[Regios] Dispenser Locking enabled for region " + ChatColor.BLUE + region);
+			} else {
+				p.sendMessage(ChatColor.GREEN + "[Regios] Dispenser Locking disabled for region " + ChatColor.BLUE + region);
+			}
+		}
+		mutable.editDispensersLocked(r, val);
+	}
 
 	public void setDoorsLocked(Region r, String region, String input, Player p) {
 		boolean val;

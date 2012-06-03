@@ -92,6 +92,7 @@ public class Region extends PermChecks {
 			, pvp = true
 			, doorsLocked = false
 			, chestsLocked = false
+			, dispensersLocked = false
 			, preventInteraction = false
 			, showPvpWarning = true
 			, passwordEnabled = false
@@ -182,6 +183,7 @@ public class Region extends PermChecks {
 		pvp = ConfigurationData.pvp;
 		doorsLocked = ConfigurationData.doorsLocked;
 		chestsLocked = ConfigurationData.chestsLocked;
+		dispensersLocked = ConfigurationData.dispensersLocked;
 		preventInteraction = ConfigurationData.preventInteraction;
 		showPvpWarning = ConfigurationData.showPvpWarning;
 		LSPS = ConfigurationData.LSPS;
@@ -242,6 +244,10 @@ public class Region extends PermChecks {
 
 	public boolean areChestsLocked() {
 		return chestsLocked;
+	}
+	
+	public boolean areDispensersLocked() {
+		return dispensersLocked;
 	}
 
 	public boolean areDoorsLocked() {
@@ -1367,5 +1373,10 @@ public class Region extends PermChecks {
 
 	public void setWorld(World world) {
 		this.world = world;
+	}
+
+	public void setDispensersLocked(boolean dispensersLocked) {
+		this.dispensersLocked = dispensersLocked;
+		
 	}
 }

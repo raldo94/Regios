@@ -338,6 +338,19 @@ public class RegiosPlayerListener implements Listener {
 				}
 			}
 		}
+		
+		if (b.getTypeId() == 23) {
+			if (r.areDispensersLocked()) {
+				if (!r.canBypassProtection(p)) {
+					if (isSendable(p, MSG.PROTECTION)) {
+						p.sendMessage(ChatColor.RED + "[Regios] Dispensers are locked for this region!");
+					}
+					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to open a locked dispenser but did not have permissions."));
+					p.closeInventory();
+					evt.setCancelled(true);
+				}
+			}
+		}
 
 	}
 

@@ -173,6 +173,17 @@ public class VersionPatcher {
 				e.printStackTrace();
 			}
 		}
+
+		outstream.println("[Regios][Patch] Modifying DefaultRegion file...");
+		File dr = new File(config_root + File.separator + "DefaultRegion.config");
+		FileConfiguration drc = YamlConfiguration.loadConfiguration(dr);
+		boolean drvalue = drc.getBoolean("DefaultSettings.General.DispensersLocked", false);
+		drc.set("DefaultSettings.General.DispensersLocked", drvalue);
+		try {
+			drc.save(dr);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		ConfigurationData.logs = true;
 		outstream.println("[Regios][Patch] Region.UseWorldEdit property added.");
 		outstream.println("[Regios][Patch] FireSpreadEnabled added to world configurations.");
