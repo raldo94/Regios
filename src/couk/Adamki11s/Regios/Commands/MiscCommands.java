@@ -114,7 +114,7 @@ public class MiscCommands extends PermissionsCore {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(p, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}

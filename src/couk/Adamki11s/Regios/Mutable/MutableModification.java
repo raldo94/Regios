@@ -272,6 +272,7 @@ public class MutableModification {
 		File f = r.getLogFile().getParentFile().getParentFile();
 		deleteDir(f);
 		GlobalRegionManager.deleteRegionFromCache(r);
+		LogRunner.log.remove(r);
 		new AdministrationCommands().reloadRegions(p);
 		RegionDeleteEvent event = new RegionDeleteEvent("RegionDeleteEvent");
 		event.setProperties(p, r);
@@ -286,6 +287,7 @@ public class MutableModification {
 		File f = r.getLogFile().getParentFile().getParentFile();
 		deleteDir(f);
 		GlobalRegionManager.deleteRegionFromCache(r);
+		LogRunner.log.remove(r);
 		new AdministrationCommands().reloadRegions(null);
 		RegionDeleteEvent event = new RegionDeleteEvent("RegionDeleteEvent");
 		event.setProperties(null, r);

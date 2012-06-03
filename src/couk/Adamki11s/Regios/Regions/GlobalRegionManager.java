@@ -2,12 +2,12 @@ package couk.Adamki11s.Regios.Regions;
 
 import java.util.ArrayList;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import couk.Adamki11s.Extras.Regions.ExtrasRegions;
-
 
 public class GlobalRegionManager {
 	
@@ -17,6 +17,7 @@ public class GlobalRegionManager {
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	
 	private static ArrayList<GlobalWorldSetting> worldSettings = new ArrayList<GlobalWorldSetting>();
+	private final static SubRegionManager srm = new SubRegionManager();
 	
 	public static ArrayList<Region> getRegions(){
 		return regions;
@@ -83,12 +84,44 @@ public class GlobalRegionManager {
 	}
 	
 	public static Region getRegion(Location l){
-		for(Region r : regions){
-			if(extReg.isInsideCuboid(l, r.getL1(), r.getL2())){
-				return r;
+			World w = l.getWorld();
+			Chunk c = w.getChunkAt(l);
+
+			ArrayList<Region> regionSet = new ArrayList<Region>();
+
+			for (Region region : GlobalRegionManager.getRegions()) {
+				for (Chunk chunk : region.getChunkGrid().getChunks()) {
+					if (chunk.getWorld() == w) {
+						if (extReg.areChunksEqual(chunk, c)) {
+							if (!regionSet.contains(region)) {
+								regionSet.add(region);
+							}
+						}
+					}
+				}
 			}
-		}
-		return null;
+
+			if (regionSet.isEmpty()) {
+				return null;
+			}
+
+			ArrayList<Region> currentRegionSet = new ArrayList<Region>();
+
+			for (Region reg : regionSet) {
+				if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
+					currentRegionSet.add(reg);
+				}
+			}
+
+			if (currentRegionSet.isEmpty()) {
+				return null;
+			}
+
+			if (currentRegionSet.size() > 1) {
+				return srm.getCurrentRegion(currentRegionSet);
+			} else {
+				return currentRegionSet.get(0);
+			}
 	}
 	
 	public static Region getRegion(String name){

@@ -296,7 +296,7 @@ public class RegiosPlayerListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(p, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -589,7 +589,7 @@ public class RegiosPlayerListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(p, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 			regionBinding.put(p, r);
 		} else {
 			r = currentRegionSet.get(0);

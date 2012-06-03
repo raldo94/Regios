@@ -212,7 +212,7 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(null, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -278,7 +278,7 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(null, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -348,7 +348,7 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(null, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -424,7 +424,7 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(p, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -554,7 +554,7 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(p, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -583,45 +583,33 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		//TODO change when region priorities are implemented
-		
-		ArrayList<Region> afr = GlobalRegionManager.getRegions(blockFrom.getLocation());
-		ArrayList<Region> atr = GlobalRegionManager.getRegions(evt.getToBlock().getLocation());
 
-		if(!afr.isEmpty())
+		Region fr = GlobalRegionManager.getRegion(blockFrom.getLocation());
+		Region tr = GlobalRegionManager.getRegion(evt.getToBlock().getLocation());
+
+		if(fr != null)
 		{
-			if(!atr.isEmpty())
+			if(tr != null)
 			{
-				for(Region fr : afr)
+				if(fr.getName().equalsIgnoreCase(tr.getName()))
 				{
-					if (atr.contains(fr) && atr.size() == 1)
-					{
-						return;
-					}
-					else
-					{
-						atr.remove(fr);
-					}
-				}
-				
-				for(Region tr : atr)
-				{
-					if(tr.isProtected())
+					return;
+				} else {
+					if (tr.isProtected())
 					{
 						evt.setCancelled(true);
+						return;
 					}
 				}
 			}
 		}
 
-		if(!atr.isEmpty())
+		if(tr != null)
 		{
-			for(Region tr: atr)
+			if (tr.isProtected())
 			{
-				if (tr.isProtected())
-				{
-					evt.setCancelled(true);
-					return;
-				}
+				evt.setCancelled(true);
+				return;
 			}
 		}
 	}

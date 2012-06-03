@@ -103,7 +103,7 @@ public class RegiosEntityListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(null, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -205,7 +205,7 @@ public class RegiosEntityListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(null, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -278,7 +278,7 @@ public class RegiosEntityListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(null, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
@@ -386,7 +386,6 @@ public class RegiosEntityListener implements Listener {
 		Location l = evt.getEntity().getLocation();
 		World w = l.getWorld();
 		Chunk c = w.getChunkAt(l);
-		Player p = (Player) evt.getEntity();
 
 		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
 
@@ -431,7 +430,7 @@ public class RegiosEntityListener implements Listener {
 		}
 
 		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(p, currentRegionSet);
+			r = srm.getCurrentRegion(currentRegionSet);
 		} else {
 			r = currentRegionSet.get(0);
 		}
