@@ -194,7 +194,12 @@ public class LoaderCore {
 		c = YamlConfiguration.loadConfiguration(generalconfig);
 		
 		ConfigurationData.defaultSelectionTool = Material.getMaterial(c.getInt("Region.Tools.Setting.ID", Material.WOOD_AXE.getId()));
-		ConfigurationData.useWorldEdit = c.getBoolean("Region.UseWorldEdit", false);
+		if (ConfigurationData.global_worldEditEnabled)
+		{
+			ConfigurationData.useWorldEdit = c.getBoolean("Region.UseWorldEdit", false);
+		} else {
+			ConfigurationData.useWorldEdit = false;
+		}
 
 		boolean econ = c.getBoolean("Region.UseEconomy", false)
 				, logs = c.getBoolean("Region.LogsEnabled", true);

@@ -21,7 +21,7 @@ public class WorldEditCommands extends PermissionsCore {
 
 	private static char[] invalidModifiers = { '!', '\'', '£', '$', '%', '^', '&', '*', '¬', '`', '/', '?', '<', '>', '|', '\\' };
 
-	public void createRegionWE(Player p, String name) throws RegionNameExistsException, CommandException {
+	public void createRegionWE(Player p, String name) throws RegionNameExistsException {
 		if (GlobalRegionManager.doesRegionExist(name)) {
 			p.sendMessage(ChatColor.RED + "[Regios] A region with name : " + ChatColor.BLUE + name + ChatColor.RED + " already exists!");
 			throw new RegionNameExistsException(name);
@@ -48,19 +48,32 @@ public class WorldEditCommands extends PermissionsCore {
 			return;
 		}
 
-		WorldEditPlugin worldEdit = WorldEditInterface.getWorldEdit();
+		WorldEditPlugin worldEdit = null;
+		try {
+			worldEdit = WorldEditInterface.getWorldEdit();
+		} catch (CommandException e) {
+			p.sendMessage(e.getMessage());
+		}
 
 		// Attempt to get the player's selection from WorldEdit
 		Selection sel = worldEdit.getSelection(p);
 
 		if(sel == null)
 		{
-			throw new CommandException("Select a region with WorldEdit first.");
+			try {
+				throw new CommandException("Select a region with WorldEdit first.");
+			} catch (CommandException e) {
+				p.sendMessage(e.getMessage());
+			}
 		}
 
 		// Detect the type of region from WorldEdit
 		if (sel instanceof Polygonal2DSelection) {
-			throw new CommandException("Regios doesn't support polygonal regions.... yet :D");
+			try {
+				throw new CommandException("Regios doesn't support polygonal regions.... yet :D");
+			} catch (CommandException e) {
+				p.sendMessage(e.getMessage());
+			}
 		} else if (sel instanceof CuboidSelection) {
 			int rCount = GlobalRegionManager.getOwnedRegions(p.getName());
 
@@ -92,11 +105,15 @@ public class WorldEditCommands extends PermissionsCore {
 			new CubeRegion(p.getName(), name, sel.getMinimumPoint(), sel.getMaximumPoint(), p.getWorld(), null, true);
 			p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + name + ChatColor.GREEN + " created successfully!");
 		} else {
-			throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+			try {
+				throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+			} catch (CommandException e) {
+				p.sendMessage(e.getMessage());
+			}
 		}
 	}
 
-	public void createBlueprintWE(Player p, String name)  throws CommandException {
+	public void createBlueprintWE(Player p, String name) {
 		StringBuilder invalidName = new StringBuilder();
 		boolean integrity = true;
 		for (char ch : name.toCharArray()) {
@@ -119,22 +136,43 @@ public class WorldEditCommands extends PermissionsCore {
 			return;
 		}
 
-		WorldEditPlugin worldEdit = WorldEditInterface.getWorldEdit();
+		WorldEditPlugin worldEdit = null;
+		try {
+			worldEdit = WorldEditInterface.getWorldEdit();
+		} catch (CommandException e) {
+			p.sendMessage(e.getMessage());
+			return;
+		}
 
 		// Attempt to get the player's selection from WorldEdit
 		Selection sel = worldEdit.getSelection(p);
 
 		if(sel == null)
 		{
-			throw new CommandException("Select a region with WorldEdit first.");
+			try {
+				throw new CommandException("Select a region with WorldEdit first.");
+			} catch (CommandException e) {
+				p.sendMessage(e.getMessage());
+				return;
+			}
 		}
 
 		if (sel instanceof Polygonal2DSelection) {
-			throw new CommandException("Regios doesn't support polygonal regions.... yet :D");
+			try {
+				throw new CommandException("Regios doesn't support polygonal regions.... yet :D");
+			} catch (CommandException e) {
+				p.sendMessage(e.getMessage());
+				return;
+			}
 		} else if (sel instanceof CuboidSelection) {
 			RBF_Core.rbf_save.startSave(null, sel.getMinimumPoint(), sel.getMaximumPoint(), name, p, true);
 		} else {
-			throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+			try {
+				throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+			} catch (CommandException e) {
+				p.sendMessage(e.getMessage());
+				return;
+			}
 		}
 	}
 }

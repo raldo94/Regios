@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class SpoutInterface{
 	
-	public static boolean global_spoutEnabled;
+	public static boolean global_spoutEnabled = false;
 	
 	public static HashMap<Player, Boolean> spoutEnabled = new HashMap<Player, Boolean>();
 	

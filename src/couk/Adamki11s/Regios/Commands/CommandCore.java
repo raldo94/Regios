@@ -12,8 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import com.sk89q.minecraft.util.commands.CommandException;
-
 import couk.Adamki11s.Regios.CustomEvents.RegionCommandEvent;
 import couk.Adamki11s.Regios.CustomExceptions.FileExistanceException;
 import couk.Adamki11s.Regios.CustomExceptions.InvalidNBTFormat;
@@ -56,7 +54,6 @@ public class CommandCore implements CommandExecutor {
 	final ProtectionCommands protect = new ProtectionCommands();
 	final ProtectionMiscCommands misc = new ProtectionMiscCommands();
 	final SpoutCommands spout = new SpoutCommands();
-	final WorldEditCommands worldedit = new WorldEditCommands();
 	final WarpCommands warps = new WarpCommands();
 
 	@Override
@@ -169,11 +166,9 @@ public class CommandCore implements CommandExecutor {
 					if (ConfigurationData.useWorldEdit)
 					{
 						try {
-							worldedit.createRegionWE(p, args[1]);
+							new WorldEditCommands().createRegionWE(p, args[1]);
 						} catch (RegionNameExistsException e) {
 							e.printStackTrace();
-						} catch (CommandException e) {
-							p.sendMessage(e.getMessage());
 						}
 					} else {
 						try {
@@ -1382,11 +1377,7 @@ public class CommandCore implements CommandExecutor {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.save-blueprint")) {
 					if(ConfigurationData.useWorldEdit)
 					{
-						try {
-							worldedit.createBlueprintWE(p, args[1]);
-						} catch (CommandException e) {
-							p.sendMessage(e.getMessage());
-						}
+						new WorldEditCommands().createBlueprintWE(p, args[1]);
 					} else {
 						creation.createBlueprint(p, args[1]);
 					}

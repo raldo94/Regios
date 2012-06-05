@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import couk.Adamki11s.Regios.Commands.CommandCore;
+import couk.Adamki11s.Regios.Data.ConfigurationData;
 import couk.Adamki11s.Regios.Data.CreationCore;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
 import couk.Adamki11s.Regios.Listeners.RegiosBlockListener;
@@ -72,8 +73,14 @@ public class Regios extends JavaPlugin {
 			SpoutInterface.global_spoutEnabled = true;
 			log.info("[Regios] Spout detected! Spout support enabled!");
 		}
-
-
+		
+		p = pm.getPlugin("WorldEdit");
+		if(p == null){
+			log.info("[Regios] WorldEdit not detected. No WorldEdit support.");
+		} else {
+			ConfigurationData.global_worldEditEnabled = true;
+			log.info("[Regios] WorldEdit detected! WorldEdit support enabled!");
+		}
 		try {
 			new CreationCore().setup();
 		} catch (IOException e) {

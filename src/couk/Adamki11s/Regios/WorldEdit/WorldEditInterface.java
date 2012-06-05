@@ -7,6 +7,7 @@ import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class WorldEditInterface {
+	
 	/**
 	 * Gets a copy of the WorldEdit plugin.
 	 *

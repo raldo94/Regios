@@ -78,6 +78,12 @@ public class RegiosEntityListener implements Listener {
 				}
 				return;
 			}
+			
+			if(r.isBlockEndermanMod())	
+			{
+				evt.setCancelled(true);
+				return;
+			}
 		}
 	}
 

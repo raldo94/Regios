@@ -65,7 +65,8 @@ public class ConfigurationData {
 		, useWorldEdit
 		, logs
 		, tntEnabled
-		, blockEndermanMod;
+		, blockEndermanMod
+		, global_worldEditEnabled = false;
 
 	public static int LSPS, healthRegen, velocityWarp, playerCap, salePrice;
 
