@@ -1266,6 +1266,22 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
+			
+			if (args.length == 3 && (args[0].equalsIgnoreCase("setgamemode") || args[0].equalsIgnoreCase("set-gamemode"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.other.gamemode-type")) {
+					miscCmd.setGameModeType(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			if (args.length == 3 && (args[0].equalsIgnoreCase("changegamemode") || args[0].equalsIgnoreCase("change-gamemode"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.other.gamemode-change")) {
+					miscCmd.setGameModeChange(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
 
 			/*
 			 * Misc. Cmd
@@ -1318,6 +1334,14 @@ public class CommandCore implements CommandExecutor {
 			if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.list")) {
 					admin.listRegions(p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			if (args.length == 1 && args[0].equalsIgnoreCase("list-owned")) {
+				if (PermissionsCore.doesHaveNode(p, "regios.data.list-owned")) {
+					admin.listOwnedRegions(p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}

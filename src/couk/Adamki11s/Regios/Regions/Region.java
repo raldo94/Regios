@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -20,6 +21,7 @@ import couk.Adamki11s.Regios.CustomEvents.RegionLoadEvent;
 import couk.Adamki11s.Regios.Data.ConfigurationData;
 import couk.Adamki11s.Regios.Data.MODE;
 import couk.Adamki11s.Regios.Data.Saveable;
+import couk.Adamki11s.Regios.GameMode.GameModeCacheManager;
 import couk.Adamki11s.Regios.Inventory.InventoryCacheManager;
 import couk.Adamki11s.Regios.Listeners.RegiosPlayerListener;
 import couk.Adamki11s.Regios.Permissions.PermChecks;
@@ -114,12 +116,15 @@ public class Region extends PermChecks {
 			, useSpoutTexturePack = false
 			, spoutWelcomeEnabled = false
 			, spoutLeaveEnabled = false
-			, TNTEnabled = true;
+			, TNTEnabled = true
+			, changeGameMode = false;
 
 	protected int LSPS = 0
 			, healthRegen = 0
 			, playerCap = 0
 			, salePrice = 0;
+	
+	protected GameMode gameMode = GameMode.SURVIVAL;
 
 	protected double velocityWarp = 0;
 
@@ -208,6 +213,7 @@ public class Region extends PermChecks {
 		permWipeOnExit = ConfigurationData.permWipeOnExit;
 		wipeAndCacheOnEnter = ConfigurationData.wipeAndCacheOnEnter;
 		wipeAndCacheOnExit = ConfigurationData.wipeAndCacheOnExit;
+		changeGameMode = ConfigurationData.changeGameMode;
 		forceCommand = ConfigurationData.forceCommand;
 		commandSet = ConfigurationData.commandSet;
 		temporaryNodesCacheAdd = ConfigurationData.temporaryNodesCacheAdd;
@@ -217,6 +223,7 @@ public class Region extends PermChecks {
 		salePrice = ConfigurationData.salePrice;
 		blockForm = ConfigurationData.blockForm;
 		TNTEnabled = ConfigurationData.tntEnabled;
+		gameMode = ConfigurationData.gameMode;
 		if (LSPS > 0 && !LightningRunner.doesStrikesContain(this)) {
 			LightningRunner.addRegion(this);
 		} else if (LSPS == 0 && LightningRunner.doesStrikesContain(this)) {
@@ -269,13 +276,27 @@ public class Region extends PermChecks {
 	public boolean canExit(Player p) {
 		return super.canExit(p, this);
 	}
+	
+	public GameMode getGameMode() {
+		return gameMode;
+	}
+	
+	public void setGameMode(GameMode gm) {
+		gameMode = gm;
+	}
+	
+	public void setChangeGameMode(boolean val)
+	{
+		changeGameMode = val;
+	}
+	
+	public boolean isChangeGameMode()
+	{
+		return changeGameMode;
+	}
 
 	public boolean canMobsSpawn() {
 		return mobSpawns;
-	}
-
-	public boolean canModify(Player p) {
-		return super.canOverride(p, this);
 	}
 
 	public boolean canMonstersSpawn() {
@@ -908,6 +929,14 @@ public class Region extends PermChecks {
 					}
 				}
 			}
+			
+			if (changeGameMode) {
+				if (GameModeCacheManager.doesCacheContain(p))
+				{
+					GameModeCacheManager.restoreGameMode(p);
+				}
+			}
+			
 			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
 
 			try {
@@ -998,10 +1027,16 @@ public class Region extends PermChecks {
 			if (wipeAndCacheOnExit) {
 				if (!canBypassProtection(p)) {
 					if (InventoryCacheManager.doesCacheContain(p)) {
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon entry"));
 						InventoryCacheManager.restoreInventory(p);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon entry"));
 					}
 				}
+			}
+			if (changeGameMode) {
+					if(!GameModeCacheManager.doesCacheContain(p)) {
+						GameModeCacheManager.cacheGameMode(p);
+						p.setGameMode(getGameMode());
+					}
 			}
 			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' entered region."));
 			if (commandSet != null) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -16,6 +17,7 @@ import couk.Adamki11s.Regios.Regions.CubeRegion;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.GlobalWorldSetting;
 import couk.Adamki11s.Regios.Regions.Region;
+import couk.Adamki11s.Regios.Restrictions.RestrictionParameters;
 import couk.Adamki11s.Regios.Scheduler.LightningRunner;
 
 public class LoaderCore {
@@ -26,7 +28,8 @@ public class LoaderCore {
 	
 	File updateconfig = new File(config_root + File.separator + "Updates.config")
 		, defaultregions = new File(config_root + File.separator + "DefaultRegion.config")
-		, generalconfig = new File(config_root + File.separator + "GeneralSettings.config");
+		, generalconfig = new File(config_root + File.separator + "GeneralSettings.config")
+		, restrictionconfig = new File(config_root + File.separator + "Restrictions.config");
 
 	private final Logger log = Logger.getLogger("Minecraft.Regios");
 	private final String prefix = "[Regios]";
@@ -81,6 +84,7 @@ public class LoaderCore {
 				, playmusic = c.getBoolean("DefaultSettings.Spout.Sound.PlayCustomMusic", false)
 				, permWipeOnEnter = c.getBoolean("DefaultSettings.Inventory.PermWipeOnEnter", false)
 				, permWipeOnExit = c.getBoolean("DefaultSettings.Inventory.PermWipeOnExit", false)
+				, changeGameMode = c.getBoolean("DefaultSettings.GameMode.Change", false)
 				, wipeAndCacheOnEnter = c.getBoolean("DefaultSettings.Inventory.WipeAndCacheOnEnter", false)
 				, wipeAndCacheOnExit = c.getBoolean("DefaultSettings.Inventory.WipeAndCacheOnExit", false)
 				, forceCommand = c.getBoolean("DefaultSettings.Command.ForceCommand", false)
@@ -97,6 +101,8 @@ public class LoaderCore {
 				, PrevEntryMode = MODE.toMode(c.getString("DefaultSettings.Modes.PreventEntryMode"))
 				, PrevExitMode = MODE.toMode(c.getString("DefaultSettings.Modes.PreventExitMode"))
 				, item = MODE.toMode(c.getString("DefaultSettings.Modes.ItemControlMode"));
+		
+		GameMode gameMode = GameMode.valueOf(c.getString("DefaultSettings.GameMode.Type", "SURVIVAL").toUpperCase());
 
 		Material welcomeIcon = Material.getMaterial(c.getInt("DefaultSettings.Spout.SpoutWelcomeIconID", Material.GRASS.getId()))
 				, leaveIcon = Material.getMaterial(c.getInt("DefaultSettings.Spout.SpoutLeaveIconID", Material.DIRT.getId()));
@@ -164,6 +170,7 @@ public class LoaderCore {
 							, permWipeOnExit
 							, wipeAndCacheOnEnter
 							, wipeAndCacheOnExit
+							, changeGameMode
 							, forceCommand
 							, commandSet
 							, tempAddCache
@@ -176,18 +183,16 @@ public class LoaderCore {
 							, protectBreak
 							, forSale
 							, salePrice
-							, TNTEnabled);
+							, TNTEnabled
+							, gameMode);
 
 		System.out.println("[Regios] Loaded default region configuation file.");
 		// Initialises variables in configuration data.
 
 		c = YamlConfiguration.loadConfiguration(generalconfig);
-
-		int id = c.getInt("Region.Tools.Setting.ID", Material.WOOD_AXE.getId());
-		ConfigurationData.defaultSelectionTool = Material.getMaterial(id);
 		
-		boolean useWE = c.getBoolean("Region.UseWorldEdit", false);
-		ConfigurationData.useWorldEdit = useWE;
+		ConfigurationData.defaultSelectionTool = Material.getMaterial(c.getInt("Region.Tools.Setting.ID", Material.WOOD_AXE.getId()));
+		ConfigurationData.useWorldEdit = c.getBoolean("Region.UseWorldEdit", false);
 
 		boolean econ = c.getBoolean("Region.UseEconomy", false)
 				, logs = c.getBoolean("Region.LogsEnabled", true);
@@ -199,8 +204,17 @@ public class LoaderCore {
 		} else {
 			EconomyCore.economySupport = true;
 		}
-
-		GlobalWorldSetting.writeWorldsToConfiguration();
+		
+		c = YamlConfiguration.loadConfiguration(restrictionconfig);
+		
+		@SuppressWarnings("unchecked")
+		ArrayList<String> size = (ArrayList<String>) c.getList("Restrictions.Size");
+		RestrictionParameters.size = size;
+		
+		@SuppressWarnings("unchecked")
+		ArrayList<String> count = (ArrayList<String>) c.getList("Restrictions.Count");
+		RestrictionParameters.count = count;
+		
 		GlobalWorldSetting.loadWorldsFromConfiguration();
 
 		log.info(prefix + " Configuration files loaded successfully!");
@@ -303,6 +317,7 @@ public class LoaderCore {
 						, permWipeOnExit = c.getBoolean("Region.Inventory.PermWipeOnExit", false)
 						, wipeAndCacheOnEnter = c.getBoolean("Region.Inventory.WipeAndCacheOnEnter", false)
 						, wipeAndCacheOnExit = c.getBoolean("Region.Inventory.WipeAndCacheOnExit", false)
+						, changeGM = c.getBoolean("Region.GameMode.Change", false)
 						, forceCommand = c.getBoolean("Region.Command.ForceCommand", false)
 						, form = c.getBoolean("Region.Block.BlockForm.Enabled", true)
 						, forSale = c.getBoolean("Region.Economy.ForSale", false)
@@ -314,6 +329,8 @@ public class LoaderCore {
 						, protectionMode = MODE.toMode(c.getString("Region.Modes.ProtectionMode", "Whitelist"))
 						, preventEntryMode = MODE.toMode(c.getString("Region.Modes.PreventEntryMode", "Whitelist"))
 						, preventExitMode = MODE.toMode(c.getString("Region.Modes.PreventExitMode", "Whitelist"));
+				
+				GameMode gm = GameMode.valueOf(c.getString("Region.GameMode.Type", "SURVIVAL").toUpperCase());
 
 				int healthRegen = c.getInt("Region.Other.HealthRegen", 0)
 						, lsps = c.getInt("Region.Other.LSPS", 0)
@@ -410,6 +427,7 @@ public class LoaderCore {
 				r.setPermWipeOnExit(permWipeOnExit);
 				r.setWipeAndCacheOnEnter(wipeAndCacheOnEnter);
 				r.setWipeAndCacheOnExit(wipeAndCacheOnExit);
+				r.setChangeGameMode(changeGM);
 				r.setForceCommand(forceCommand);
 
 				r.setCommandSet(commandSet);
@@ -430,6 +448,8 @@ public class LoaderCore {
 
 				r.setSalePrice(price);
 				r.setForSale(forSale);
+				
+				r.setGameMode(gm);
 
 				if (r.getLSPS() > 0 && !LightningRunner.doesStrikesContain(r)) {
 					LightningRunner.addRegion(r);

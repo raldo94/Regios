@@ -115,6 +115,9 @@ public class Saveable {
 		c.set("Region.Block.BlockForm.Enabled", r.isBlockForm());
 		c.set("Region.General.PlayerCap.Cap", r.getPlayerCap());
 		
+		c.set("Region.GameMode.Type", r.getGameMode().toString());
+		c.set("Region.GameMode.Change", r.isChangeGameMode());
+		
 		try {
 			c.save(region_core);
 		} catch (IOException e2) {
@@ -222,6 +225,7 @@ public class Saveable {
 		
 		c.set("Region.General.Protected", Boolean.valueOf(r.isProtected()));
 		c.set("Region.General.FireProtection", Boolean.valueOf(r.isFireProtection()));
+		c.set("Region.General.FireSpread", Boolean.valueOf(r.isFireSpread()));
 		c.set("Region.General.TNTEnabled", Boolean.valueOf(r.isTNTEnabled()));
 		c.set("Region.General.PreventEntry", Boolean.valueOf(r.isPreventEntry()));
 		c.set("Region.General.PreventExit", Boolean.valueOf(r.isPreventExit()));
@@ -277,6 +281,9 @@ public class Saveable {
 		
 		c.set("Region.Block.BlockForm.Enabled", r.isBlockForm());
 		c.set("Region.General.PlayerCap.Cap", r.getPlayerCap());
+		
+		c.set("Region.GameMode.Type", r.getGameMode().toString());
+		c.set("Region.GameMode.Change", r.isChangeGameMode());
 		
 		c.save(region_core);
 		

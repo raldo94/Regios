@@ -2,9 +2,6 @@ package couk.Adamki11s.Regios.Mutable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,6 +16,7 @@ import couk.Adamki11s.Regios.CustomExceptions.RegionExistanceException;
 import couk.Adamki11s.Regios.Data.LoaderCore;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
+import couk.Adamki11s.Regios.Restrictions.RestrictionParameters;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
 
 public class MutableModification {
@@ -28,8 +26,35 @@ public class MutableModification {
 	private String convertLocation(Location l) {
 		return l.getWorld().getName() + "," + l.getX() + "," + l.getY() + "," + l.getZ();
 	}
+	
+	private boolean canChangeSize(Location smaller, Location bigger, Player p) {
+		double width = Math.max(smaller.getX(), bigger.getX()) - Math.min(smaller.getX(), bigger.getX())
+				, height = Math.max(smaller.getY(), bigger.getY()) - Math.min(smaller.getY(), bigger.getY())
+				, length = Math.max(smaller.getZ(), bigger.getZ()) - Math.min(smaller.getZ(), bigger.getZ());
+			
+			RestrictionParameters params = RestrictionParameters.getRestrictions(p);
 
-	public void editExpandUp(Region r, int value) {
+			if(width > params.getRegionWidthLimit()){
+				p.sendMessage(ChatColor.RED + "[Regios] You cannot change a region to this width!");
+				p.sendMessage(ChatColor.RED + "[Regios] Maximum width : " + ChatColor.BLUE + params.getRegionWidthLimit() + ChatColor.RED + ", your width : " + ChatColor.BLUE + width);
+				return false;
+			}
+
+			if(height > params.getRegionHeightLimit()){
+				p.sendMessage(ChatColor.RED + "[Regios] You cannot change a region to this height!");
+				p.sendMessage(ChatColor.RED + "[Regios] Maximum height : " + ChatColor.BLUE + params.getRegionHeightLimit() + ChatColor.RED + ", your height : " + ChatColor.BLUE + height);
+				return false;
+			}
+
+			if(length > params.getRegionLengthLimit()){
+				p.sendMessage(ChatColor.RED + "[Regios] You cannot change a region to this length!");
+				p.sendMessage(ChatColor.RED + "[Regios] Maximum length : " + ChatColor.BLUE + params.getRegionLengthLimit() + ChatColor.RED + ", your length : " + ChatColor.BLUE + length);
+				return false;
+			}
+			return true;
+	}
+
+	public void editExpandUp(Region r, int value, Player p) {
 		Location smaller = new Location(r.getL1().getWorld(), Math.min(r.getL1().getX(), r.getL2().getX())
 				, Math.min(r.getL1().getY(), r.getL2().getY())
 				, Math.min(r.getL1().getZ(), r.getL2().getZ()))
@@ -37,6 +62,12 @@ public class MutableModification {
 				, Math.max(r.getL1().getY(), r.getL2().getY())
 				, Math.max(r.getL1().getZ(), r.getL2().getZ()));
 		bigger.add(0, value, 0);
+		
+		if (!canChangeSize(smaller, bigger, p))
+		{
+			return;
+		}
+		
 		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
@@ -52,7 +83,7 @@ public class MutableModification {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	public void editExpandDown(Region r, int value) {
+	public void editExpandDown(Region r, int value, Player p) {
 		Location smaller = new Location(r.getL1().getWorld(), Math.min(r.getL1().getX(), r.getL2().getX())
 				, Math.min(r.getL1().getY(), r.getL2().getY())
 				, Math.min(r.getL1().getZ(), r.getL2().getZ()))
@@ -60,6 +91,12 @@ public class MutableModification {
 				, Math.max(r.getL1().getY(), r.getL2().getY())
 				, Math.max(r.getL1().getZ(), r.getL2().getZ()));
 		smaller.add(0, value, 0);
+		
+		if (!canChangeSize(smaller, bigger, p))
+		{
+			return;
+		}
+		
 		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
@@ -75,7 +112,7 @@ public class MutableModification {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	public void editShrinkUp(Region r, int value) {
+	public void editShrinkUp(Region r, int value, Player p) {
 		Location smaller = new Location(r.getL1().getWorld(), Math.min(r.getL1().getX(), r.getL2().getX())
 				, Math.min(r.getL1().getY(), r.getL2().getY())
 				, Math.min(r.getL1().getZ(), r.getL2().getZ()))
@@ -83,6 +120,12 @@ public class MutableModification {
 				, Math.max(r.getL1().getY(), r.getL2().getY())
 				, Math.max(r.getL1().getZ(), r.getL2().getZ()));
 		smaller.subtract(0, value, 0);
+		
+		if (!canChangeSize(smaller, bigger, p))
+		{
+			return;
+		}
+		
 		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
@@ -98,7 +141,7 @@ public class MutableModification {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	public void editShrinkDown(Region r, int value) {
+	public void editShrinkDown(Region r, int value, Player p) {
 		Location smaller = new Location(r.getL1().getWorld(), Math.min(r.getL1().getX(), r.getL2().getX())
 				, Math.min(r.getL1().getY(), r.getL2().getY())
 				, Math.min(r.getL1().getZ(), r.getL2().getZ()))
@@ -106,6 +149,12 @@ public class MutableModification {
 				, Math.max(r.getL1().getY(), r.getL2().getY())
 				, Math.max(r.getL1().getZ(), r.getL2().getZ()));
 		bigger.subtract(0, value, 0);
+		
+		if (!canChangeSize(smaller, bigger, p))
+		{
+			return;
+		}
+		
 		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
@@ -121,7 +170,7 @@ public class MutableModification {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	public void editExpandMax(Region r) {
+	public void editExpandMax(Region r, Player p) {
 		Location smaller = new Location(r.getL1().getWorld(), Math.min(r.getL1().getX(), r.getL2().getX())
 				, Math.min(r.getL1().getY(), r.getL2().getY())
 				, Math.min(r.getL1().getZ(), r.getL2().getZ()))
@@ -130,6 +179,12 @@ public class MutableModification {
 				, Math.max(r.getL1().getZ(), r.getL2().getZ()));
 		smaller.setY(0);
 		bigger.setY(r.getWorld().getMaxHeight());
+		
+		if (!canChangeSize(smaller, bigger, p))
+		{
+			return;
+		}
+		
 		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
@@ -145,7 +200,12 @@ public class MutableModification {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	public void editModifyPoints(Region r, Location l1, Location l2) {
+	public void editModifyPoints(Region r, Location l1, Location l2, Player p) {
+		if (!canChangeSize(l1, l2, p))
+		{
+			return;
+		}
+		
 		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Points.Point1", convertLocation(l1));
 		c.set("Region.Essentials.Points.Point2", convertLocation(l2));
@@ -161,21 +221,20 @@ public class MutableModification {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	public void editExpandOut(Region r, int expand) {
+	public void editExpandOut(Region r, int expand, Player p) {
 		Location smaller = new Location(r.getL1().getWorld(), Math.min(r.getL1().getX(), r.getL2().getX()), Math.min(r.getL1().getY(), r.getL2().getY()), Math.min(r.getL1()
 				.getZ(), r.getL2().getZ()));
 		Location bigger = new Location(r.getL1().getWorld(), Math.max(r.getL1().getX(), r.getL2().getX()), Math.max(r.getL1().getY(), r.getL2().getY()), Math.max(r.getL1()
 				.getZ(), r.getL2().getZ()));
 		smaller.subtract(expand, 0, expand);
 		bigger.add(expand, 0, expand);
-		File file = r.getConfigFile();
-		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
-		Map<String, Object> all = c.getValues(true);
-		all.remove("Region.Essentials.Points.Point1");
-		all.remove("Region.Essentials.Points.Point2");
-		for (Entry<String, Object> entry : all.entrySet()) {
-			c.set(entry.getKey(), entry.getValue());
+		
+		if (!canChangeSize(smaller, bigger, p))
+		{
+			return;
 		}
+		
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
 		r.setL1(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ());
@@ -190,21 +249,20 @@ public class MutableModification {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	public void editShrinkIn(Region r, int shrink) {
+	public void editShrinkIn(Region r, int shrink, Player p) {
 		Location smaller = new Location(r.getL1().getWorld(), Math.min(r.getL1().getX(), r.getL2().getX()), Math.min(r.getL1().getY(), r.getL2().getY()), Math.min(r.getL1()
 				.getZ(), r.getL2().getZ()));
 		Location bigger = new Location(r.getL1().getWorld(), Math.max(r.getL1().getX(), r.getL2().getX()), Math.max(r.getL1().getY(), r.getL2().getY()), Math.max(r.getL1()
 				.getZ(), r.getL2().getZ()));
 		smaller.add(shrink, 0, shrink);
 		bigger.subtract(shrink, 0, shrink);
-		File file = r.getConfigFile();
-		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
-		Map<String, Object> all = c.getValues(true);
-		all.remove("Region.Essentials.Points.Point1");
-		all.remove("Region.Essentials.Points.Point2");
-		for (Entry<String, Object> entry : all.entrySet()) {
-			c.set(entry.getKey(), entry.getValue());
+		
+		if (!canChangeSize(smaller, bigger, p))
+		{
+			return;
 		}
+		
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Points.Point1", convertLocation(smaller));
 		c.set("Region.Essentials.Points.Point2", convertLocation(bigger));
 		r.setL1(smaller.getWorld(), smaller.getBlockX(), smaller.getBlockY(), smaller.getBlockZ());
@@ -228,8 +286,7 @@ public class MutableModification {
 
 		LogRunner.log.remove(r);
 
-		File file = r.getConfigFile();
-		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Name", new_name);
 		try {
 			c.save(r.getConfigFile());
@@ -237,7 +294,7 @@ public class MutableModification {
 			e1.printStackTrace();
 		}
 
-		file.renameTo(new File(r.getDirectory() + File.separator + new_name + ".rz"));
+		r.getConfigFile().renameTo(new File(r.getDirectory() + File.separator + new_name + ".rz"));
 
 		r.getDirectory().renameTo(new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + new_name));
 
@@ -252,8 +309,7 @@ public class MutableModification {
 
 		LogRunner.log.remove(r);
 
-		File file = r.getConfigFile();
-		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Name", new_name);
 		try {
 			c.save(r.getConfigFile());
@@ -261,7 +317,7 @@ public class MutableModification {
 			e1.printStackTrace();
 		}
 
-		file.renameTo(new File(r.getDirectory() + File.separator + new_name + ".rz"));
+		r.getConfigFile().renameTo(new File(r.getDirectory() + File.separator + new_name + ".rz"));
 
 		r.getDirectory().renameTo(new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + new_name));
 

@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -31,15 +33,53 @@ import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.GlobalWorldSetting;
 import couk.Adamki11s.Regios.Regions.Region;
-import couk.Adamki11s.Regios.Regions.SubRegionManager;
 import couk.Adamki11s.Regios.Scheduler.HealthRegeneration;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
 
 public class RegiosEntityListener implements Listener {
 
 	private static final ExtrasRegions extReg = new ExtrasRegions();
-	private static final SubRegionManager srm = new SubRegionManager();
 
+	private boolean isPeacefulMob(EntityType ce)
+	{
+		if (ce == EntityType.CHICKEN || 
+				ce == EntityType.COW || 
+				ce == EntityType.PIG || 
+				ce == EntityType.SHEEP || 
+				ce == EntityType.SQUID || 
+				ce == EntityType.SNOWMAN || 
+				ce == EntityType.VILLAGER || 
+				ce == EntityType.OCELOT || 
+				ce == EntityType.IRON_GOLEM || 
+				ce == EntityType.WOLF) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onEntityBlockChange(EntityChangeBlockEvent evt)
+	{
+		Location l = evt.getBlock().getLocation();
+		World w = evt.getBlock().getWorld();
+		
+		if(evt.getEntity() instanceof Enderman)
+		{
+			GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
+			Region r = GlobalRegionManager.getRegion(l);
+			
+			if(r == null)
+			{
+				if (gws != null) {
+					if (gws.blockEndermanMod) {
+						evt.setCancelled(true);
+					}
+				}
+				return;
+			}
+		}
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityExplode(EntityExplodeEvent evt)
@@ -56,61 +96,22 @@ public class RegiosEntityListener implements Listener {
 
 		Location l = evt.getEntity().getLocation();
 		World w = l.getWorld();
-		Chunk c = w.getChunkAt(l);
+		EntityType ce = evt.getEntityType();
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
+		if (r == null)
+		{
 			if (GlobalRegionManager.getGlobalWorldSetting(w) != null) {
-				if (!GlobalRegionManager.getGlobalWorldSetting(w).canCreatureSpawn(evt.getEntityType())) {
-					evt.setCancelled(true);
-				}
-				return;
-			}
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-			// inside region then cancel the
-			// check.
-			if (GlobalRegionManager.getGlobalWorldSetting(w) != null) {
-				if (!GlobalRegionManager.getGlobalWorldSetting(w).canCreatureSpawn(evt.getEntityType())) {
+				if (!GlobalRegionManager.getGlobalWorldSetting(w).canCreatureSpawn(ce)) {
 					evt.setCancelled(true);
 				}
 			}
 			return;
 		}
 
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
-		}
-
 		if (!r.canMobsSpawn()) {
-			EntityType ce = evt.getEntityType();
-			if (ce == EntityType.CHICKEN || ce == EntityType.COW || ce == EntityType.PIG || ce == EntityType.SHEEP || ce == EntityType.SQUID || ce == EntityType.SNOWMAN || ce == EntityType.VILLAGER || ce == EntityType.OCELOT || ce == EntityType.IRON_GOLEM || ce == EntityType.WOLF) {
+			if (isPeacefulMob(ce)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Mob '" + ce.getName() + "' tried to spawn but was prevented."));
 				evt.setCancelled(true);
 				return;
@@ -118,14 +119,14 @@ public class RegiosEntityListener implements Listener {
 		}
 
 		if (!r.canMonstersSpawn()) {
-			EntityType ce = evt.getEntityType();
-			if (ce != EntityType.CHICKEN && ce != EntityType.COW && ce != EntityType.PIG && ce != EntityType.SHEEP && ce != EntityType.SQUID && ce != EntityType.SNOWMAN && ce != EntityType.VILLAGER && ce != EntityType.OCELOT && ce != EntityType.IRON_GOLEM && ce != EntityType.WOLF) {
+			if (!isPeacefulMob(ce)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Monster '" + ce.getName() + "' tried to spawn but was prevented."));
 				evt.setCancelled(true);
 				return;
 			}
 		}
 	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDeath(EntityDeathEvent evt) {
 		Entity e = evt.getEntity();
@@ -136,6 +137,7 @@ public class RegiosEntityListener implements Listener {
 			}
 		}
 	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPaintingBreak(PaintingBreakEvent evt) {
 
@@ -154,60 +156,19 @@ public class RegiosEntityListener implements Listener {
 
 		Location l = evt.getPainting().getLocation();
 		World w = l.getWorld();
-		Chunk c = w.getChunkAt(l);
 
 		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
+		if(r == null)
+		{
 			if (gws != null) {
 				if (gws.invert_protection) {
 					evt.setCancelled(true);
-					return;
 				}
 			}
 			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-			// inside region then cancel the
-			// check.
-			if (gws != null) {
-				if (gws.invert_protection) {
-					evt.setCancelled(true);
-					return;
-				}
-			}
-			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
 		}
 
 		if (r.is_protectionBreak()) {
@@ -220,6 +181,7 @@ public class RegiosEntityListener implements Listener {
 		}
 
 	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPaintingPlace(PaintingPlaceEvent evt) {
 
@@ -227,60 +189,19 @@ public class RegiosEntityListener implements Listener {
 
 		Location l = evt.getPainting().getLocation();
 		World w = l.getWorld();
-		Chunk c = w.getChunkAt(l);
 
 		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
+		if(r == null)
+		{
 			if (gws != null) {
 				if (gws.invert_protection) {
 					evt.setCancelled(true);
-					return;
 				}
 			}
 			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-			// inside region then cancel the
-			// check.
-			if (gws != null) {
-				if (gws.invert_protection) {
-					evt.setCancelled(true);
-					return;
-				}
-			}
-			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
 		}
 
 		if (r.is_protectionPlace()) {
@@ -293,7 +214,6 @@ public class RegiosEntityListener implements Listener {
 		}
 
 	}
-
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onExplosionPrime(ExplosionPrimeEvent evt) {
@@ -376,6 +296,7 @@ public class RegiosEntityListener implements Listener {
 		}
 
 	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent evt) {
 
@@ -385,54 +306,19 @@ public class RegiosEntityListener implements Listener {
 
 		Location l = evt.getEntity().getLocation();
 		World w = l.getWorld();
-		Chunk c = w.getChunkAt(l);
 
 		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
-			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-			// inside region then cancel the
-			// check.
+		if (r == null)
+		{
 			if (gws != null) {
 				if (!gws.invert_pvp && gws.overridingPvp) {
 					evt.setCancelled(true);
-					return;
 				}
 			}
 			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
 		}
 
 		if (!r.isHealthEnabled()) {

@@ -17,6 +17,10 @@ public class AdministrationCommands extends PermissionsCore {
 		p.sendMessage(mutable.listRegions());
 	}
 	
+	public void listOwnedRegions(Player p){
+		p.sendMessage(mutable.listOwnedRegions(p));
+	}
+	
 	public void reloadRegions(Player p){
 		mutable.reloadRegions();
 		p.sendMessage(ChatColor.GREEN + "[Regios] All Regions reloaded.");

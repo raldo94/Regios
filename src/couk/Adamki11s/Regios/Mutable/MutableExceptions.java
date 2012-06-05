@@ -2,9 +2,6 @@ package couk.Adamki11s.Regios.Mutable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -156,14 +153,8 @@ public class MutableExceptions {
 	 */
 
 	public void addSubOwner(Region r, String message){
-		File file = r.getConfigFile();
-		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
-		Map<String, Object> all = c.getValues(true);
-		String current = (String)all.get("Region.Essentials.SubOwners");
-		all.remove("Region.Essentials.SubOwners");
-		for(Entry<String, Object> entry : all.entrySet()){
-			c.set(entry.getKey(), entry.getValue());
-		}
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		String current = (String)c.get("Region.Essentials.SubOwners");
 		c.set("Region.Essentials.SubOwners", current.trim() + message.trim() + ",");
 		r.setSubOwners((current.trim() + "," + message.trim()).split(","));
 		try {
@@ -174,17 +165,11 @@ public class MutableExceptions {
 	}
 
 	public void removeSubOwner(Region r, String message){
-		File file = r.getConfigFile();
-		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
-		Map<String, Object> all = c.getValues(true);
-		String current = (String)all.get("Region.Essentials.SubOwners");
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		String current = (String)c.get("Region.Essentials.SubOwners");
 		current = current.replaceAll(" ", "");
 		current = current.replaceAll(message + ",", "");
 		current = current.replaceAll(",,", ",");
-		all.remove("Region.Essentials.SubOwners");
-		for(Entry<String, Object> entry : all.entrySet()){
-			c.set(entry.getKey(), entry.getValue());
-		}
 		c.set("Region.Essentials.SubOwners", current.trim());
 		r.setSubOwners((current.trim()).split(","));
 		try {
@@ -203,13 +188,7 @@ public class MutableExceptions {
 	}
 
 	public void eraseAllSubOwners(Region r){
-		File file = r.getConfigFile();
-		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
-		Map<String, Object> all = c.getValues(true);
-		all.remove("Region.Essentials.SubOwners");
-		for(Entry<String, Object> entry : all.entrySet()){
-			c.set(entry.getKey(), entry.getValue());
-		}
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.SubOwners", "");
 		r.setSubOwners(("").split(","));
 		try {

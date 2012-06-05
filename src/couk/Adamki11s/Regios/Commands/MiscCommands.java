@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -38,7 +39,7 @@ public class MiscCommands extends PermissionsCore {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			mods.editExpandMax(r);
+			mods.editExpandMax(r, p);
 			System.out.println(ConfigurationData.salePrice);
 			eco.editSalePrice(r, ConfigurationData.salePrice);
 			eco.editForSale(r, true);
@@ -142,7 +143,7 @@ public class MiscCommands extends PermissionsCore {
 				p.sendMessage(ChatColor.RED + "[Regios] The Command " + ChatColor.BLUE + msg + ChatColor.RED + " already exists!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] Command " + ChatColor.BLUE + msg + ChatColor.GREEN + " added to region set " + ChatColor.BLUE + region);
+			p.sendMessage(ChatColor.GREEN + "[Regios] Command " + ChatColor.BLUE + msg + ChatColor.GREEN + " added to region set " + ChatColor.BLUE + r.getName());
 		}
 		mutable.editAddToForceCommandSet(r, msg);
 	}
@@ -166,7 +167,7 @@ public class MiscCommands extends PermissionsCore {
 				p.sendMessage(ChatColor.RED + "[Regios] The command " + ChatColor.BLUE + msg + ChatColor.RED + " did not match any in the set!");
 				return;
 			} else {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Command " + ChatColor.BLUE + msg + ChatColor.GREEN + " removed from region set " + ChatColor.BLUE + region);
+				p.sendMessage(ChatColor.GREEN + "[Regios] Command " + ChatColor.BLUE + msg + ChatColor.GREEN + " removed from region set " + ChatColor.BLUE + r.getName());
 			}
 		}
 		mutable.editRemoveFromForceCommandSet(r, msg);
@@ -181,7 +182,7 @@ public class MiscCommands extends PermissionsCore {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] Command Set reset for region " + ChatColor.BLUE + region);
+			p.sendMessage(ChatColor.GREEN + "[Regios] Command Set reset for region " + ChatColor.BLUE + r.getName());
 		}
 		mutable.editResetForceCommandSet(r);
 	}
@@ -192,7 +193,7 @@ public class MiscCommands extends PermissionsCore {
 			return;
 		} else {
 			String regionSet = mutable.listCommandSet(r);
-			p.sendMessage(ChatColor.GREEN + "Force Command Set List : " + ChatColor.BLUE + region);
+			p.sendMessage(ChatColor.GREEN + "Force Command Set List : " + ChatColor.BLUE + r.getName());
 			p.sendMessage(regionSet);
 		}
 	}
@@ -214,12 +215,62 @@ public class MiscCommands extends PermissionsCore {
 				return;
 			}
 			if (val) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Force Commands enabled for region " + ChatColor.BLUE + region);
+				p.sendMessage(ChatColor.GREEN + "[Regios] Force Commands enabled for region " + ChatColor.BLUE + r.getName());
 			} else {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Force Commands disabled for region " + ChatColor.BLUE + region);
+				p.sendMessage(ChatColor.GREEN + "[Regios] Force Commands disabled for region " + ChatColor.BLUE + r.getName());
 			}
 		}
 		mutable.editSetForceCommand(r, val);
 	}
-
+	
+	public void setGameModeType(Region r, String region, String input, Player p) {
+		GameMode gm = null;
+		try {
+			gm = GameMode.valueOf(input.toUpperCase());
+		} catch (Exception ex) {
+			try {
+				gm = GameMode.getByValue(Integer.parseInt(input));
+			} catch (Exception ex2) {
+				p.sendMessage(ChatColor.RED + "[Regios] Invalid GameMode! Correct modes are SURVIVAL, CREATIVE, 0, 1.");
+			}
+		}
+		if(r == null)
+		{
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			if(!super.canModify(r, p)){
+				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				return;
+			}
+			p.sendMessage(ChatColor.GREEN + "[Regios] GameMode set to " + ChatColor.BLUE + gm.toString() + " for region " + ChatColor.BLUE + r.getName());
+		}
+		mutable.editGameModeType(r, gm);
+	}
+	
+	public void setGameModeChange(Region r, String region, String input, Player p) {
+		boolean val;
+		try {
+			val = Boolean.parseBoolean(input);
+		} catch (Exception bfe) {
+			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be boolean!");
+			return;
+		}
+		if(r == null)
+		{
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			if(!super.canModify(r, p)){
+				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				return;
+			}
+			if (val) {
+				p.sendMessage(ChatColor.GREEN + "[Regios] GameMode change enabled for region " + ChatColor.BLUE + r.getName());
+			} else {
+				p.sendMessage(ChatColor.GREEN + "[Regios] GameMode change disabled for region " + ChatColor.BLUE + r.getName());
+			}
+		}
+		mutable.editGameModeChange(r, val);
+	}
 }

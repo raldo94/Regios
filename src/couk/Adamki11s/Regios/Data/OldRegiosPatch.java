@@ -174,7 +174,7 @@ public class OldRegiosPatch {
 
 				if (integrity) {
 
-					if (GlobalRegionManager.doesExist(name)) {
+					if (GlobalRegionManager.doesRegionExist(name)) {
 						mutable.editDeleteRegion(GlobalRegionManager.getRegion(name), false, p);
 						patchMessage("Deleting existing region name : " + name, p);
 					}

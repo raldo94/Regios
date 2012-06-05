@@ -1,5 +1,6 @@
 package couk.Adamki11s.Regios.Data;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 
 public class ConfigurationData {
@@ -57,6 +58,7 @@ public class ConfigurationData {
 		, permWipeOnExit
 		, wipeAndCacheOnEnter
 		, wipeAndCacheOnExit
+		, changeGameMode
 		, forceCommand
 		, blockForm
 		, forSale
@@ -68,12 +70,14 @@ public class ConfigurationData {
 
 	public static MODE protectionMode, preventEntryMode, preventExitMode, itemMode;
 
+	public static GameMode gameMode;
+
 	public ConfigurationData(String a, String b, String c, String d, String e, String pass, boolean f, boolean g, boolean h, boolean i, boolean j, boolean k, boolean m, boolean n,
 			boolean nn, boolean o, boolean v, boolean passEnabled, int p, int q, int r, MODE s, MODE t, MODE u, MODE item, boolean w, boolean x, boolean y, boolean z, boolean exit,
 			String dam, String dasm, Material welcome, Material leave, boolean welcomeMsg, boolean leaveMsg, boolean protectMsg, boolean preventEntryMsg, boolean preventExitMsg,
 			boolean fireProt, boolean fireSpr, String[] music, boolean playmusic, boolean permWipeOnEnter1, boolean permWipeOnExit1,
-			boolean wipeAndCacheOnEnter1, boolean wipeAndCacheOnExit1, boolean forceCommand1, String[] commandSet1, String[] tempAddCache, String[] permAddCache,
-			String[] tempRemCache, String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt) {
+			boolean wipeAndCacheOnEnter1, boolean wipeAndCacheOnExit1, boolean changeGM, boolean forceCommand1, String[] commandSet1, String[] tempAddCache, String[] permAddCache,
+			String[] tempRemCache, String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt, GameMode gamemode) {
 		defaultWelcomeMessage = a;
 		defaultLeaveMessage = b;
 		defaultProtectionMessage = c;
@@ -121,6 +125,7 @@ public class ConfigurationData {
 		permWipeOnExit = permWipeOnExit1;
 		wipeAndCacheOnEnter = wipeAndCacheOnEnter1;
 		wipeAndCacheOnExit = wipeAndCacheOnExit1;
+		changeGameMode = changeGM;
 		forceCommand = forceCommand1;
 		commandSet = commandSet1;
 		temporaryNodesCacheAdd = tempAddCache;
@@ -134,6 +139,7 @@ public class ConfigurationData {
 		forSale = fs;
 		salePrice = sp;
 		tntEnabled = tnt;
+		gameMode = gamemode;
 	}
 
 }

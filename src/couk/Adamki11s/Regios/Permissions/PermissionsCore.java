@@ -35,21 +35,21 @@ public class PermissionsCore {
 	}
 
 	public static boolean canModify(Region r, Player p) {
-		if (doesHaveNode(p, ("regios.override." + r.getName())) || doesHaveNode(p, "regios.override.all")) {
+		if (PermissionsCore.doesHaveNode(p, ("regios.override." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.override.all")) {
 			return true;
 		}
 		if (r.getOwner().equalsIgnoreCase(p.getName())) {
 			return true;
-		}
-		if (p.isOp()) {
-			return true;
-		}
-		for (String s : r.getSubOwners()) {
-			if (s.equalsIgnoreCase(p.getName())) {
-				return true;
+		} else {
+			if (r.getSubOwners() != null && r.getSubOwners().length > 0) {
+				for (String subOwner : r.getSubOwners()) {
+					if (subOwner.equalsIgnoreCase(p.getName())) {
+						return true;
+					}
+				}
 			}
+			return false;
 		}
-		return false;
 	}
 	
 	public static void addTempUserPermission(Player p, String node) {

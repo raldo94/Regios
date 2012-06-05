@@ -19,10 +19,10 @@ public class VersionPatcher {
 	static final File patch4063F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "4.0.63.rv");
 	static final File patch4071F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "4.0.71.rv");
 	static final File patch5021F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.21.rv");
-	static final File patch5045F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.45.rv");
+	static final File patch505F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.5.rv");
 
 	public static void runPatch(String version) throws IOException {
-		if (version.equalsIgnoreCase("5.0.45")) {
+		if (version.equalsIgnoreCase("5.0.5")) {
 			if (!patch4057F.exists()) {
 				patch4057(version);
 				patch4057F.createNewFile();
@@ -39,9 +39,9 @@ public class VersionPatcher {
 				patch5021(version);
 				patch5021F.createNewFile();
 			}
-			if (!patch5045F.exists()) {
-				patch5045(version);
-				patch5045F.createNewFile();
+			if (!patch505F.exists()) {
+				patch505(version);
+				patch505F.createNewFile();
 			}
 		}
 	}
@@ -142,7 +142,7 @@ public class VersionPatcher {
 		outstream.println("[Regios][Patch] Patch completed!");
 	}
 
-	private static void patch5045(String v) {
+	private static void patch505(String v) {
 		outstream.println("[Regios][Patch] Patching files for version : " + v);
 		outstream.println("[Regios][Patch] Modifying general configuration file...");
 		File generalconfig = new File(config_root + File.separator + "GeneralSettings.config");
@@ -164,9 +164,11 @@ public class VersionPatcher {
 			FileConfiguration wc = YamlConfiguration.loadConfiguration(w);
 			boolean wvalue = wc.getBoolean(w.getName().substring(0, pos) + ".Protection.FireSpreadEnabled", true);
 			boolean dragon = wc.getBoolean(w.getName().substring(0, pos) + ".Protection.DragonProtect", true);
+			boolean enderman = wc.getBoolean(w.getName().substring(0, pos) + ".Protection.EndermanBlock", false);
 			wc = YamlConfiguration.loadConfiguration(w);
 			wc.set(w.getName().substring(0, pos) + ".Protection.FireSpreadEnabled", wvalue);
 			wc.set(w.getName().substring(0, pos) + ".Protection.DragonProtect", dragon);
+			wc.set(w.getName().substring(0, pos) + ".Protection.EndermanBlock", enderman);
 			try {
 				wc.save(w);
 			} catch (IOException e) {
@@ -178,16 +180,20 @@ public class VersionPatcher {
 		File dr = new File(config_root + File.separator + "DefaultRegion.config");
 		FileConfiguration drc = YamlConfiguration.loadConfiguration(dr);
 		boolean drvalue = drc.getBoolean("DefaultSettings.General.DispensersLocked", false);
+		String drgmt = drc.getString("DefaultSettings.GameMode.Type", "SURVIVAL");
+		boolean drgmc = drc.getBoolean("DefaultSettings.GameMode.Change", false);
 		drc.set("DefaultSettings.General.DispensersLocked", drvalue);
+		drc.set("DefaultSettings.GameMode.Type", drgmt);
+		drc.set("DefaultSettings.GameMode.Change", drgmc);
 		try {
 			drc.save(dr);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		ConfigurationData.logs = true;
-		outstream.println("[Regios][Patch] Region.UseWorldEdit property added.");
-		outstream.println("[Regios][Patch] FireSpreadEnabled added to world configurations.");
-		outstream.println("[Regios][Patch] DragonProtect added to world configurations.");
+		outstream.println("[Regios][Patch] Region.UseWorldEdit property added to generalsettings.config.");
+		outstream.println("[Regios][Patch] FireSpreadEnabled, DragonProtect, and EndermanBlock added to world configurations.");
+		outstream.println("[Regios][Patch] Added DispensersLocked, GameMode.Type, and GameMode.Change to DefaultRegion.config");
 		outstream.println("[Regios][Patch] Patch completed!");
 	}
 

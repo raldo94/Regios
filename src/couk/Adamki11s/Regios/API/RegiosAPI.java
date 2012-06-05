@@ -23,7 +23,7 @@ import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
 public class RegiosAPI {
 	
 	private final SaveData sd = new SaveData();
-
+	
 	/**
 	 * Get a region by it's name.
 	 * 
@@ -118,6 +118,17 @@ public class RegiosAPI {
 	 */
 	public boolean isInRegion(Player p) {
 		return (GlobalRegionManager.getRegion(p) == null ? false : true);
+	}
+	
+	/**
+	 * Check whether a location is in a region.
+	 * 
+	 * @param l
+	 *            Location.
+	 * @return Whether the location is in a region or not.
+	 */
+	public boolean isInRegion(Location l) {
+		return (GlobalRegionManager.getRegion(l) == null ? false : true);
 	}
 
 	/**

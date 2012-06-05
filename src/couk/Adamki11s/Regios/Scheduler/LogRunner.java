@@ -40,7 +40,11 @@ public class LogRunner {
 			for (Entry<Region, ArrayList<String>> entry : log.entrySet()) {
 				File logFile = entry.getKey().getLogFile();
 				if (!logFile.exists()) {
-					logFile.createNewFile();
+					try {
+						logFile.createNewFile();
+					} catch (Exception ex) {
+						System.out.println("Unable to create log file " + logFile.getAbsolutePath());
+					}
 				}
 				fileWipeCheck(logFile);
 				FileWriter fstream = new FileWriter(logFile, true);

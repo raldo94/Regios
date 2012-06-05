@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
@@ -12,10 +13,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class CreationCore {
 
-	private final File root = new File("plugins" + File.separator + "Regios"), db_root = new File(root + File.separator + "Database"), config_root = new File(root
-			+ File.separator + "Configuration"), backup_root = new File(root + File.separator + "Backups"), version_root = new File(root + File.separator + "Versions"),
-			updates = new File("plugins" + File.separator + "Update"), other = new File(root + File.separator + "Other"), shares = new File(root + File.separator
-					+ "Blueprints"), depend = new File(root + File.separator + "Dependancies"), restrict = new File(root + File.separator + "Restrictions");
+	private final File root = new File("plugins" + File.separator + "Regios")
+				, db_root = new File(root + File.separator + "Database")
+				, config_root = new File(root + File.separator + "Configuration")
+				, backup_root = new File(root + File.separator + "Backups")
+				, version_root = new File(root + File.separator + "Versions")
+				, updates = new File("plugins" + File.separator + "Update")
+				, other = new File(root + File.separator + "Other")
+				, shares = new File(root + File.separator + "Blueprints")
+				, depend = new File(root + File.separator + "Dependancies")
+				, restrict = new File(root + File.separator + "Restrictions");
 
 	private final Logger log = Logger.getLogger("Minecraft.Regios");
 	private final String prefix = "[Regios]";
@@ -65,7 +72,7 @@ public class CreationCore {
 			log.info(prefix + " Creating directory @_root/plugins/Regios/Other");
 		}
 
-		if (!depend.exists()) {
+		if (depend.exists()) {
 			depend.delete();
 			log.info(prefix + " Deleting directory @_root/plugins/Regios/Dependancies");
 		}
@@ -118,8 +125,9 @@ public class CreationCore {
 	private void configuration() throws IOException {
 		log.info(prefix + " Checking configuration files.");
 		boolean flawless = true;
-		File defaultregions = new File(config_root + File.separator + "DefaultRegion.config"), generalconfig = new File(config_root + File.separator
-				+ "GeneralSettings.config");
+		File defaultregions = new File(config_root + File.separator + "DefaultRegion.config")
+		   , generalconfig = new File(config_root + File.separator + "GeneralSettings.config")
+		   , restrictionconfig = new File(config_root + File.separator + "Restrictions.config");
 
 		if (!generalconfig.exists()) {
 			log.info(prefix + " Creating general configuration.");
@@ -202,13 +210,69 @@ public class CreationCore {
 			c.set("DefaultSettings.General.PlayerCap.Cap", 0);
 
 			c.set("DefaultSettings.Block.BlockForm.Enabled", true);
+			
+			c.set("DefaultSettings.GameMode.Type", "SURVIVAL");
+			c.set("DefaultSettings.GameMode.Change", false);
 
 			c.save(defaultregions);
+		}
+		if (!restrictionconfig.exists()) {
+			log.info(prefix + " Creating restriction configuration.");
+			restrictionconfig.createNewFile();
+			FileConfiguration c = YamlConfiguration.loadConfiguration(restrictionconfig);
+			c.set("Restrictions.Size", size);
+			c.set("Restrictions.Count", count);
+			c.save(restrictionconfig);
 		}
 		if (!flawless) {
 			log.info(prefix + " Required configurations created successfully!");
 		}
 		log.info(prefix + " Configuration check completed.");
 	}
+	
+	ArrayList<String> size = new ArrayList<String>() {
+		private static final long serialVersionUID = -6829028729172255886L;
+	{
+		add("regios.restrictions.size10");
+		add("regios.restrictions.size20");
+		add("regios.restrictions.size30");
+		add("regios.restrictions.size40");
+		add("regios.restrictions.size50");
+		add("regios.restrictions.size60");
+		add("regios.restrictions.size70");
+		add("regios.restrictions.size75");
+		add("regios.restrictions.size80");
+		add("regios.restrictions.size90");
+		add("regios.restrictions.size100");
+		add("regios.restrictions.size125");
+		add("regios.restrictions.size150");
+		add("regios.restrictions.size175");
+		add("regios.restrictions.size200");
+		
+	}};
+	
+	ArrayList<String> count = new ArrayList<String>() {
+		private static final long serialVersionUID = 1373000493169672932L;
+	{
+		add("regios.restrictions.1");
+		add("regios.restrictions.2");
+		add("regios.restrictions.3");
+		add("regios.restrictions.5");
+		add("regios.restrictions.10");
+		add("regios.restrictions.20");
+		add("regios.restrictions.30");
+		add("regios.restrictions.40");
+		add("regios.restrictions.50");
+		add("regios.restrictions.60");
+		add("regios.restrictions.70");
+		add("regios.restrictions.80");
+		add("regios.restrictions.90");
+		add("regios.restrictions.100");
+		add("regios.restrictions.250");
+		add("regios.restrictions.500");
+		add("regios.restrictions.1000");
+		
+	}};
+
 
 }

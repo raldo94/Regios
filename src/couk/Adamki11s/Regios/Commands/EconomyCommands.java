@@ -6,7 +6,9 @@ import org.bukkit.entity.Player;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
 import couk.Adamki11s.Regios.Mutable.MutableEconomy;
 import couk.Adamki11s.Regios.Permissions.PermissionsCore;
+import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
+import couk.Adamki11s.Regios.Restrictions.RestrictionParameters;
 
 public class EconomyCommands extends PermissionsCore {
 
@@ -52,6 +54,17 @@ public class EconomyCommands extends PermissionsCore {
 			}
 			if (!PermissionsCore.doesHaveNode(p, "regios.fun.buy")) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to buy regions!");
+				return;
+			}
+			if(!r.isForSale())
+			{
+				p.sendMessage(ChatColor.RED + "[Regios] This region is not for sale!");
+				return;
+			}
+			RestrictionParameters params = RestrictionParameters.getRestrictions(p);
+			if (GlobalRegionManager.getOwnedRegions(p.getName()) + 1 > params.getRegionLimit())
+			{
+				p.sendMessage("[Regios] You are already at your ownership limit, you cannot own another region!");
 				return;
 			}
 			int price = r.getSalePrice();

@@ -9,8 +9,8 @@ import couk.Adamki11s.Extras.Inventory.ExtrasInventory;
 
 public class InventoryCacheManager {
 	
-	public static HashMap<Player, ItemStack[]> inventMain = new HashMap<Player, ItemStack[]>();
-	public static HashMap<Player, ItemStack[]> inventArmour = new HashMap<Player, ItemStack[]>();
+	private static HashMap<Player, ItemStack[]> inventMain = new HashMap<Player, ItemStack[]>();
+	private static HashMap<Player, ItemStack[]> inventArmour = new HashMap<Player, ItemStack[]>();
 	
 	static ExtrasInventory exi = new ExtrasInventory();
 	

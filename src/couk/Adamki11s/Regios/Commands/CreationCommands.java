@@ -21,12 +21,10 @@ import couk.Adamki11s.Regios.CustomExceptions.RegionNameExistsException;
 import couk.Adamki11s.Regios.CustomExceptions.RegionPointsNotSetException;
 import couk.Adamki11s.Regios.Data.ConfigurationData;
 import couk.Adamki11s.Regios.Listeners.RegiosPlayerListener;
-import couk.Adamki11s.Regios.Net.PingManager;
 import couk.Adamki11s.Regios.RBF.RBF_Core;
 import couk.Adamki11s.Regios.Regions.CubeRegion;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.Region;
-import couk.Adamki11s.Regios.Restrictions.RestrictionManager;
 import couk.Adamki11s.Regios.Restrictions.RestrictionParameters;
 import couk.Adamki11s.Regios.WorldEditInterface.WEInterface;
 
@@ -108,11 +106,10 @@ public class CreationCommands {
 			throw new InvalidDataSetException(errors);
 		}
 		new CubeRegion(rds.getOwner(), rds.getName(), rds.getL1(), rds.getL2(), Bukkit.getServer().getWorld(rds.getWorld()), null, true);
-		PingManager.created();
 	}
 
 	public void createRegion(Player p, String name) throws RegionNameExistsException, RegionPointsNotSetException {
-		if (GlobalRegionManager.doesExist(name)) {
+		if (GlobalRegionManager.doesRegionExist(name)) {
 			p.sendMessage(ChatColor.RED + "[Regios] A region with name : " + ChatColor.BLUE + name + ChatColor.RED + " already exists!");
 			throw new RegionNameExistsException(name);
 		}
@@ -147,7 +144,7 @@ public class CreationCommands {
 				- Math.min(point1.get(p).getZ(), point2.get(p).getZ());
 		int rCount = GlobalRegionManager.getOwnedRegions(p.getName());
 
-		RestrictionParameters params = RestrictionManager.getRestriction(p);
+		RestrictionParameters params = RestrictionParameters.getRestrictions(p);
 
 		if(width > params.getRegionWidthLimit()){
 			p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this width!");
@@ -177,11 +174,10 @@ public class CreationCommands {
 		clearPoints(p);
 		modding.put(p, false);
 		setting.put(p, false);
-		PingManager.created();
 	}
 
 	public void createRegionWE(Player p, String name) throws RegionNameExistsException, CommandException {
-		if (GlobalRegionManager.doesExist(name)) {
+		if (GlobalRegionManager.doesRegionExist(name)) {
 			p.sendMessage(ChatColor.RED + "[Regios] A region with name : " + ChatColor.BLUE + name + ChatColor.RED + " already exists!");
 			throw new RegionNameExistsException(name);
 		}
@@ -223,7 +219,7 @@ public class CreationCommands {
 		} else if (sel instanceof CuboidSelection) {
 			int rCount = GlobalRegionManager.getOwnedRegions(p.getName());
 
-			RestrictionParameters params = RestrictionManager.getRestriction(p);
+			RestrictionParameters params = RestrictionParameters.getRestrictions(p);
 
 			if(sel.getWidth() > params.getRegionWidthLimit()){
 				p.sendMessage(ChatColor.RED + "[Regios] You cannot create a region of this width!");
@@ -253,7 +249,6 @@ public class CreationCommands {
 			clearPoints(p);
 			modding.put(p, false);
 			setting.put(p, false);
-			PingManager.created();
 		} else {
 			throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
 		}

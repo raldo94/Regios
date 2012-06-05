@@ -8,29 +8,15 @@ import couk.Adamki11s.Regios.Regions.Region;
 
 public class PermChecks {
 
-	public boolean canOverride(Player p, Region r) {
-		if (PermissionsCore.doesHaveNode(p, ("regios.override." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.override.all")) {
-			return true;
-		}
-		if (r.getOwner().equalsIgnoreCase(p.getName())) {
-			return true;
-		} else {
-			if (r.getSubOwners() != null && r.getSubOwners().length > 0) {
-				for (String subOwner : r.getSubOwners()) {
-					if (subOwner.equalsIgnoreCase(p.getName())) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-	}
-
 	public boolean canItemBePlaced(Player p, Material m, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
-		if (canOverride(p, r)) {
+		if (PermissionsCore.doesHaveNode(p, "regios.exceptions.itemplace." + r.getName()) || PermissionsCore.doesHaveNode(p, "regios.exceptions.itemplace.all"))
+		{
+			return true;
+		}
+		if (PermissionsCore.canModify(r, p)) {
 			return true;
 		} else {
 			for (String excep : r.getExceptionNodes()) {
@@ -68,7 +54,7 @@ public class PermChecks {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
-		if (canOverride(p, r)) {
+		if (PermissionsCore.canModify(r, p)) {
 			return true;
 		} else {
 			for (String excep : r.getExceptionNodes()) {
@@ -106,7 +92,11 @@ public class PermChecks {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
-		if (canOverride(p, r)) {
+		if (PermissionsCore.doesHaveNode(p, "regios.exceptions.enter." + r.getName()) || PermissionsCore.doesHaveNode(p, "regios.exceptions.enter.all"))
+		{
+			return true;
+		}
+		if (PermissionsCore.canModify(r, p)) {
 			return true;
 		} else {
 			for (String excep : r.getExceptionNodes()) {
@@ -144,7 +134,11 @@ public class PermChecks {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
-		if (canOverride(p, r)) {
+		if (PermissionsCore.doesHaveNode(p, "regios.exceptions.exit." + r.getName()) || PermissionsCore.doesHaveNode(p, "regios.exceptions.exit.all"))
+		{
+			return true;
+		}
+		if (PermissionsCore.canModify(r, p)) {
 			return true;
 		} else {
 			for (String excep : r.getExceptionNodes()) {

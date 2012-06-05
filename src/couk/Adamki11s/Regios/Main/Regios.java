@@ -23,7 +23,6 @@ import couk.Adamki11s.Regios.Listeners.RegiosBlockListener;
 import couk.Adamki11s.Regios.Listeners.RegiosEntityListener;
 import couk.Adamki11s.Regios.Listeners.RegiosPlayerListener;
 import couk.Adamki11s.Regios.Listeners.RegiosWeatherListener;
-import couk.Adamki11s.Regios.Net.PingManager;
 import couk.Adamki11s.Regios.Permissions.PermissionsCore;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.GlobalWorldSetting;
@@ -62,8 +61,6 @@ public class Regios extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		PingManager.enabled();
-
 		version = this.getDescription().getVersion();
 		authors = this.getDescription().getAuthors();
 		PluginManager pm = this.getServer().getPluginManager();

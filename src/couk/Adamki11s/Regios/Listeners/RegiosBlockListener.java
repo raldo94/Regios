@@ -3,11 +3,11 @@ package couk.Adamki11s.Regios.Listeners;
 import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,11 +19,12 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 import couk.Adamki11s.Regios.Commands.CreationCommands;
 import couk.Adamki11s.Regios.Data.ConfigurationData;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
@@ -32,13 +33,9 @@ import couk.Adamki11s.Regios.Permissions.PermissionsCore;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.GlobalWorldSetting;
 import couk.Adamki11s.Regios.Regions.Region;
-import couk.Adamki11s.Regios.Regions.SubRegionManager;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
 
 public class RegiosBlockListener implements Listener {
-
-	private static final ExtrasRegions extReg = new ExtrasRegions();
-	private static final SubRegionManager srm = new SubRegionManager();
 	final CreationCommands cc = new CreationCommands();
 
 	public void extinguish(Block b) {
@@ -60,41 +57,12 @@ public class RegiosBlockListener implements Listener {
 
 	public void forceBucketEvent(BlockPlaceEvent evt) {
 		if (evt.getBlock().getType() == Material.LAVA || evt.getBlock().getType() == Material.STATIONARY_LAVA || evt.getBlock().getType() == Material.STATIONARY_WATER || evt.getBlock().getType() == Material.WATER) {
-			Location l = evt.getBlock().getLocation();
 			Player p = evt.getPlayer();
-			World w = l.getWorld();
-			Chunk c = w.getChunkAt(l);
-
-			ArrayList<Region> regionSet = new ArrayList<Region>();
-
-			for (Region region : GlobalRegionManager.getRegions()) {
-				for (Chunk chunk : region.getChunkGrid().getChunks()) {
-					if (chunk.getWorld() == w) {
-						if (extReg.areChunksEqual(chunk, c)) {
-							if (!regionSet.contains(region)) {
-								regionSet.add(region);
-							}
-						}
-					}
-				}
-			}
-
-			if (regionSet.isEmpty()) {
-				return;
-			}
-
-			ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-			for (Region reg : regionSet) {
-				if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-					currentRegionSet.add(reg);
-				}
-			}
-
-			if (currentRegionSet.isEmpty()) { // If player is in chunk range but not inside region then cancel the check.
-				return;
-			} else {
-				for (Region r : currentRegionSet) {
+			Location l = evt.getBlock().getLocation();
+			ArrayList<Region> regions = GlobalRegionManager.getRegions(l);
+			if (!regions.isEmpty())
+			{
+				for (Region r : regions) {
 					if (r.isProtected()) {
 						if (!r.canBypassProtection(p)) {
 							LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
@@ -120,32 +88,53 @@ public class RegiosBlockListener implements Listener {
 			} else {
 				if (PermissionsCore.doesHaveNode(evt.getPlayer(), "regios.fun.sell")) {
 					Region r = GlobalRegionManager.getRegion(lines[1]);
+					Player p = evt.getPlayer();
+					Block b = evt.getBlock();
 					if (r == null) {
 						if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
-							evt.getPlayer().sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + lines[1] + ChatColor.RED + " does not exist.");
+							p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + lines[1] + ChatColor.RED + " does not exist.");
 						}
-						evt.getBlock().setTypeId(0);
-						evt.getPlayer().getInventory().addItem(new ItemStack(323, 1));
+						b.setTypeId(0);
+						p.getInventory().addItem(new ItemStack(323, 1));
 						evt.setCancelled(true);
 						return;
 					} else {
-						if (!r.isForSale()) {
+						if (!PermissionsCore.canModify(r, evt.getPlayer())) {
 							if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
-								evt.getPlayer().sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + lines[1] + ChatColor.RED + " is not for sale!");
+								p.sendMessage(ChatColor.RED + "[Regios] You don't have permissions to sell this region!");
+								b.setTypeId(0);
+								p.getInventory().addItem(new ItemStack(323, 1));
+								evt.setCancelled(true);
+								return;
 							}
-							evt.getBlock().setTypeId(0);
-							evt.getPlayer().getInventory().addItem(new ItemStack(323, 1));
+						}
+						if (lines[2] != null)
+						{
+							try {
+								r.setSalePrice(Integer.parseInt(lines[2]));
+								r.setForSale(true);
+							} catch (NumberFormatException ex) {
+								if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
+									p.sendMessage(ChatColor.RED + "[Regios] Invalid price " + ChatColor.BLUE + lines[2] + ChatColor.RED + " entered!");
+								}
+								b.setTypeId(0);
+								p.getInventory().addItem(new ItemStack(323, 1));
+								evt.setCancelled(true);
+								return;
+							}
+						} else if (!r.isForSale()) {
+							if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
+								p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + lines[1] + ChatColor.RED + " is not for sale!");
+							}
+							b.setTypeId(0);
+							p.getInventory().addItem(new ItemStack(323, 1));
 							evt.setCancelled(true);
 							return;
 						}
-						if (!PermissionsCore.canModify(r, evt.getPlayer())) {
-							if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
-								evt.getPlayer().sendMessage(ChatColor.RED + "[Regios] You don't have permissions to sell this region!");
-							}
-						}
+
 						evt.setLine(0, ChatColor.GREEN + "[Regios]");
 						evt.setLine(1, ChatColor.BLUE + r.getName());
-						evt.setLine(2, ChatColor.RED + "Price : " + r.getSalePrice());
+						evt.setLine(2, ChatColor.RED + String.valueOf(r.getSalePrice()));
 						evt.setLine(3, ChatColor.GREEN + "[Regios]");
 						evt.getPlayer().sendMessage(ChatColor.GREEN + "[Regios] Sale sign created for region : " + ChatColor.BLUE + r.getName());
 						evt.getPlayer().sendMessage(ChatColor.GREEN + "[Regios] Price : " + ChatColor.BLUE + r.getSalePrice());
@@ -164,7 +153,6 @@ public class RegiosBlockListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockIgnite(BlockIgniteEvent evt) {
 		World w = evt.getBlock().getWorld();
-		Chunk c = w.getChunkAt(evt.getBlock());
 		Location l = evt.getBlock().getLocation();
 		if (GlobalRegionManager.getGlobalWorldSetting(w) != null) {
 			if (!GlobalRegionManager.getGlobalWorldSetting(w).fireEnabled) {
@@ -179,54 +167,20 @@ public class RegiosBlockListener implements Listener {
 			}
 		}
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
+		if (r != null) {
+			if (r.isFireProtection()) {
+				Block b = evt.getBlock();
+				extinguishAround(b);
+				evt.setCancelled(true);
+				return;
 			}
-		}
 
-		if (regionSet.isEmpty()) {
-			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
+			if (!r.isFireSpread() && evt.getCause() == IgniteCause.SPREAD) {
+				evt.setCancelled(true);
+				return;
 			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not inside region then cancel the check.
-			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
-		}
-
-		if (r.isFireProtection()) {
-			Block b = evt.getBlock();
-			extinguishAround(b);
-			evt.setCancelled(true);
-			return;
-		}
-
-		if (!r.isFireSpread() && evt.getCause() == IgniteCause.SPREAD) {
-			evt.setCancelled(true);
-			return;
 		}
 
 	}
@@ -236,51 +190,22 @@ public class RegiosBlockListener implements Listener {
 	{
 		Location l = evt.getBlock().getLocation();
 		World w = l.getWorld();
-		Chunk c = w.getChunkAt(l);
 
 		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
+		if (r == null)
+		{
 			if (gws != null) {
-				if (!gws.blockForm_enabled) {
+				if (!gws.fireEnabled) {
+					evt.setCancelled(true);
+				}
+				if (!gws.fireSpreadEnabled) {
 					evt.setCancelled(true);
 				}
 			}
 			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not inside region then cancel the check.
-			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
 		}
 
 		if (r.isFireProtection()) {
@@ -301,56 +226,19 @@ public class RegiosBlockListener implements Listener {
 
 		Location l = evt.getBlock().getLocation();
 		World w = l.getWorld();
-		Chunk c = w.getChunkAt(l);
 
 		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
+		if (r == null)
+		{
 			if (gws != null) {
 				if (!gws.blockForm_enabled) {
 					evt.setCancelled(true);
 				}
 			}
 			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-			// inside region then cancel the
-			// check.
-			if (!GlobalRegionManager.getGlobalWorldSetting(w).blockForm_enabled) {
-				evt.setCancelled(true);
-			}
-			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
 		}
 
 		if (!r.isBlockForm()) {
@@ -365,27 +253,13 @@ public class RegiosBlockListener implements Listener {
 		Block b = evt.getBlock();
 		Location l = b.getLocation();
 		World w = b.getWorld();
-		Chunk c = w.getChunkAt(l);
 
 		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
+		if (r == null)
+		{
 			if (gws != null) {
 				if (gws.invert_protection) {
 					if (!gws.canBypassWorldChecks(p)) {
@@ -397,36 +271,6 @@ public class RegiosBlockListener implements Listener {
 			}
 			this.forceBucketEvent(evt);
 			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-			// inside region then cancel the
-			// check.
-			if (gws != null) {
-				if (gws.invert_protection) {
-					if (!gws.canBypassWorldChecks(p)) {
-						p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to build in this area!");
-						evt.setCancelled(true);
-						return;
-					}
-				}
-			}
-			this.forceBucketEvent(evt);
-			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
 		}
 
 		if (r.getItems().isEmpty() && r.is_protectionPlace()) {
@@ -467,7 +311,6 @@ public class RegiosBlockListener implements Listener {
 		Block b = evt.getBlock();
 		Location l = b.getLocation();
 		World w = b.getWorld();
-		Chunk c = w.getChunkAt(l);
 
 		if ((b.getType() == Material.SIGN || b.getType() == Material.SIGN_POST || b.getTypeId() == 68)) {
 			Sign sign = (Sign) b.getState();
@@ -503,23 +346,10 @@ public class RegiosBlockListener implements Listener {
 
 		GlobalWorldSetting gws = GlobalRegionManager.getGlobalWorldSetting(w);
 
-		Region r;
+		Region r = GlobalRegionManager.getRegion(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
+		if (r == null)
+		{
 			if (gws != null) {
 				if (gws.invert_protection) {
 					if (!gws.canBypassWorldChecks(p)) {
@@ -530,33 +360,6 @@ public class RegiosBlockListener implements Listener {
 				}
 			}
 			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not inside region then cancel the check.
-			if (gws != null) {
-				if (gws.invert_protection) {
-					if (!gws.canBypassWorldChecks(p)) {
-						p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to build in this area!");
-						evt.setCancelled(true);
-						return;
-					}
-				}
-			}
-			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
 		}
 
 		if (r.is_protectionBreak()) {
@@ -610,6 +413,45 @@ public class RegiosBlockListener implements Listener {
 			{
 				evt.setCancelled(true);
 				return;
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPistonExtend(BlockPistonExtendEvent evt)
+	{
+		for(Block b : evt.getBlocks())
+		{
+			Region r = GlobalRegionManager.getRegion(b.getLocation());
+			if (r != null)
+			{
+				if(r.isProtected() || r.is_protectionBreak() || r.is_protectionPlace())
+				{
+					evt.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPistonRetract(BlockPistonRetractEvent evt)
+	{
+		if(evt.isSticky())
+		{
+			Location l = evt.getRetractLocation();
+			if (l.getBlock().getTypeId() != 0)
+			{
+				if(l.getBlock().getPistonMoveReaction().equals(PistonMoveReaction.MOVE) || l.getBlock().getPistonMoveReaction().equals(PistonMoveReaction.BREAK))
+				{
+					Region r = GlobalRegionManager.getRegion(l);
+					if (r != null)
+					{
+						if(r.isProtected() || r.is_protectionBreak() || r.is_protectionPlace())
+						{
+							evt.setCancelled(true);
+						}
+					}
+				}
 			}
 		}
 	}

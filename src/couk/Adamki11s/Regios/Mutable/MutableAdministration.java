@@ -1,13 +1,10 @@
 package couk.Adamki11s.Regios.Mutable;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import couk.Adamki11s.Regios.Data.LoaderCore;
 import couk.Adamki11s.Regios.Data.Saveable;
@@ -19,20 +16,14 @@ public class MutableAdministration extends Saveable {
 	final LoaderCore lc = new LoaderCore();
 
 	public void setOwner(Region r, String owner) {
-		File file = r.getConfigFile();
-		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
-		Map<String, Object> all = c.getValues(true);
-		all.remove("Region.Essentials.Owner");
-		for (Entry<String, Object> entry : all.entrySet()) {
-			c.set(entry.getKey(), entry.getValue());
-		}
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.Essentials.Owner", owner);
 		r.setOwner(owner);
 		try {
-	c.save(r.getConfigFile());
-} catch (IOException e) {
-	e.printStackTrace();
-}
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void reloadRegions() {
@@ -54,11 +45,27 @@ public class MutableAdministration extends Saveable {
 	public String listRegions() {
 		StringBuilder sb = new StringBuilder();
 		int build = 0;
-		for (File f : new File("plugins" + File.separator + "Regios" + File.separator + "Database").listFiles()) {
+		for (Region r : GlobalRegionManager.getRegions()) {
 			build++;
-			sb.append(ChatColor.WHITE).append(f.getName().trim()).append(ChatColor.BLUE).append(", ");
+			sb.append(ChatColor.WHITE).append(r.getName().trim()).append(ChatColor.BLUE).append(", ");
 		}
 		if (build == 0) {
+			return ChatColor.RED + "[Regios] No Regions Found!";
+		} else {
+			return sb.toString();
+		}
+	}
+	
+	public String listOwnedRegions(Player p) {
+		StringBuilder sb = new StringBuilder();
+		int count = 0;
+		for(Region r : GlobalRegionManager.getRegions()){
+			if(r.getOwner().equalsIgnoreCase(p.getName())){
+				count++;
+				sb.append(ChatColor.WHITE).append(r.getName().trim()).append(ChatColor.BLUE).append(", ");
+			}
+		}
+		if (count == 0) {
 			return ChatColor.RED + "[Regios] No Regions Found!";
 		} else {
 			return sb.toString();
@@ -74,6 +81,7 @@ public class MutableAdministration extends Saveable {
 		tin.setDoorsLocked(inf.areDoorsLocked());
 		tin.setExceptions(inf.getExceptions());
 		tin.setFireProtection(inf.isFireProtection());
+		tin.setFireSpread(inf.isFireSpread());
 		tin.setForceCommand(inf.isForceCommand());
 		tin.setForSale(inf.isForSale());
 		tin.setHealthEnabled(inf.isHealthEnabled());
@@ -124,6 +132,8 @@ public class MutableAdministration extends Saveable {
 		tin.setWelcomeMessage(inf.getWelcomeMessage());
 		tin.setWipeAndCacheOnEnter(inf.isWipeAndCacheOnEnter());
 		tin.setWipeAndCacheOnExit(inf.isWipeAndCacheOnExit());
+		tin.setChangeGameMode(inf.isChangeGameMode());
+		tin.setGameMode(inf.getGameMode());
 		tin.setWorld(inf.getWorld());
 		try {
 			super.updateInheritedRegion(tin, tin.getL1(), tin.getL2());

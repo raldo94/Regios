@@ -66,7 +66,7 @@ public class RegiosPlayerListener implements Listener {
 	public static HashMap<Player, Long> timeStampsEconomy = new HashMap<Player, Long>();
 
 	public static HashMap<Player, ShareData> loadingTerrain = new HashMap<Player, ShareData>();
-	
+
 	private static void setTimestamp(Player p, MSG msg) {
 		switch (msg) {
 		case PROTECTION:
@@ -111,7 +111,7 @@ public class RegiosPlayerListener implements Listener {
 		}
 		return outcome;
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuit(PlayerQuitEvent evt) {
 		Player p = evt.getPlayer();
@@ -127,7 +127,7 @@ public class RegiosPlayerListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent evt) {
 		SpoutInterface.spoutEnabled.put(evt.getPlayer(), false);
@@ -135,7 +135,7 @@ public class RegiosPlayerListener implements Listener {
 			EconomyPending.loadAndSendPending(evt.getPlayer());
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent evt) {
 
@@ -145,10 +145,7 @@ public class RegiosPlayerListener implements Listener {
 
 		Location l = evt.getClickedBlock().getLocation();
 		Player p = evt.getPlayer();
-		World w = p.getWorld();
-		Chunk c = w.getChunkAt(l);
-		Region r;
-		ArrayList<Region> regionSet = new ArrayList<Region>();
+		Region r = GlobalRegionManager.getRegion(l);
 
 		if (evt.getAction() == Action.LEFT_CLICK_BLOCK) {
 			if (loadingTerrain.containsKey(p)) {
@@ -265,134 +262,70 @@ public class RegiosPlayerListener implements Listener {
 			}
 		}
 
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
+		if (r != null) 
+		{
+			if (r.isPreventInteraction()) {
+				if (!r.canBypassProtection(p)) {
+					if (isSendable(p, MSG.PROTECTION)) {
+						p.sendMessage(ChatColor.RED + "[Regios] You cannot interact within this region!");
+					}
+					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact but did not have permissions."));
+					evt.setCancelled(true);
+					return;
+				}
+			}
+
+			if (b.getTypeId() == 64 || b.getTypeId() == 71 || b.getTypeId() == 96) {
+				if (r.areDoorsLocked()) {
+					if (!r.canBypassProtection(p)) {
+						if (isSendable(p, MSG.PROTECTION)) {
+							p.sendMessage(ChatColor.RED + "[Regios] Doors are locked for this region!");
 						}
+						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to open a locked door but did not have permissions."));
+						Door d = new Door(b.getType());
+						d.setOpen(false);
+						evt.setCancelled(true);
+					}
+				}
+			}
+
+			if (b.getTypeId() == 54 || b.getTypeId() == 95) {
+				if (r.areChestsLocked()) {
+					if (!r.canBypassProtection(p)) {
+						if (isSendable(p, MSG.PROTECTION)) {
+							p.sendMessage(ChatColor.RED + "[Regios] Chests are locked for this region!");
+						}
+						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to open a locked chest but did not have permissions."));
+						p.closeInventory();
+						evt.setCancelled(true);
+					}
+				}
+			}
+
+			if (b.getTypeId() == 23) {
+				if (r.areDispensersLocked()) {
+					if (!r.canBypassProtection(p)) {
+						if (isSendable(p, MSG.PROTECTION)) {
+							p.sendMessage(ChatColor.RED + "[Regios] Dispensers are locked for this region!");
+						}
+						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to open a locked dispenser but did not have permissions."));
+						p.closeInventory();
+						evt.setCancelled(true);
 					}
 				}
 			}
 		}
-
-		if (regionSet.isEmpty()) {
-			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
-			return;
-		}
-
-		if (currentRegionSet.size() > 1) {
-			r = srm.getCurrentRegion(currentRegionSet);
-		} else {
-			r = currentRegionSet.get(0);
-		}
-
-		if (r.isPreventInteraction()) {
-			if (!r.canBypassProtection(p)) {
-				if (isSendable(p, MSG.PROTECTION)) {
-					p.sendMessage(ChatColor.RED + "[Regios] You cannot interact within this region!");
-				}
-				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact but did not have permissions."));
-				evt.setCancelled(true);
-				return;
-			}
-		}
-
-		if (b.getTypeId() == 64 || b.getTypeId() == 71 || b.getTypeId() == 96) {
-			if (r.areDoorsLocked()) {
-				if (!r.canBypassProtection(p)) {
-					if (isSendable(p, MSG.PROTECTION)) {
-						p.sendMessage(ChatColor.RED + "[Regios] Doors are locked for this region!");
-					}
-					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to open a locked door but did not have permissions."));
-					Door d = new Door(b.getType());
-					d.setOpen(false);
-					evt.setCancelled(true);
-				}
-			}
-		}
-		
-		if (b.getTypeId() == 54 || b.getTypeId() == 95) {
-			if (r.areChestsLocked()) {
-				if (!r.canBypassProtection(p)) {
-					if (isSendable(p, MSG.PROTECTION)) {
-						p.sendMessage(ChatColor.RED + "[Regios] Chests are locked for this region!");
-					}
-					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to open a locked chest but did not have permissions."));
-					p.closeInventory();
-					evt.setCancelled(true);
-				}
-			}
-		}
-		
-		if (b.getTypeId() == 23) {
-			if (r.areDispensersLocked()) {
-				if (!r.canBypassProtection(p)) {
-					if (isSendable(p, MSG.PROTECTION)) {
-						p.sendMessage(ChatColor.RED + "[Regios] Dispensers are locked for this region!");
-					}
-					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to open a locked dispenser but did not have permissions."));
-					p.closeInventory();
-					evt.setCancelled(true);
-				}
-			}
-		}
-
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketFill(PlayerBucketFillEvent evt) {
 		Location l = evt.getBlockClicked().getLocation();
 		Player p = evt.getPlayer();
-		World w = l.getWorld();
-		Chunk c = w.getChunkAt(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
-			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
-			return;
-		} else {
-			for (Region r : currentRegionSet) {
+		ArrayList<Region> regions = GlobalRegionManager.getRegions(l);
+		if (!regions.isEmpty())
+		{
+			for (Region r : regions) {
 				if (r.isProtected()) {
 					if (!r.canBypassProtection(p)) {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
@@ -405,7 +338,7 @@ public class RegiosPlayerListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent evt) {
 		Location l = evt.getBlockClicked().getLocation();
@@ -435,41 +368,11 @@ public class RegiosPlayerListener implements Listener {
 			l.setX(l.getX() - 1);
 		}
 		Player p = evt.getPlayer();
-		World w = l.getWorld();
-		Chunk c = w.getChunkAt(l);
 
-		ArrayList<Region> regionSet = new ArrayList<Region>();
-
-		for (Region region : GlobalRegionManager.getRegions()) {
-			for (Chunk chunk : region.getChunkGrid().getChunks()) {
-				if (chunk.getWorld() == w) {
-					if (extReg.areChunksEqual(chunk, c)) {
-						if (!regionSet.contains(region)) {
-							regionSet.add(region);
-						}
-					}
-				}
-			}
-		}
-
-		if (regionSet.isEmpty()) {
-			return;
-		}
-
-		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
-
-		for (Region reg : regionSet) {
-			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
-				currentRegionSet.add(reg);
-			}
-		}
-
-		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
-			return;
-		} else {
-			for (Region r : currentRegionSet) {
+		ArrayList<Region> regions = GlobalRegionManager.getRegions(l);
+		if (!regions.isEmpty())
+		{
+			for (Region r : regions) {
 				if (r.isProtected()) {
 					if (!r.canBypassProtection(p)) {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
@@ -482,7 +385,7 @@ public class RegiosPlayerListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerMove(PlayerMoveEvent evt) {
 
@@ -593,8 +496,8 @@ public class RegiosPlayerListener implements Listener {
 		}
 
 		if (currentRegionSet.isEmpty()) { // If player is in chunk range but not
-											// inside region then cancel the
-											// check.
+			// inside region then cancel the
+			// check.
 			if (evt.getFrom().getBlockY() == evt.getTo().getBlockY()) { // To prevent people getting stuck if jumping into a region
 				outsideRegionLocation.put(p, p.getLocation());
 			}

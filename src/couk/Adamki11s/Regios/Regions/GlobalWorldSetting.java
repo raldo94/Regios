@@ -26,7 +26,8 @@ public class GlobalWorldSetting {
 			fireSpreadEnabled = true,
 			blockForm_enabled = true,
 			tntEnabled = true,
-			dragonProtect = true;
+			dragonProtect = true,
+			blockEndermanMod = false;
 	
 	public ArrayList<EntityType> creaturesWhoSpawn = new ArrayList<EntityType>();
 
@@ -67,6 +68,7 @@ public class GlobalWorldSetting {
 				c.set(world + ".Protection.FireSpreadEnabled", true);
 				c.set(world + ".Protection.TNTEnabled", true);
 				c.set(world + ".Protection.DragonProtect", true);
+				c.set(world + ".Protection.EndermanBlock", false);
 				c.set(world + ".Weather.LightningEnabled", true);
 				c.set(world + ".Mobs.Spawning.Chicken", true);
 				c.set(world + ".Mobs.Spawning.Cow", true);
@@ -118,6 +120,7 @@ public class GlobalWorldSetting {
 			gws.fireSpreadEnabled = c.getBoolean(world + ".Protection.FireSpreadEnabled", true);
 			gws.tntEnabled = c.getBoolean(world + ".Protection.TNTEnabled", true);
 			gws.dragonProtect = c.getBoolean(world + ".Protection.DragonProtect", true);
+			gws.blockEndermanMod = c.getBoolean(world + ".Protection.EndermanBlock", false);
 			gws.invert_pvp = c.getBoolean(world + ".PvP.EnabledOutsideRegions", true);
 			gws.lightning_enabled = c.getBoolean(world + ".Weather.LightningEnabled", true);
 			gws.creeperExplodes = c.getBoolean(world + ".Mobs.Creeper.DoesExplode", true);

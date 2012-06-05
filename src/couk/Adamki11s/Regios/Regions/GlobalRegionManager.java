@@ -12,8 +12,7 @@ import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 public class GlobalRegionManager {
 	
 	private static ArrayList<Region> regions = new ArrayList<Region>()
-							, regionsInWorld = new ArrayList<Region>()
-							, regionsAtLocation = new ArrayList<Region>();
+							, regionsInWorld = new ArrayList<Region>();
 	private static final ExtrasRegions extReg = new ExtrasRegions();
 	
 	private static ArrayList<GlobalWorldSetting> worldSettings = new ArrayList<GlobalWorldSetting>();
@@ -34,13 +33,36 @@ public class GlobalRegionManager {
 	}
 	
 	public static ArrayList<Region> getRegions(Location l){
-		regionsAtLocation.clear();
-		for(Region r : regions) {
-			if(extReg.isInsideCuboid(l, r.getL1(), r.getL2())) {
-				regionsAtLocation.add(r);
+		World w = l.getWorld();
+		Chunk c = w.getChunkAt(l);
+
+		ArrayList<Region> regionSet = new ArrayList<Region>();
+
+		for (Region region : GlobalRegionManager.getRegions()) {
+			for (Chunk chunk : region.getChunkGrid().getChunks()) {
+				if (chunk.getWorld() == w) {
+					if (extReg.areChunksEqual(chunk, c)) {
+						if (!regionSet.contains(region)) {
+							regionSet.add(region);
+						}
+					}
+				}
 			}
 		}
-		return regionsAtLocation;
+
+		if (regionSet.isEmpty()) {
+			return regionSet;
+		}
+
+		ArrayList<Region> currentRegionSet = new ArrayList<Region>();
+
+		for (Region reg : regionSet) {
+			if (extReg.isInsideCuboid(l, reg.getL1(), reg.getL2())) {
+				currentRegionSet.add(reg);
+			}
+		}
+
+		return currentRegionSet;
 	}
 	
 	public static ArrayList<GlobalWorldSetting> getWorldSettings(){
@@ -55,7 +77,7 @@ public class GlobalRegionManager {
 		return false;
 	}
 	
-	public static boolean doesExist(String name){
+	public static boolean doesRegionExist(String name){
 		for(Region r : regions){
 			if(r.getName().equalsIgnoreCase(name)){
 				return true;
