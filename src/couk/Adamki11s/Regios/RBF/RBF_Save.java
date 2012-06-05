@@ -86,7 +86,7 @@ public class RBF_Save extends PermissionsCore {
 			p.sendMessage(ChatColor.GREEN + "[Regios] Creating .rbf backup file...");
 		}
 		if (p != null) {
-			if (!super.canModify(r, p)) {
+			if (!r.canModify(p)) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}

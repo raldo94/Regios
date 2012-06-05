@@ -59,7 +59,7 @@ public class AdministrationCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region to inherit : " + ChatColor.BLUE + name + ChatColor.RED + " does not exist!");
 			return;
 		}
-		if(!super.canModify(r, p)){
+		if(!r.canModify(p)){
 			p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 			return;
 		}
@@ -76,7 +76,7 @@ public class AdministrationCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region to inherit from : " + ChatColor.BLUE + infName + ChatColor.RED + " does not exist!");
 			return;
 		}
-		if(!super.canModify(tin, p)){
+		if(!tin.canModify(p)){
 			p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 			return;
 		}

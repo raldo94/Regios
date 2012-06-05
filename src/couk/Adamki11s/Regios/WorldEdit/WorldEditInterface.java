@@ -1,4 +1,4 @@
-package couk.Adamki11s.Regios.WorldEditInterface;
+package couk.Adamki11s.Regios.WorldEdit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -6,7 +6,7 @@ import org.bukkit.plugin.Plugin;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
-public class WEInterface {
+public class WorldEditInterface {
 	/**
 	 * Gets a copy of the WorldEdit plugin.
 	 *

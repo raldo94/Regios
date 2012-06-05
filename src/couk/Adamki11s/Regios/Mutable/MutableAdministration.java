@@ -134,6 +134,7 @@ public class MutableAdministration extends Saveable {
 		tin.setWipeAndCacheOnExit(inf.isWipeAndCacheOnExit());
 		tin.setChangeGameMode(inf.isChangeGameMode());
 		tin.setGameMode(inf.getGameMode());
+		tin.setBlockEndermanMod(inf.isBlockEndermanMod());
 		tin.setWorld(inf.getWorld());
 		try {
 			super.updateInheritedRegion(tin, tin.getL1(), tin.getL2());

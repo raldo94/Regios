@@ -29,16 +29,18 @@ import couk.Adamki11s.Regios.Permissions.PermissionsCore;
 import couk.Adamki11s.Regios.RBF.RBF_Core;
 import couk.Adamki11s.Regios.RBF.ShareData;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
-import couk.Adamki11s.Regios.SpoutGUI.RegionScreenManager;
-import couk.Adamki11s.Regios.SpoutGUI.ScreenHolder;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
+import couk.Adamki11s.Regios.Spout.SpoutInterface;
+import couk.Adamki11s.Regios.Spout.Commands.SpoutCommands;
+import couk.Adamki11s.Regios.Spout.Commands.SpoutHelp;
+import couk.Adamki11s.Regios.Spout.GUI.RegionScreenManager;
+import couk.Adamki11s.Regios.Spout.GUI.ScreenHolder;
+import couk.Adamki11s.Regios.WorldEdit.Commands.WorldEditCommands;
 
 public class CommandCore implements CommandExecutor {
 
 	final AdministrationCommands admin = new AdministrationCommands();
 	final AuthenticationCommands auth = new AuthenticationCommands();
 	final CreationCommands creation = new CreationCommands();
-	final DebugCommands debug = new DebugCommands();
 	final EconomyCommands eco = new EconomyCommands();
 	final ExceptionCommands excep = new ExceptionCommands();
 	final FunCommands fun = new FunCommands();
@@ -54,20 +56,21 @@ public class CommandCore implements CommandExecutor {
 	final ProtectionCommands protect = new ProtectionCommands();
 	final ProtectionMiscCommands misc = new ProtectionMiscCommands();
 	final SpoutCommands spout = new SpoutCommands();
+	final WorldEditCommands worldedit = new WorldEditCommands();
 	final WarpCommands warps = new WarpCommands();
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (label.equalsIgnoreCase("regios") || label.equalsIgnoreCase("reg") || label.equalsIgnoreCase("r")) {
-			
+
 			if (!(sender instanceof Player)) {
 				System.out.println("[Regios] Regios doesn't support console commands yet. Please log in and excute your command as a player.");
 				return true;
 			}
 
 			Player p = (Player) sender;
-			
+
 			if (args.length == 0) {
 				if (SpoutInterface.doesPlayerHaveSpout(p)) {
 					ScreenHolder sh = ScreenHolder.getScreenHolder((SpoutPlayer) p);
@@ -109,7 +112,7 @@ public class CommandCore implements CommandExecutor {
 					return true;
 				}
 			}
-			
+
 			if (args.length == 2 && args[0].equalsIgnoreCase("plot")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.plot")) {
 					miscCmd.createAllotment(p, args[1], GlobalRegionManager.getRegion(args[1]));
@@ -166,16 +169,16 @@ public class CommandCore implements CommandExecutor {
 					if (ConfigurationData.useWorldEdit)
 					{
 						try {
-							creation.createRegionWE(p, args[1]);
+							worldedit.createRegionWE(p, args[1]);
 						} catch (RegionNameExistsException e) {
 							e.printStackTrace();
 						} catch (CommandException e) {
 							p.sendMessage(e.getMessage());
 						}
 					} else {
-					try {
-						creation.createRegion(p, args[1]);
-					} catch (RegionNameExistsException e) {} catch (RegionPointsNotSetException e) {}
+						try {
+							creation.createRegion(p, args[1]);
+						} catch (RegionNameExistsException e) {} catch (RegionPointsNotSetException e) {}
 					}
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
@@ -354,7 +357,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && (args[0].equalsIgnoreCase("protectall") || args[0].equalsIgnoreCase("protect-all"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.protection")) {
 					protect.setProtectedAll(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -362,7 +365,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && args[0].equalsIgnoreCase("protect-bb")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.protection")) {
 					protect.setProtectedBB(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -370,7 +373,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && args[0].equalsIgnoreCase("protect-bp")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.protection")) {
 					protect.setProtectedBP(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -386,7 +389,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && (args[0].equalsIgnoreCase("unprotectall") || args[0].equalsIgnoreCase("un-protect-all") || args[0].equalsIgnoreCase("unprotect-all"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.protection")) {
 					protect.setUnProtectAll(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -394,7 +397,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && args[0].equalsIgnoreCase("unprotect-bb")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.protection")) {
 					protect.setUnProtectedBB(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -402,7 +405,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && args[0].equalsIgnoreCase("unprotect-bp")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.protection")) {
 					protect.setUnProtectedBP(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -474,7 +477,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && args[0].equalsIgnoreCase("expand-up")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
 					mod.setExpandUp(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -498,7 +501,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && (args[0].equalsIgnoreCase("expand-max") || args[0].equalsIgnoreCase("expandmax"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
 					mod.setExpandMax(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -506,7 +509,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 1 && (args[0].equalsIgnoreCase("expand-max") || args[0].equalsIgnoreCase("expandmax"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.modify.expand")) {
 					creation.expandMaxSelection(p);
@@ -526,7 +529,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && args[0].equalsIgnoreCase("shrink-up")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.modify.shrink")) {
 					mod.setShrinkUp(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -818,7 +821,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && (args[0].equalsIgnoreCase("dispenserslocked") || args[0].equalsIgnoreCase("dispensers-locked"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.dispensers-locked")) {
 					misc.setDispensersLocked(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -850,7 +853,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && (args[0].equalsIgnoreCase("firespread") || args[0].equalsIgnoreCase("fire-spread"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.fire-spread")) {
 					misc.setFireSpread(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -858,7 +861,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && (args[0].equalsIgnoreCase("tntenabled") || args[0].equalsIgnoreCase("tnt-enabled"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.tnt-enabled")) {
 					misc.setTNTEnabled(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -878,6 +881,14 @@ public class CommandCore implements CommandExecutor {
 			if (args.length == 3 && (args[0].equalsIgnoreCase("blockform") || args[0].equalsIgnoreCase("block-form"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.protection.block-form")) {
 					misc.setBlockForm(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+
+			if (args.length == 3 && (args[0].equalsIgnoreCase("endermanblock") || args[0].equalsIgnoreCase("enderman-block"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.protection.enderman-block")) {
+					misc.setEndermanBlock(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -978,7 +989,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-rem-add"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
 					perms.addToTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -1010,7 +1021,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && (args[0].equalsIgnoreCase("perm-cache-rem-rem"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
 					perms.removeFromTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -1042,7 +1053,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-rem-reset"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
 					perms.resetTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -1098,7 +1109,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-rem-list"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
 					perms.listTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -1122,7 +1133,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length >= 3 && args[0].equalsIgnoreCase("show-spout-welcome")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.spout.messages")) {
 					spout.setUseWelcome(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -1138,7 +1149,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length >= 3 && args[0].equalsIgnoreCase("show-spout-leave")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.spout.messages")) {
 					spout.setUseLeave(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -1266,7 +1277,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && (args[0].equalsIgnoreCase("setgamemode") || args[0].equalsIgnoreCase("set-gamemode"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.other.gamemode-type")) {
 					miscCmd.setGameModeType(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -1274,7 +1285,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 3 && (args[0].equalsIgnoreCase("changegamemode") || args[0].equalsIgnoreCase("change-gamemode"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.other.gamemode-change")) {
 					miscCmd.setGameModeChange(GlobalRegionManager.getRegion(args[1]), args[1], args[2], p);
@@ -1338,7 +1349,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 1 && args[0].equalsIgnoreCase("list-owned")) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.list-owned")) {
 					admin.listOwnedRegions(p);
@@ -1366,15 +1377,24 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && (args[0].equalsIgnoreCase("save-blueprint") || args[0].equalsIgnoreCase("saveblueprint"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.save-blueprint")) {
-					creation.createBlueprint(p, args[1]);
+					if(ConfigurationData.useWorldEdit)
+					{
+						try {
+							worldedit.createBlueprintWE(p, args[1]);
+						} catch (CommandException e) {
+							p.sendMessage(e.getMessage());
+						}
+					} else {
+						creation.createBlueprint(p, args[1]);
+					}
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 2 && (args[0].equalsIgnoreCase("load-blueprint") || args[0].equalsIgnoreCase("loadblueprint"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.load-blueprint")) {
 					File f = new File("plugins" + File.separator + "Regios" + File.separator + "Blueprints" + File.separator + args[1] + ".blp");
@@ -1389,7 +1409,7 @@ public class CommandCore implements CommandExecutor {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
-			
+
 			if (args.length == 1 && (args[0].equalsIgnoreCase("undo"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.load-blueprint")) {
 					RBF_Core.rbf_load_share.undoLoad(p);
@@ -1428,7 +1448,7 @@ public class CommandCore implements CommandExecutor {
 					e.printStackTrace();
 				}
 			}
-			
+
 			RegionCommandEvent event = new RegionCommandEvent("RegionCommandEvent");
 			event.setProperties(sender, label, args);
 			Bukkit.getServer().getPluginManager().callEvent(event);

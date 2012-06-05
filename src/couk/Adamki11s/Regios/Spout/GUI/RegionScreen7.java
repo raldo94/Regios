@@ -1,4 +1,4 @@
-package couk.Adamki11s.Regios.SpoutGUI;
+package couk.Adamki11s.Regios.Spout.GUI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +20,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import couk.Adamki11s.Regios.Main.Regios;
 import couk.Adamki11s.Regios.Mutable.MutableSpout;
 import couk.Adamki11s.Regios.Regions.Region;
-import couk.Adamki11s.Regios.SpoutGUI.RegionScreenManager.RGB;
+import couk.Adamki11s.Regios.Spout.GUI.RegionScreenManager.RGB;
 
 public class RegionScreen7 {
 

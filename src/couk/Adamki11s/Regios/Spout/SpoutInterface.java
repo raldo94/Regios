@@ -1,4 +1,4 @@
-package couk.Adamki11s.Regios.SpoutInterface;
+package couk.Adamki11s.Regios.Spout;
 
 import java.util.HashMap;
 

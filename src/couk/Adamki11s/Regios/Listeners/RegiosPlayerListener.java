@@ -39,8 +39,8 @@ import couk.Adamki11s.Regios.Regions.Region;
 import couk.Adamki11s.Regios.Regions.SubRegionManager;
 import couk.Adamki11s.Regios.Scheduler.HealthRegeneration;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutRegion;
+import couk.Adamki11s.Regios.Spout.SpoutInterface;
+import couk.Adamki11s.Regios.Spout.SpoutRegion;
 
 public class RegiosPlayerListener implements Listener {
 
@@ -427,7 +427,7 @@ public class RegiosPlayerListener implements Listener {
 				return;
 			}
 			if (binding.isPreventEntry() && extReg.isInsideCuboid(p, binding.getL1(), binding.getL2())) {
-				if (!binding.canEnter(p, binding)) {
+				if (!binding.canEnter(p)) {
 					if (!binding.isPasswordEnabled()) {
 						if (outsideRegionLocation.containsKey(p)) {
 							p.teleport(outsideRegionLocation.get(p));
@@ -453,7 +453,7 @@ public class RegiosPlayerListener implements Listener {
 			}
 
 			if (binding.isPreventExit() && !extReg.isInsideCuboid(p, binding.getL1(), binding.getL2())) {
-				if (!binding.canExit(p, binding)) {
+				if (!binding.canExit(p)) {
 					if (!binding.isPasswordEnabled()) {
 						if (insideRegionLocation.containsKey(p)) {
 							p.teleport(insideRegionLocation.get(p));

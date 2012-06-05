@@ -89,7 +89,8 @@ public class LoaderCore {
 				, wipeAndCacheOnExit = c.getBoolean("DefaultSettings.Inventory.WipeAndCacheOnExit", false)
 				, forceCommand = c.getBoolean("DefaultSettings.Command.ForceCommand", false)
 				, form = c.getBoolean("DefaultSettings.Block.BlockForm.Enabled", true)
-				, forSale = c.getBoolean("DefaultSettings.Economy.ForSale", false);
+				, forSale = c.getBoolean("DefaultSettings.Economy.ForSale", false)
+				, blockEnderman = c.getBoolean("DefaultSettings.Protection.EndermanBlock", false);
 
 		int LSPS = c.getInt("DefaultSettings.Other.LSPS", 0)
 				, HealthRegen = c.getInt("DefaultSettings.Other.HealthRegen", 0)
@@ -184,7 +185,8 @@ public class LoaderCore {
 							, forSale
 							, salePrice
 							, TNTEnabled
-							, gameMode);
+							, gameMode
+							, blockEnderman);
 
 		System.out.println("[Regios] Loaded default region configuation file.");
 		// Initialises variables in configuration data.
@@ -323,7 +325,8 @@ public class LoaderCore {
 						, forSale = c.getBoolean("Region.Economy.ForSale", false)
 						, useTexture = c.getBoolean("Region.Spout.Texture.UseTexture", false)
 						, sw = c.getBoolean("Region.Spout.Welcome.Enabled", true)
-						, sl = c.getBoolean("Region.Spout.Leave.Enabled", true);
+						, sl = c.getBoolean("Region.Spout.Leave.Enabled", true)
+						, enderman = c.getBoolean("Region.General.EndermanBlock", false);
 
 				MODE itemMode = MODE.toMode(c.getString("Region.Modes.ItemControlMode", "Whitelist"))
 						, protectionMode = MODE.toMode(c.getString("Region.Modes.ProtectionMode", "Whitelist"))
@@ -450,6 +453,8 @@ public class LoaderCore {
 				r.setForSale(forSale);
 				
 				r.setGameMode(gm);
+				
+				r.setBlockEndermanMod(enderman);
 
 				if (r.getLSPS() > 0 && !LightningRunner.doesStrikesContain(r)) {
 					LightningRunner.addRegion(r);

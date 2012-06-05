@@ -68,6 +68,7 @@ public class Saveable {
 		c.set("Region.General.FireProtection", Boolean.valueOf(r.isFireProtection()));
 		c.set("Region.General.FireSpread", Boolean.valueOf(r.isFireSpread()));
 		c.set("Region.General.TNTEnabled", Boolean.valueOf(r.isTNTEnabled()));
+		c.set("Region.General.EndermanBlock", Boolean.valueOf(r.isBlockEndermanMod()));
 		c.set("Region.General.PreventEntry", Boolean.valueOf(r.isPreventEntry()));
 		c.set("Region.General.PreventExit", Boolean.valueOf(r.isPreventExit()));
 		c.set("Region.General.PreventInteraction", Boolean.valueOf(r.isPreventInteraction()));
@@ -90,7 +91,7 @@ public class Saveable {
 		c.set("Region.Other.VelocityWarp", r.getVelocityWarp());
 		
 		c.set("Region.Essentials.Owner", r.getOwner().toString());
-		c.set("Region.Essentials.SubOwners", "");
+		c.set("Region.Essentials.SubOwners", r.getSubOwners());
 		c.set("Region.Essentials.Name", r.getName().toString());
 		c.set("Region.Essentials.World", r.getWorld().getName());
 		c.set("Region.Essentials.Points.Point1", convertLocation(rl1));
@@ -227,6 +228,7 @@ public class Saveable {
 		c.set("Region.General.FireProtection", Boolean.valueOf(r.isFireProtection()));
 		c.set("Region.General.FireSpread", Boolean.valueOf(r.isFireSpread()));
 		c.set("Region.General.TNTEnabled", Boolean.valueOf(r.isTNTEnabled()));
+		c.set("Region.General.EndermanBlock", Boolean.valueOf(r.isBlockEndermanMod()));
 		c.set("Region.General.PreventEntry", Boolean.valueOf(r.isPreventEntry()));
 		c.set("Region.General.PreventExit", Boolean.valueOf(r.isPreventExit()));
 		c.set("Region.General.PreventInteraction", Boolean.valueOf(r.isPreventInteraction()));

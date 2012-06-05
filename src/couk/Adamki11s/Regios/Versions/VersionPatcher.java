@@ -180,9 +180,11 @@ public class VersionPatcher {
 		File dr = new File(config_root + File.separator + "DefaultRegion.config");
 		FileConfiguration drc = YamlConfiguration.loadConfiguration(dr);
 		boolean drvalue = drc.getBoolean("DefaultSettings.General.DispensersLocked", false);
+		boolean drender = drc.getBoolean("DefaultSettings.General.EndermanBlock", false);
 		String drgmt = drc.getString("DefaultSettings.GameMode.Type", "SURVIVAL");
 		boolean drgmc = drc.getBoolean("DefaultSettings.GameMode.Change", false);
 		drc.set("DefaultSettings.General.DispensersLocked", drvalue);
+		drc.set("DefaultSettings.Protection.EndermanBlock", drender);
 		drc.set("DefaultSettings.GameMode.Type", drgmt);
 		drc.set("DefaultSettings.GameMode.Change", drgmc);
 		try {

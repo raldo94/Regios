@@ -1,4 +1,4 @@
-package couk.Adamki11s.Regios.SpoutGUI;
+package couk.Adamki11s.Regios.Spout.GUI;
 
 import java.util.ArrayList;
 import java.util.HashMap;

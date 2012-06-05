@@ -18,7 +18,7 @@ import couk.Adamki11s.Regios.RBF.RBF_Core;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.GlobalWorldSetting;
 import couk.Adamki11s.Regios.Regions.Region;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
+import couk.Adamki11s.Regios.Spout.SpoutInterface;
 
 public class RegiosAPI {
 	

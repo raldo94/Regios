@@ -159,6 +159,7 @@ public class CreationCore {
 			c.set("DefaultSettings.Protection.FireProtection", false);
 			c.set("DefaultSettings.Protection.FireSpread", true);
 			c.set("DefaultSettings.Protection.TNTEnabled", true);
+			c.set("DefaultSettings.Protection.EndermanBlock", false);
 
 			c.set("DefaultSettings.Messages.WelcomeMessage", "<BGREEN>Welcome to <BLUE>[NAME] <BGREEN>owned by <YELLOW>[OWNER]");
 			c.set("DefaultSettings.Messages.LeaveMessage", "<RED>You left <BLUE>[NAME] <RED>owned by <YELLOW>[OWNER]");

@@ -64,7 +64,8 @@ public class ConfigurationData {
 		, forSale
 		, useWorldEdit
 		, logs
-		, tntEnabled;
+		, tntEnabled
+		, blockEndermanMod;
 
 	public static int LSPS, healthRegen, velocityWarp, playerCap, salePrice;
 
@@ -77,7 +78,8 @@ public class ConfigurationData {
 			String dam, String dasm, Material welcome, Material leave, boolean welcomeMsg, boolean leaveMsg, boolean protectMsg, boolean preventEntryMsg, boolean preventExitMsg,
 			boolean fireProt, boolean fireSpr, String[] music, boolean playmusic, boolean permWipeOnEnter1, boolean permWipeOnExit1,
 			boolean wipeAndCacheOnEnter1, boolean wipeAndCacheOnExit1, boolean changeGM, boolean forceCommand1, String[] commandSet1, String[] tempAddCache, String[] permAddCache,
-			String[] tempRemCache, String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt, GameMode gamemode) {
+			String[] tempRemCache, String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt, GameMode gamemode
+			, boolean blockEnderman) {
 		defaultWelcomeMessage = a;
 		defaultLeaveMessage = b;
 		defaultProtectionMessage = c;
@@ -140,6 +142,7 @@ public class ConfigurationData {
 		salePrice = sp;
 		tntEnabled = tnt;
 		gameMode = gamemode;
+		blockEndermanMod = blockEnderman;
 	}
 
 }

@@ -27,10 +27,10 @@ import couk.Adamki11s.Regios.Permissions.PermissionsCore;
 import couk.Adamki11s.Regios.Regions.GlobalRegionManager;
 import couk.Adamki11s.Regios.Regions.GlobalWorldSetting;
 import couk.Adamki11s.Regios.Scheduler.MainRunner;
-import couk.Adamki11s.Regios.SpoutGUI.CacheHandler;
-import couk.Adamki11s.Regios.SpoutGUI.Screen_Listener;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutCraftListener;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
+import couk.Adamki11s.Regios.Spout.SpoutCraftListener;
+import couk.Adamki11s.Regios.Spout.SpoutInterface;
+import couk.Adamki11s.Regios.Spout.GUI.CacheHandler;
+import couk.Adamki11s.Regios.Spout.GUI.Screen_Listener;
 import couk.Adamki11s.Regios.Versions.VersionTracker;
 
 public class Regios extends JavaPlugin {

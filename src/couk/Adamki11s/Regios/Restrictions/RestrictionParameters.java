@@ -43,7 +43,14 @@ public class RestrictionParameters {
 		{
 			if(PermissionsCore.doesHaveNode(p, node))
 			{
-				w = h = l = Integer.parseInt(node.substring(24));
+				int i = Integer.parseInt(node.substring(24));
+				if (i > p.getWorld().getMaxHeight())
+				{
+					w = l = i;
+					h = p.getWorld().getMaxHeight();
+				} else {
+					w = h = l = i;
+				}
 			}
 		}
 		
@@ -57,11 +64,13 @@ public class RestrictionParameters {
 		
 		
 		if (PermissionsCore.doesHaveNode(p, "regios.restrictions.none")) {
-			c = w = h = l = 999999999;
+			c = w = l = 999999999;
+			h = p.getWorld().getMaxHeight();
 		}
 		
 		if (p.isOp()) {
-			c = w = h = l = 999999999;
+			c = w = l = 999999999;
+			h = p.getWorld().getMaxHeight();
 		}
 
 		return new RestrictionParameters(c, w, h, l);

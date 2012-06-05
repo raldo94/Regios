@@ -7,8 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import couk.Adamki11s.Regios.Regions.Region;
-
 public class PermissionsCore {
 
 	public static Permission permission = null;
@@ -32,24 +30,6 @@ public class PermissionsCore {
 
 	public static void sendInvalidPermsPopup(SpoutPlayer p) {
 		p.sendNotification("Permissions", ChatColor.RED + "You cannot do this!", Material.FIRE);
-	}
-
-	public static boolean canModify(Region r, Player p) {
-		if (PermissionsCore.doesHaveNode(p, ("regios.override." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.override.all")) {
-			return true;
-		}
-		if (r.getOwner().equalsIgnoreCase(p.getName())) {
-			return true;
-		} else {
-			if (r.getSubOwners() != null && r.getSubOwners().length > 0) {
-				for (String subOwner : r.getSubOwners()) {
-					if (subOwner.equalsIgnoreCase(p.getName())) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
 	}
 	
 	public static void addTempUserPermission(Player p, String node) {

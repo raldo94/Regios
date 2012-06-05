@@ -29,8 +29,8 @@ import couk.Adamki11s.Regios.Permissions.PermissionsCacheManager;
 import couk.Adamki11s.Regios.Scheduler.HealthRegeneration;
 import couk.Adamki11s.Regios.Scheduler.LightningRunner;
 import couk.Adamki11s.Regios.Scheduler.LogRunner;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutInterface;
-import couk.Adamki11s.Regios.SpoutInterface.SpoutRegion;
+import couk.Adamki11s.Regios.Spout.SpoutInterface;
+import couk.Adamki11s.Regios.Spout.SpoutRegion;
 
 public class Region extends PermChecks {
 
@@ -117,7 +117,8 @@ public class Region extends PermChecks {
 			, spoutWelcomeEnabled = false
 			, spoutLeaveEnabled = false
 			, TNTEnabled = true
-			, changeGameMode = false;
+			, changeGameMode = false
+			, blockEndermanMod = false;
 
 	protected int LSPS = 0
 			, healthRegen = 0
@@ -224,6 +225,7 @@ public class Region extends PermChecks {
 		blockForm = ConfigurationData.blockForm;
 		TNTEnabled = ConfigurationData.tntEnabled;
 		gameMode = ConfigurationData.gameMode;
+		blockEndermanMod = ConfigurationData.blockEndermanMod;
 		if (LSPS > 0 && !LightningRunner.doesStrikesContain(this)) {
 			LightningRunner.addRegion(this);
 		} else if (LSPS == 0 && LightningRunner.doesStrikesContain(this)) {
@@ -268,6 +270,18 @@ public class Region extends PermChecks {
 	public boolean canBypassProtection(Player p) {
 		return super.canBypassProtection(p, this);
 	}
+	
+	public boolean canModify(Player p) {
+		return super.canModify(p, this);
+	}
+	
+	public boolean canBuild(Player p) {
+		return super.canBypassProtection(p, this);
+	}
+	
+	public boolean canPlaceItem(Player p, Material m) {
+		return super.canItemBePlaced(p, m, this);
+	}
 
 	public boolean canEnter(Player p) {
 		return super.canEnter(p, this);
@@ -293,6 +307,16 @@ public class Region extends PermChecks {
 	public boolean isChangeGameMode()
 	{
 		return changeGameMode;
+	}
+	
+	public void setBlockEndermanMod(boolean val)
+	{
+		blockEndermanMod = val;
+	}
+	
+	public boolean isBlockEndermanMod()
+	{
+		return blockEndermanMod;
 	}
 
 	public boolean canMobsSpawn() {

@@ -86,12 +86,12 @@ public class RegiosBlockListener implements Listener {
 			if (!lines[0].equalsIgnoreCase("[Regios]")) {
 				return;
 			} else {
-				if (PermissionsCore.doesHaveNode(evt.getPlayer(), "regios.fun.sell")) {
+				Player p = evt.getPlayer();
+				if (PermissionsCore.doesHaveNode(p, "regios.fun.sell")) {
 					Region r = GlobalRegionManager.getRegion(lines[1]);
-					Player p = evt.getPlayer();
 					Block b = evt.getBlock();
 					if (r == null) {
-						if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
+						if (RegiosPlayerListener.isSendable(p, MSG.ECONOMY)) {
 							p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + lines[1] + ChatColor.RED + " does not exist.");
 						}
 						b.setTypeId(0);
@@ -99,8 +99,8 @@ public class RegiosBlockListener implements Listener {
 						evt.setCancelled(true);
 						return;
 					} else {
-						if (!PermissionsCore.canModify(r, evt.getPlayer())) {
-							if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
+						if (!r.canModify(p)) {
+							if (RegiosPlayerListener.isSendable(p, MSG.ECONOMY)) {
 								p.sendMessage(ChatColor.RED + "[Regios] You don't have permissions to sell this region!");
 								b.setTypeId(0);
 								p.getInventory().addItem(new ItemStack(323, 1));
@@ -114,7 +114,7 @@ public class RegiosBlockListener implements Listener {
 								r.setSalePrice(Integer.parseInt(lines[2]));
 								r.setForSale(true);
 							} catch (NumberFormatException ex) {
-								if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
+								if (RegiosPlayerListener.isSendable(p, MSG.ECONOMY)) {
 									p.sendMessage(ChatColor.RED + "[Regios] Invalid price " + ChatColor.BLUE + lines[2] + ChatColor.RED + " entered!");
 								}
 								b.setTypeId(0);
@@ -123,7 +123,7 @@ public class RegiosBlockListener implements Listener {
 								return;
 							}
 						} else if (!r.isForSale()) {
-							if (RegiosPlayerListener.isSendable(evt.getPlayer(), MSG.ECONOMY)) {
+							if (RegiosPlayerListener.isSendable(p, MSG.ECONOMY)) {
 								p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + lines[1] + ChatColor.RED + " is not for sale!");
 							}
 							b.setTypeId(0);
@@ -136,8 +136,8 @@ public class RegiosBlockListener implements Listener {
 						evt.setLine(1, ChatColor.BLUE + r.getName());
 						evt.setLine(2, ChatColor.RED + String.valueOf(r.getSalePrice()));
 						evt.setLine(3, ChatColor.GREEN + "[Regios]");
-						evt.getPlayer().sendMessage(ChatColor.GREEN + "[Regios] Sale sign created for region : " + ChatColor.BLUE + r.getName());
-						evt.getPlayer().sendMessage(ChatColor.GREEN + "[Regios] Price : " + ChatColor.BLUE + r.getSalePrice());
+						p.sendMessage(ChatColor.GREEN + "[Regios] Sale sign created for region : " + ChatColor.BLUE + r.getName());
+						p.sendMessage(ChatColor.GREEN + "[Regios] Price : " + ChatColor.BLUE + r.getSalePrice());
 					}
 				} else {
 					PermissionsCore.sendInvalidPerms(evt.getPlayer());
@@ -274,7 +274,7 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (r.getItems().isEmpty() && r.is_protectionPlace()) {
-			if (r.canBypassProtection(p, r)) {
+			if (r.canBypassProtection(p)) {
 				return;
 			} else {
 				evt.setCancelled(true);
@@ -284,10 +284,10 @@ public class RegiosBlockListener implements Listener {
 		}
 
 		if (!r.getItems().isEmpty()) {
-			if (r.canItemBePlaced(p, b.getType(), r)) {
+			if (r.canPlaceItem(p, b.getType())) {
 				return;
 			} else {
-				if (!r.canBypassProtection(p, r)) {
+				if (!r.canBypassProtection(p)) {
 					evt.setCancelled(true);
 					p.sendMessage(ChatColor.RED + "[Regios] You cannot place this item in this region!");
 					return;
@@ -318,7 +318,7 @@ public class RegiosBlockListener implements Listener {
 			if (sign.getLine(0).contains("[Regios]")) {
 				Region reg = GlobalRegionManager.getRegion(sign.getLine(1).substring(0, sign.getLine(1).length()));
 				if (reg != null) {
-					if (!PermissionsCore.canModify(reg, p)) {
+					if (!reg.canModify(p)) {
 						p.sendMessage(ChatColor.RED + "[Regios] You cannot destroy this sign!");
 						evt.setCancelled(true);
 						int count = 0;

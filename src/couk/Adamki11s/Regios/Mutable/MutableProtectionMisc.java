@@ -55,6 +55,17 @@ public class MutableProtectionMisc {
 		}
 	}
 	
+	public void editEndermanBlock(Region r, boolean val){
+		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		c.set("Region.General.EndermanBlock", val);
+		r.setBlockEndermanMod(val);
+		try {
+			c.save(r.getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void editPlayerCap(Region r, int val){
 		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
 		c.set("Region.General.PlayerCap.Cap", val);

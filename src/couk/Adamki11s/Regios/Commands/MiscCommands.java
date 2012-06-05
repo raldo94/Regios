@@ -35,7 +35,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if (!super.canModify(r, p)) {
+			if (!r.canModify(p)) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -130,7 +130,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if (!super.canModify(r, p)) {
+			if (!r.canModify(p)) {
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -154,7 +154,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModify(r, p)){
+			if(!r.canModify(p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -178,7 +178,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModify(r, p)){
+			if(!r.canModify(p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -210,7 +210,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModify(r, p)){
+			if(!r.canModify(p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -239,11 +239,11 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModify(r, p)){
+			if(!r.canModify(p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] GameMode set to " + ChatColor.BLUE + gm.toString() + " for region " + ChatColor.BLUE + r.getName());
+			p.sendMessage(ChatColor.GREEN + "[Regios] GameMode set to " + ChatColor.BLUE + gm.toString() + ChatColor.GREEN + " for region " + ChatColor.BLUE + r.getName());
 		}
 		mutable.editGameModeType(r, gm);
 	}
@@ -261,7 +261,7 @@ public class MiscCommands extends PermissionsCore {
 			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
 			return;
 		} else {
-			if(!super.canModify(r, p)){
+			if(!r.canModify(p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}

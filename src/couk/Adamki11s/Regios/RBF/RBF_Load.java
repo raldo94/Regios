@@ -44,7 +44,7 @@ public class RBF_Load extends PermissionsCore {
 	@SuppressWarnings("unchecked")
 	public void loadRegion(Region r, String backupname, Player p) throws IOException, RegionExistanceException, FileExistanceException, InvalidNBTFormat {
 		if(p != null){
-			if (!super.canModify(r, p)) {
+			if (!r.canModify(p)) {
 				if (p != null) {
 					p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				}

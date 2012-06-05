@@ -21,7 +21,7 @@ public class MobCommands extends PermissionsCore {
 			return;
 		}
 		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
-			if(!super.canModify(r, p)){
+			if(!r.canModify(p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
@@ -43,7 +43,7 @@ public class MobCommands extends PermissionsCore {
 			return;
 		}
 		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
-			if(!super.canModify(r, p)){
+			if(!r.canModify(p)){
 				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
 				return;
 			}

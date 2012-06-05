@@ -7,8 +7,26 @@ import couk.Adamki11s.Regios.Data.MODE;
 import couk.Adamki11s.Regios.Regions.Region;
 
 public class PermChecks {
+	
+	protected boolean canModify(Player p, Region r) {
+		if (PermissionsCore.doesHaveNode(p, ("regios.override." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.override.all")) {
+			return true;
+		}
+		if (r.getOwner().equalsIgnoreCase(p.getName())) {
+			return true;
+		} else {
+			if (r.getSubOwners() != null && r.getSubOwners().length > 0) {
+				for (String subOwner : r.getSubOwners()) {
+					if (subOwner.equalsIgnoreCase(p.getName())) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+	}
 
-	public boolean canItemBePlaced(Player p, Material m, Region r) {
+	protected boolean canItemBePlaced(Player p, Material m, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
@@ -16,7 +34,7 @@ public class PermChecks {
 		{
 			return true;
 		}
-		if (PermissionsCore.canModify(r, p)) {
+		if (canModify(p, r)) {
 			return true;
 		} else {
 			for (String excep : r.getExceptionNodes()) {
@@ -50,11 +68,11 @@ public class PermChecks {
 		}
 	}
 
-	public boolean canBypassProtection(Player p, Region r) {
+	protected boolean canBypassProtection(Player p, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
-		if (PermissionsCore.canModify(r, p)) {
+		if (canModify(p, r)) {
 			return true;
 		} else {
 			for (String excep : r.getExceptionNodes()) {
@@ -88,7 +106,7 @@ public class PermChecks {
 		}
 	}
 
-	public boolean canEnter(Player p, Region r) {
+	protected boolean canEnter(Player p, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
@@ -96,7 +114,7 @@ public class PermChecks {
 		{
 			return true;
 		}
-		if (PermissionsCore.canModify(r, p)) {
+		if (canModify(p, r)) {
 			return true;
 		} else {
 			for (String excep : r.getExceptionNodes()) {
@@ -130,7 +148,7 @@ public class PermChecks {
 		}
 	}
 
-	public boolean canExit(Player p, Region r) {
+	protected boolean canExit(Player p, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
@@ -138,7 +156,7 @@ public class PermChecks {
 		{
 			return true;
 		}
-		if (PermissionsCore.canModify(r, p)) {
+		if (canModify(p, r)) {
 			return true;
 		} else {
 			for (String excep : r.getExceptionNodes()) {
