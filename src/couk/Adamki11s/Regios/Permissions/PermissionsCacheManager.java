@@ -11,6 +11,8 @@ public class PermissionsCacheManager {
 
 	public static HashMap<Player, ArrayList<String>> temporaryAddCache = new HashMap<Player, ArrayList<String>>();
 	public static HashMap<Player, ArrayList<String>> temporaryRemCache = new HashMap<Player, ArrayList<String>>();
+	public static HashMap<Player, ArrayList<String>> temporaryAddGroups = new HashMap<Player, ArrayList<String>>();
+	public static HashMap<Player, ArrayList<String>> temporaryRemGroups = new HashMap<Player, ArrayList<String>>();
 
 	public static void cacheAddNodes(Player p, Region r) {
 		ArrayList<String> nodeCache = new ArrayList<String>();
@@ -69,5 +71,62 @@ public class PermissionsCacheManager {
 			}
 		}
 	}
+	
+	public static void permAddGroups(Player p, Region r) {
+		for (String group : r.getPermAddGroups()) {
+			if(!PermissionsCore.isInGroup(p, group.trim())) {
+				PermissionsCore.addGroup(p, group.trim());
+			}
+		}
+	}
 
+	public static void permRemoveGroups(Player p, Region r) {
+		for (String group : r.getPermRemoveGroups()) {
+			if (PermissionsCore.isInGroup(p, group.trim())) {
+				PermissionsCore.removeGroup(p, group.trim());
+			}
+		}
+	}
+	
+	public static void cacheAddGroups(Player p, Region r) {
+		ArrayList<String> groupCache = new ArrayList<String>();
+		for (String group : r.getTempAddGroups()) {
+			groupCache.add(group.trim());
+			PermissionsCore.addGroup(p, group.trim());
+		}
+		temporaryAddGroups.put(p, groupCache);
+	}
+	
+	public static void cacheRemoveGroups(Player p, Region r) {
+		ArrayList<String> groupCache = new ArrayList<String>();
+		for (String group : r.getTempRemoveGroups()) {
+			groupCache.add(group.trim());
+			PermissionsCore.removeGroup(p, group.trim());
+		}
+		temporaryRemGroups.put(p, groupCache);
+	}
+	
+	public static void unCacheAddGroups(Player p, Region r) {
+		if (temporaryAddGroups.containsKey(p)) {
+			ArrayList<String> cache = temporaryAddGroups.get(p);
+			if (!cache.isEmpty()) {
+				for (String group : cache) {
+					PermissionsCore.removeGroup(p, group);
+				}
+			}
+			temporaryAddGroups.remove(p);
+		}
+	}
+	
+	public static void unCacheRemoveGroups(Player p, Region r) {
+		if (temporaryRemGroups.containsKey(p)) {
+			ArrayList<String> cache = temporaryRemGroups.get(p);
+			if (!cache.isEmpty()) {
+				for (String group : cache) {
+					PermissionsCore.addGroup(p, group);
+				}
+			}
+			temporaryRemGroups.remove(p);
+		}
+	}
 }

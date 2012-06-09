@@ -108,7 +108,8 @@ public class RegiosBlockListener implements Listener {
 								return;
 							}
 						}
-						if (lines[2] != null)
+						p.sendMessage("'" + lines[2] + "'");
+						if (!lines[2].equalsIgnoreCase(""))
 						{
 							try {
 								r.setSalePrice(Integer.parseInt(lines[2]));
@@ -316,7 +317,7 @@ public class RegiosBlockListener implements Listener {
 			Sign sign = (Sign) b.getState();
 			String[] lines = sign.getLines();
 			if (sign.getLine(0).contains("[Regios]")) {
-				Region reg = GlobalRegionManager.getRegion(sign.getLine(1).substring(0, sign.getLine(1).length()));
+				Region reg = GlobalRegionManager.getRegion(sign.getLine(1));
 				if (reg != null) {
 					if (!reg.canModify(p)) {
 						p.sendMessage(ChatColor.RED + "[Regios] You cannot destroy this sign!");
@@ -372,7 +373,7 @@ public class RegiosBlockListener implements Listener {
 
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFromTo(BlockFromToEvent evt)
 	{
 		Block blockFrom = evt.getBlock();
@@ -380,7 +381,7 @@ public class RegiosBlockListener implements Listener {
 		boolean isWater = blockFrom.getTypeId() == 8 || blockFrom.getTypeId() == 9;
 		boolean isLava = blockFrom.getTypeId() == 10 || blockFrom.getTypeId() == 11;
 
-		if(!isWater && !isLava)
+		if(!isWater || !isLava)
 		{
 			return;
 		}
@@ -405,14 +406,14 @@ public class RegiosBlockListener implements Listener {
 					}
 				}
 			}
-		}
-
-		if(tr != null)
-		{
-			if (tr.isProtected())
+		}else {
+			if(tr != null)
 			{
-				evt.setCancelled(true);
-				return;
+				if (tr.isProtected())
+				{
+					evt.setCancelled(true);
+					return;
+				}
 			}
 		}
 	}

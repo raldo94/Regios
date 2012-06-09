@@ -61,6 +61,10 @@ public class Region extends PermChecks {
 			, temporaryNodesCacheRem
 			, permanentNodesCacheAdd
 			, permanentNodesCacheRemove
+			, permanentGroupAdd
+			, permanentGroupRemove
+			, temporaryGroupAdd
+			, temporaryGroupRemove
 			, subOwners;
 
 	protected ArrayList<String> exceptions = new ArrayList<String>()
@@ -218,6 +222,13 @@ public class Region extends PermChecks {
 		forceCommand = ConfigurationData.forceCommand;
 		commandSet = ConfigurationData.commandSet;
 		temporaryNodesCacheAdd = ConfigurationData.temporaryNodesCacheAdd;
+		temporaryNodesCacheRem = ConfigurationData.temporaryNodesCacheRem;
+		permanentNodesCacheAdd = ConfigurationData.permanentNodesCacheAdd;
+		permanentNodesCacheRemove = ConfigurationData.permanentNodesCacheRemove;
+		temporaryGroupAdd = ConfigurationData.temporaryGroupsAdd;
+		temporaryGroupRemove = ConfigurationData.temporaryGroupsRem;
+		permanentGroupAdd = ConfigurationData.permanentGroupsAdd;
+		permanentGroupRemove = ConfigurationData.permanentGroupsRemove;
 		spoutTexturePack = "";
 		useSpoutTexturePack = false;
 		forSale = ConfigurationData.forSale;
@@ -572,6 +583,38 @@ public class Region extends PermChecks {
 
 	public String[] getPermRemoveNodes() {
 		return permanentNodesCacheRemove;
+	}
+	
+	public String[] getPermAddGroups() {
+		return permanentGroupAdd;
+	}
+	
+	public String[] getPermRemoveGroups() {
+		return permanentGroupRemove;
+	}
+	
+	public String[] getTempAddGroups() {
+		return temporaryGroupAdd;
+	}
+	
+	public String[] getTempRemoveGroups() {
+		return temporaryGroupRemove;
+	}
+	
+	public void setPermAddGroups(String[] val) {
+		permanentGroupAdd = val;
+	}
+	
+	public void setPermRemoveGroups(String[] val) {
+		permanentGroupRemove = val;
+	}
+	
+	public void setTempAddGroups(String[] val) {
+		temporaryGroupAdd = val;
+	}
+	
+	public void setTempRemoveGroups(String[] val) {
+		temporaryGroupRemove = val;
 	}
 
 	public int getPlayerCap() {
@@ -964,6 +1007,9 @@ public class Region extends PermChecks {
 			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
 
 			try {
+				/*
+				 * Permission Nodes
+				 */
 				if (temporaryNodesCacheAdd != null) {
 					if (temporaryNodesCacheAdd.length > 0) {
 						PermissionsCacheManager.unCacheAddNodes(p, this);
@@ -982,6 +1028,33 @@ public class Region extends PermChecks {
 						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes wiped upon region exit for player '" + p.getName() + "'"));
 					}
 				}
+				/*
+				 * End Permission Nodes
+				 */
+				/*
+				 * Groups
+				 */
+				if (temporaryGroupAdd != null) {
+					if (temporaryNodesCacheAdd.length > 0) {
+						PermissionsCacheManager.unCacheAddGroups(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add groups wiped upon region exit for player '" + p.getName() + "'"));
+					}
+				}
+				if (temporaryGroupRemove != null) {
+					if (temporaryGroupRemove.length > 0) {
+						PermissionsCacheManager.unCacheRemoveGroups(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove groups restored upon region exit for player '" + p.getName() + "'"));
+					}
+				}
+				if (permanentGroupRemove != null) {
+					if (permanentGroupRemove.length > 0) {
+						PermissionsCacheManager.permRemoveGroups(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent groups wiped upon region exit for player '" + p.getName() + "'"));
+					}
+				}
+				/*
+				 * End Groups
+				 */
 			} catch (Exception ex) {
 				// Fail silently if the operation is unsupported
 			}
@@ -1074,6 +1147,9 @@ public class Region extends PermChecks {
 				}
 			}
 			try {
+				/*
+				 * Permission Nodes
+				 */
 				if (temporaryNodesCacheAdd != null) {
 					if (temporaryNodesCacheAdd.length > 0) {
 						PermissionsCacheManager.cacheAddNodes(p, this);
@@ -1094,6 +1170,35 @@ public class Region extends PermChecks {
 						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes added upon region enter for player '" + p.getName() + "'"));
 					}
 				}
+				/*
+				 * End Permission Nodes
+				 */
+				/*
+				 * Groups
+				 */
+				if (temporaryGroupAdd != null) {
+					if (temporaryGroupAdd.length > 0) {
+						PermissionsCacheManager.cacheAddGroups(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add groups added upon region enter for player '" + p.getName() + "'"));
+					}
+
+				}
+				if (temporaryGroupRemove != null) {
+					if (temporaryGroupRemove.length > 0) {
+						PermissionsCacheManager.cacheRemoveGroups(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove groups wiped upon region enter for player '" + p.getName() + "'"));
+					}
+
+				}
+				if (permanentGroupAdd != null) {
+					if (permanentGroupAdd.length > 0) {
+						PermissionsCacheManager.permAddGroups(p, this);
+						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent groups added upon region enter for player '" + p.getName() + "'"));
+					}
+				}
+				/*
+				 * End Groups
+				 */
 			} catch (Exception ex) {
 				// Fail silently if the operation is unsupported
 			}

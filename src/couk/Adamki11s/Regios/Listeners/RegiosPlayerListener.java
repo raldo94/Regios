@@ -205,15 +205,7 @@ public class RegiosPlayerListener implements Listener {
 					if (region.isForSale()) {
 						if (PermissionsCore.doesHaveNode(p, "regios.fun.buy")) {
 							int price = region.getSalePrice();
-							try {
-								if (Integer.parseInt(sign.getLine(2).split(":")[1].trim()) != price) {
-									p.sendMessage(ChatColor.RED + "[Regios] Invalid sign! Price does not correspond!");
-									b.setTypeId(0);
-									return;
-								}
-							} catch (NumberFormatException ex) {
-								ex.printStackTrace();
-							}
+							sign.setLine(2, String.valueOf(price));
 							if (!EconomyCore.canAffordRegion(p.getName(), price)) {
 								if (isSendable(p, MSG.ECONOMY)) {
 									p.sendMessage(ChatColor.RED + "[Regios] You cannot afford this region!");

@@ -253,4 +253,123 @@ public class PermissionsCommands extends PermissionsCore {
 		}
 	}
 
+	public void addPermGroupAdd(Region r, String region, Player p, String group){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Group " + ChatColor.BLUE + group + ChatColor.GREEN + " was added to group add list for region " + ChatColor.BLUE + region);
+			mutable.editAddPermGroupAdd(r, group);
+		}
+	}
+	
+	public void addPermGroupRemove(Region r, String region, Player p, String group){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Group " + ChatColor.BLUE + group + ChatColor.GREEN + " was added to group remove list for region " + ChatColor.BLUE + region);
+			mutable.editAddPermGroupRemove(r, group);
+		}
+	}
+	
+	public void removePermGroupAdd(Region r, String region, Player p, String group){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Group " + ChatColor.BLUE + group + ChatColor.GREEN + " was removed to group add list for region " + ChatColor.BLUE + region);
+			mutable.editRemovePermGroupAdd(r, group);
+		}
+	}
+	
+	public void removePermGroupRemove(Region r, String region, Player p, String group){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Group " + ChatColor.BLUE + group + ChatColor.GREEN + " was removed to group remove list for region " + ChatColor.BLUE + region);
+			mutable.editRemovePermGroupRemove(r, group);
+		}
+	}
+	
+	public void addTempGroupAdd(Region r, String region, Player p, String group){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Group " + ChatColor.BLUE + group + ChatColor.GREEN + " added to group add list for region " + ChatColor.BLUE + region);
+			mutable.editAddTempGroupAdd(r, group);
+		}
+	}
+	
+	public void removeTempGroupAdd(Region r, String region, Player p, String group){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Group " + ChatColor.BLUE + group + ChatColor.GREEN + " added to group remove list for region " + ChatColor.BLUE + region);
+			mutable.editRemoveTempGroupAdd(r, group);
+		}
+	}
+	
+	public void addTempGroupRemove(Region r, String region, Player p, String group){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Group " + ChatColor.BLUE + group + ChatColor.GREEN + " added to group add list for region " + ChatColor.BLUE + region);
+			mutable.editAddTempGroupRemove(r, group);
+		}
+	}
+	
+	public void removeTempGroupRemove(Region r, String region, Player p, String group){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Group " + ChatColor.BLUE + group + ChatColor.GREEN + " added to group remove list for region " + ChatColor.BLUE + region);
+			mutable.editRemoveTempGroupRemove(r, group);
+		}
+	}
+	
+	public void listAddTempGroup(Region r, String region, Player p){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Temp group add list for region " + ChatColor.BLUE + region);
+			p.sendMessage(mutable.listTempAddGroup(r));
+		}
+	}
+	
+	public void listRemoveTempGroup(Region r, String region, Player p){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Temp group remove list for region " + ChatColor.BLUE + region);
+			p.sendMessage(mutable.listTempRemGroup(r));
+		}
+	}
+	
+	public void listAddPermGroup(Region r, String region, Player p){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Perm group add list for region " + ChatColor.BLUE + region);
+			p.sendMessage(mutable.listPermAddGroup(r));
+			for (String group : r.getPermAddGroups())
+			{
+				p.sendMessage(group);
+			}
+		}
+	}
+	
+	public void listRemovePermGroup(Region r, String region, Player p){
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			p.sendMessage(ChatColor.GREEN + "[Regios] Perm group removal list for region " + ChatColor.BLUE + region);
+			p.sendMessage(mutable.listPermRemGroup(r));
+			for (String group : r.getPermRemoveGroups())
+			{
+				p.sendMessage(group);
+			}
+		}
+	}
 }

@@ -62,6 +62,11 @@ public class Saveable {
 		c.set("Region.Permissions.PermanentCache.AddNodes", "");
 		c.set("Region.Permissions.PermanentCache.RemoveNodes", "");
 		
+		c.set("Region.Permissions.TempGroups.AddGroups", "");
+		c.set("Region.Permissions.TempGroups.RemoveGroups", "");
+		c.set("Region.Permissions.PermGroups.AddGroups", "");
+		c.set("Region.Permissions.PermGroups.RemoveGroups", "");
+		
 		c.set("Region.General.Protected.General", Boolean.valueOf(r.isProtected()));
 		c.set("Region.General.Protected.BlockBreak", Boolean.valueOf(r.is_protectionBreak()));
 		c.set("Region.General.Protected.BlockPlace", Boolean.valueOf(r.is_protectionPlace()));
@@ -196,6 +201,9 @@ public class Saveable {
 		c.set("Region.Command.CommandSet", sb.toString());
 		sb.replace(0, sb.length(), "");
 		
+		/*
+		 * Permission nodes
+		 */
 		for(String s : r.getTempNodesCacheAdd()){
 			sb.append(s).append(",");
 		}
@@ -223,6 +231,43 @@ public class Saveable {
 		
 		c.set("Region.Permissions.PermanentCache.RemoveNodes", sb.toString());
 		sb.replace(0, sb.length(), "");
+		/*
+		 * End Permission Nodes
+		 */
+		
+		/*
+		 * Groups
+		 */
+		for(String s : r.getTempAddGroups()){
+			sb.append(s).append(",");
+		}
+		
+		c.set("Region.Permissions.TempGroups.AddGroups", sb.toString());
+		sb.replace(0, sb.length(), "");
+		
+		for(String s : r.getTempRemoveGroups()){
+			sb.append(s).append(",");
+		}
+		
+		c.set("Region.Permissions.TempGroups.RemoveGroups", sb.toString());
+		sb.replace(0, sb.length(), "");
+		
+		for(String s : r.getPermAddGroups()){
+			sb.append(s).append(",");
+		}
+		
+		c.set("Region.Permissions.PermGroups.AddGroups", sb.toString());
+		sb.replace(0, sb.length(), "");
+		
+		for(String s : r.getPermRemoveGroups()){
+			sb.append(s).append(",");
+		}
+		
+		c.set("Region.Permissions.PermGroups.RemoveGroups", sb.toString());
+		sb.replace(0, sb.length(), "");
+		/*
+		 * End Groups
+		 */
 		
 		c.set("Region.General.Protected", Boolean.valueOf(r.isProtected()));
 		c.set("Region.General.FireProtection", Boolean.valueOf(r.isFireProtection()));

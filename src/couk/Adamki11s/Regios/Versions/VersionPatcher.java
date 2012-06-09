@@ -19,10 +19,10 @@ public class VersionPatcher {
 	static final File patch4063F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "4.0.63.rv");
 	static final File patch4071F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "4.0.71.rv");
 	static final File patch5021F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.21.rv");
-	static final File patch505F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.5.rv");
+	static final File patch5051F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.51.rv");
 
 	public static void runPatch(String version) throws IOException {
-		if (version.equalsIgnoreCase("5.0.5")) {
+		if (version.equalsIgnoreCase("5.0.51")) {
 			if (!patch4057F.exists()) {
 				patch4057(version);
 				patch4057F.createNewFile();
@@ -39,9 +39,9 @@ public class VersionPatcher {
 				patch5021(version);
 				patch5021F.createNewFile();
 			}
-			if (!patch505F.exists()) {
-				patch505(version);
-				patch505F.createNewFile();
+			if (!patch5051F.exists()) {
+				patch5051(version);
+				patch5051F.createNewFile();
 			}
 		}
 	}
@@ -142,7 +142,7 @@ public class VersionPatcher {
 		outstream.println("[Regios][Patch] Patch completed!");
 	}
 
-	private static void patch505(String v) {
+	private static void patch5051(String v) {
 		outstream.println("[Regios][Patch] Patching files for version : " + v);
 		outstream.println("[Regios][Patch] Modifying general configuration file...");
 		File generalconfig = new File(config_root + File.separator + "GeneralSettings.config");

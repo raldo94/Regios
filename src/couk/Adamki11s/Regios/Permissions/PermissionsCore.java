@@ -23,6 +23,14 @@ public class PermissionsCore {
 			return p.hasPermission(node);
 		}
 	}
+	
+	public static boolean isInGroup(Player p, String group) {
+		if (hasPermissions) {
+			return permission.playerInGroup(p.getWorld(), p.getName(), group);
+		} else {
+			return false;
+		}
+	}
 
 	public static void sendInvalidPerms(Player p) {
 		p.sendMessage(ChatColor.RED + "[Regios] You do not have permissions to do this!");
@@ -46,14 +54,33 @@ public class PermissionsCore {
 
 	public static void addUserPermission(Player p, String node) {
 		if (hasPermissions) {
-			permission.playerAdd(p.getWorld().getName(), p.getName(), node);
+			permission.playerAdd(p.getWorld(), p.getName(), node);
 		}
 	}
 
 	public static void removeUserPermission(Player p, String node) {
 		if (hasPermissions) {
-			permission.playerRemove(p.getWorld().getName(), p.getName(), node);
+			permission.playerRemove(p.getWorld(), p.getName(), node);
+		}
+	}
+	
+	public static void removeGroup(Player p, String group) {
+		if(hasPermissions) {
+			permission.playerRemoveGroup(p.getWorld(), p.getName(), group);
+		}
+	}
+	
+	public static void addGroup(Player p, String group) {
+		if(hasPermissions) {
+			permission.playerAddGroup(p.getWorld(), p.getName(), group);
 		}
 	}
 
+	public static void removeAllGroups(Player p) {
+		if(hasPermissions) {
+			for (String group : permission.getPlayerGroups(p.getWorld(), p.getName())) {
+				permission.playerRemoveGroup(p.getWorld(), p.getName(), group);
+			}
+		}
+	}
 }

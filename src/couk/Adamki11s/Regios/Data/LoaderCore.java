@@ -110,10 +110,14 @@ public class LoaderCore {
 
 		String[] musicUrl = c.getString("DefaultSettings.Spout.Sound.CustomMusicURL", "").trim().split(",")
 				, commandSet = c.getString("DefaultSettings.Command.CommandSet", "").trim().split(",")
-				, tempAddCache = c.getString("Region.Permissions.TemporaryCache.AddNodes", "").trim().split(",")
-				, tempRemCache = c.getString("Region.Permissions.TemporaryCache.RemoveNodes", "").trim().split(",")
-				, permAddCache = c.getString("Region.Permissions.PermanentCache.AddNodes", "").trim().split(",")
-				, permRemCache = c.getString("Region.Permissions.PermanentCache.RemoveNodes", "").trim().split(",");
+				, tempAddCache = c.getString("DefaultSettings.Permissions.TemporaryCache.AddNodes", "").trim().split(",")
+				, tempRemCache = c.getString("DefaultSettings.Permissions.TemporaryCache.RemoveNodes", "").trim().split(",")
+				, permAddCache = c.getString("DefaultSettings.Permissions.PermanentCache.AddNodes", "").trim().split(",")
+				, permRemCache = c.getString("DefaultSettings.Permissions.PermanentCache.RemoveNodes", "").trim().split(",")
+				, tempAddGroup = c.getString("DefaultSettings.Permissions.TempGroups.AddGroups", "").trim().split(",")
+				, tempRemGroup = c.getString("DefaultSettings.Permissions.TempGroups.RemoveGroups", "").trim().split(",")
+				, permAddGroup = c.getString("DefaultSettings.Permissions.PermGroups.AddGroups", "").trim().split(",")
+				, permRemGroup = c.getString("DefaultSettings.Permissions.PermGroups.RemoveGroups", "").trim().split(",");
 
 		// ___________________________________
 
@@ -175,9 +179,13 @@ public class LoaderCore {
 							, forceCommand
 							, commandSet
 							, tempAddCache
-							, tempRemCache
 							, permAddCache
+							, tempRemCache
 							, permRemCache
+							, tempAddGroup
+							, permAddGroup
+							, tempRemGroup
+							, permRemGroup
 							, form
 							, playerCap
 							, protectPlace
@@ -362,6 +370,10 @@ public class LoaderCore {
 						, tempRemCache = c.getString("Region.Permissions.TemporaryCache.RemoveNodes", "").trim().split(",")
 						, permAddCache = c.getString("Region.Permissions.PermanentCache.AddNodes", "").trim().split(",")
 						, permRemCache = c.getString("Region.Permissions.PermanentCache.RemoveNodes", "").trim().split(",")
+						, tempAddGroup = c.getString("Region.Permissions.TempGroups.AddGroups", "").trim().split(",")
+						, tempRemGroup = c.getString("Region.Permissions.TempGroups.RemoveGroups", "").trim().split(",")
+						, permAddGroup = c.getString("Region.Permissions.PermGroups.AddGroups", "").trim().split(",")
+						, permRemGroup = c.getString("Region.Permissions.PermGroups.RemoveGroups", "").trim().split(",")
 						, subOwners = c.getString("Region.Essentials.SubOwners", "").trim().split(",");
 
 				Region r = new CubeRegion(owner, name, l1, l2, world, null, false);
@@ -445,6 +457,11 @@ public class LoaderCore {
 				r.setTempNodesCacheRem(tempRemCache);
 				r.setPermanentNodesCacheAdd(permAddCache);
 				r.setPermanentNodesCacheRemove(permRemCache);
+				
+				r.setTempAddGroups(tempAddGroup);
+				r.setTempRemoveGroups(tempRemGroup);
+				r.setPermAddGroups(permAddGroup);
+				r.setPermRemoveGroups(permRemGroup);
 
 				r.setSubOwners(subOwners);
 

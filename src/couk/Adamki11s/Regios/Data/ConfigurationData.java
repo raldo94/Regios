@@ -21,7 +21,11 @@ public class ConfigurationData {
 		, temporaryNodesCacheAdd
 		, temporaryNodesCacheRem
 		, permanentNodesCacheAdd
-		, permanentNodesCacheRemove;
+		, permanentNodesCacheRemove
+		, temporaryGroupsAdd
+		, temporaryGroupsRem
+		, permanentGroupsAdd
+		, permanentGroupsRemove;
 
 	public static Material defaultSpoutWelcomeMaterial
 		, defaultSpoutLeaveMaterial
@@ -79,7 +83,8 @@ public class ConfigurationData {
 			String dam, String dasm, Material welcome, Material leave, boolean welcomeMsg, boolean leaveMsg, boolean protectMsg, boolean preventEntryMsg, boolean preventExitMsg,
 			boolean fireProt, boolean fireSpr, String[] music, boolean playmusic, boolean permWipeOnEnter1, boolean permWipeOnExit1,
 			boolean wipeAndCacheOnEnter1, boolean wipeAndCacheOnExit1, boolean changeGM, boolean forceCommand1, String[] commandSet1, String[] tempAddCache, String[] permAddCache,
-			String[] tempRemCache, String[] permRemoveCache, boolean form, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt, GameMode gamemode
+			String[] tempRemCache, String[] permRemoveCache, String[] tempAddGroups, String[] permAddGroups, String[] tempRemGroups, String[] permRemoveGroups, boolean form
+			, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean tnt, GameMode gamemode
 			, boolean blockEnderman) {
 		defaultWelcomeMessage = a;
 		defaultLeaveMessage = b;
@@ -135,6 +140,10 @@ public class ConfigurationData {
 		temporaryNodesCacheRem = tempRemCache;
 		permanentNodesCacheAdd = permAddCache;
 		permanentNodesCacheRemove = permRemoveCache;
+		temporaryGroupsAdd = tempAddGroups;
+		temporaryGroupsRem = tempRemGroups;
+		permanentGroupsAdd = permAddGroups;
+		permanentGroupsRemove = permRemoveGroups;
 		blockForm = form;
 		playerCap = cap;
 		regionPlaceProtected = placeprotect;

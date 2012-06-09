@@ -1073,14 +1073,6 @@ public class CommandCore implements CommandExecutor {
 				}
 			}
 
-			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-rem-list"))) {
-				if (PermissionsCore.doesHaveNode(p, "regios.permissions.perm-rem")) {
-					perms.listPermRemCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
-				} else {
-					PermissionsCore.sendInvalidPerms(p);
-				}
-			}
-
 			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-add-list"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.permissions.perm-add")) {
 					perms.listPermAdd(GlobalRegionManager.getRegion(args[1]), args[1], p);
@@ -1105,11 +1097,134 @@ public class CommandCore implements CommandExecutor {
 				}
 			}
 
-			if (args.length == 2 && (args[0].equalsIgnoreCase("perm-cache-rem-list"))) {
-				if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
-					perms.listTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
-				} else {
-					PermissionsCore.sendInvalidPerms(p);
+			if (args[0].equalsIgnoreCase("perm-cache-rem-list")) {
+				if(args.length == 2)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissions.cache")) {
+						perms.listTempRemCache(GlobalRegionManager.getRegion(args[1]), args[1], p);
+					} else {
+						PermissionsCore.sendInvalidPerms(p);
+					}
+				}
+			}
+
+			if (args[0].equalsIgnoreCase("perm-add-group-add") || args[0].equalsIgnoreCase("permaddgroupadd"))
+			{
+				if (args.length == 3)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.add")) {
+						perms.addPermGroupAdd(GlobalRegionManager.getRegion(args[1]), args[1], p, args[2]);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("perm-remove-group-add") || args[0].equalsIgnoreCase("permremovegroupadd"))
+			{
+				if (args.length == 3)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.remove")) {
+						perms.addPermGroupRemove(GlobalRegionManager.getRegion(args[1]), args[1], p, args[2]);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("perm-add-group-remove") || args[0].equalsIgnoreCase("permaddgroupremove"))
+			{
+				if (args.length == 3)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.add")) {
+						perms.removePermGroupAdd(GlobalRegionManager.getRegion(args[1]), args[1], p, args[2]);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("perm-remove-group-remove") || args[0].equalsIgnoreCase("permremovegroupremove"))
+			{
+				if (args.length == 3)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.remove")) {
+						perms.removePermGroupRemove(GlobalRegionManager.getRegion(args[1]), args[1], p, args[2]);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("temp-add-group-add"))
+			{
+				if (args.length == 3)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.add")) {
+						perms.addTempGroupAdd(GlobalRegionManager.getRegion(args[1]), args[1], p, args[2]);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("temp-add-group-remove"))
+			{
+				if (args.length == 3)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.remove")) {
+						perms.removeTempGroupAdd(GlobalRegionManager.getRegion(args[1]), args[1], p, args[2]);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("temp-remove-group-add"))
+			{
+				if (args.length == 3)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.add")) {
+						perms.addTempGroupRemove(GlobalRegionManager.getRegion(args[1]), args[1], p, args[2]);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("temp-remove-group-remove"))
+			{
+				if (args.length == 3)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.remove")) {
+						perms.removeTempGroupRemove(GlobalRegionManager.getRegion(args[1]), args[1], p, args[2]);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("list-perm-add-group"))
+			{
+				if (args.length == 2)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.add")) {
+						perms.listAddPermGroup(GlobalRegionManager.getRegion(args[1]), args[1], p);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("list-perm-remove-group"))
+			{
+				if (args.length == 2)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.remove")) {
+						perms.listRemovePermGroup(GlobalRegionManager.getRegion(args[1]), args[1], p);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("list-temp-add-group"))
+			{
+				if (args.length == 2)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.add")) {
+						perms.listAddTempGroup(GlobalRegionManager.getRegion(args[1]), args[1], p);
+					}
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("list-temp-remove-group"))
+			{
+				if (args.length == 2)
+				{
+					if (PermissionsCore.doesHaveNode(p, "regios.permissons.group.remove")) {
+						perms.listRemoveTempGroup(GlobalRegionManager.getRegion(args[1]), args[1], p);
+					}
 				}
 			}
 

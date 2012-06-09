@@ -174,8 +174,14 @@ public class CreationCore {
 			c.set("DefaultSettings.Messages.ShowPvPWarning", true);
 
 			c.set("DefaultSettings.Permissions.TemporaryCache.AddNodes", "");
+			c.set("DefaultSettings.Permissions.TemporaryCache.RemoveNodes", "");
 			c.set("DefaultSettings.Permissions.PermanentCache.AddNodes", "");
 			c.set("DefaultSettings.Permissions.PermanentCache.RemoveNodes", "");
+			
+			c.set("DefaultSettings.Permissions.TempGroups.AddGroups", "");
+			c.set("DefaultSettings.Permissions.TempGroups.RemoveGroups", "");
+			c.set("DefaultSettings.Permissions.PermGroups.AddGroups", "");
+			c.set("DefaultSettings.Permissions.PermGroups.RemoveGroups", "");
 
 			c.set("DefaultSettings.Other.LSPS", 0);
 			c.set("DefaultSettings.Other.HealthEnabled", true);
