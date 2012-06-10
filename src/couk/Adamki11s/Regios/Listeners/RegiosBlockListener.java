@@ -25,6 +25,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 import couk.Adamki11s.Regios.Commands.CreationCommands;
 import couk.Adamki11s.Regios.Data.ConfigurationData;
 import couk.Adamki11s.Regios.Economy.EconomyCore;
@@ -37,6 +38,7 @@ import couk.Adamki11s.Regios.Scheduler.LogRunner;
 
 public class RegiosBlockListener implements Listener {
 	final CreationCommands cc = new CreationCommands();
+	final ExtrasRegions extReg = new ExtrasRegions();
 
 	public void extinguish(Block b) {
 		if (b.getType() == Material.FIRE) {
@@ -426,6 +428,10 @@ public class RegiosBlockListener implements Listener {
 			Region r = GlobalRegionManager.getRegion(b.getLocation());
 			if (r != null)
 			{
+				if(extReg.isInsideCuboid(evt.getBlock().getLocation(), r.getL1(), r.getL2()))
+				{
+					return;
+				}
 				if(r.isProtected() || r.is_protectionBreak() || r.is_protectionPlace())
 				{
 					evt.setCancelled(true);
@@ -447,6 +453,10 @@ public class RegiosBlockListener implements Listener {
 					Region r = GlobalRegionManager.getRegion(l);
 					if (r != null)
 					{
+						if(extReg.isInsideCuboid(evt.getBlock().getLocation(), r.getL1(), r.getL2()))
+						{
+							return;
+						}
 						if(r.isProtected() || r.is_protectionBreak() || r.is_protectionPlace())
 						{
 							evt.setCancelled(true);
