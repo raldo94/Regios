@@ -381,7 +381,7 @@ public class RegiosBlockListener implements Listener {
 		boolean isWater = blockFrom.getTypeId() == 8 || blockFrom.getTypeId() == 9;
 		boolean isLava = blockFrom.getTypeId() == 10 || blockFrom.getTypeId() == 11;
 
-		if(!isWater || !isLava)
+		if(!(isWater || isLava))
 		{
 			return;
 		}
