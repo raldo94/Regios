@@ -39,6 +39,40 @@ import couk.Adamki11s.Regios.Scheduler.LogRunner;
 public class RegiosBlockListener implements Listener {
 	final CreationCommands cc = new CreationCommands();
 	final ExtrasRegions extReg = new ExtrasRegions();
+	
+	ArrayList<Integer> waterBrokenBlockIDs = new ArrayList<Integer>() {
+		private static final long serialVersionUID = 2203318228451900490L;
+	{
+		add(0);
+		add(6);
+		add(27);
+		add(28);
+		add(31);
+		add(32);
+		add(37);
+		add(38);
+		add(39);
+		add(40);
+		add(50);
+		add(51);
+		add(55);
+		add(59);
+		add(66);
+		add(69);
+		add(75);
+		add(76);
+		add(77);
+		add(78);
+		add(81);
+		add(83);
+		add(90);
+		add(93);
+		add(94);
+		add(104);
+		add(105);
+		add(106);
+		add(115);
+	}};
 
 	public void extinguish(Block b) {
 		if (b.getType() == Material.FIRE) {
@@ -379,6 +413,12 @@ public class RegiosBlockListener implements Listener {
 	public void onBlockFromTo(BlockFromToEvent evt)
 	{
 		Block blockFrom = evt.getBlock();
+		Block blockTo = evt.getToBlock();
+		
+		if(!waterBrokenBlockIDs.contains(blockTo.getTypeId()))
+		{
+			return;
+		}
 
 		boolean isWater = blockFrom.getTypeId() == 8 || blockFrom.getTypeId() == 9;
 		boolean isLava = blockFrom.getTypeId() == 10 || blockFrom.getTypeId() == 11;
@@ -391,7 +431,7 @@ public class RegiosBlockListener implements Listener {
 		//TODO change when region priorities are implemented
 
 		Region fr = GlobalRegionManager.getRegion(blockFrom.getLocation());
-		Region tr = GlobalRegionManager.getRegion(evt.getToBlock().getLocation());
+		Region tr = GlobalRegionManager.getRegion(blockTo.getLocation());
 
 		if(fr != null)
 		{
