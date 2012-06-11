@@ -1,6 +1,6 @@
 name: Regios
 main: couk.Adamki11s.Regios.Main.Regios
-version: 5.0.52
+version: 5.0.53
 authors: [Adamki11s, johnnyzerox7]
 commands:
   regios:
