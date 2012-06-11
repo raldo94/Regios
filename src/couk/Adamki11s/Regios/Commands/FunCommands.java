@@ -114,8 +114,8 @@ public class FunCommands extends PermissionsCore {
 	public void setWarp(Player p){
 		Location loc = p.getLocation();
 		Region r = null;
-		if(RegiosPlayerListener.currentRegion.containsKey(p)){
-			r = RegiosPlayerListener.currentRegion.get(p);
+		if(RegiosPlayerListener.currentRegion.containsKey(p.getName())){
+			r = RegiosPlayerListener.currentRegion.get(p.getName());
 		}
 		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] You are not in a Region!"); return; } else {
 			if(!r.canModify(p)){

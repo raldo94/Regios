@@ -8,11 +8,11 @@ public class SpoutInterface{
 	
 	public static boolean global_spoutEnabled = false;
 	
-	public static HashMap<Player, Boolean> spoutEnabled = new HashMap<Player, Boolean>();
+	public static HashMap<String, Boolean> spoutEnabled = new HashMap<String, Boolean>();
 	
 	public static boolean doesPlayerHaveSpout(Player p){
-		if(spoutEnabled.containsKey(p)){
-			return spoutEnabled.get(p);
+		if(spoutEnabled.containsKey(p.getName())){
+			return spoutEnabled.get(p.getName());
 		} else {
 			return false;
 		}

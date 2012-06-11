@@ -1509,7 +1509,7 @@ public class CommandCore implements CommandExecutor {
 						p.sendMessage(ChatColor.RED + "[Regios] A Blueprint file with the name " + ChatColor.BLUE + args[1] + ChatColor.RED + " does not exist!");
 						return true;
 					}
-					RegiosPlayerListener.loadingTerrain.put(p, new ShareData(args[1], p));
+					RegiosPlayerListener.loadingTerrain.put(p.getName(), new ShareData(args[1], p));
 					p.sendMessage(ChatColor.GREEN + "[Regios] Click the block where you wish to paste the blueprint.");
 				} else {
 					PermissionsCore.sendInvalidPerms(p);

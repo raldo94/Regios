@@ -8,13 +8,12 @@ import java.util.Set;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 
 public class ChunkGrid {
 	
 	public Set<Chunk> chunkGrid = new HashSet<Chunk>();
-	public HashMap<Player, ArrayList<Chunk>> playerChunks = new HashMap<Player, ArrayList<Chunk>>();
+	public HashMap<String, ArrayList<Chunk>> playerChunks = new HashMap<String, ArrayList<Chunk>>();
 	
 	public Region region;
 	

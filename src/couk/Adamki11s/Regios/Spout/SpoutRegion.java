@@ -17,8 +17,8 @@ import couk.Adamki11s.Regios.Regions.Region;
 
 public class SpoutRegion {
 
-	public static HashMap<Player, ArrayList<UUID>> widgetBindings = new HashMap<Player, ArrayList<UUID>>();
-	public static HashMap<Player, String> lastSong = new HashMap<Player, String>();
+	public static HashMap<String, ArrayList<UUID>> widgetBindings = new HashMap<String, ArrayList<UUID>>();
+	public static HashMap<String, String> lastSong = new HashMap<String, String>();
 
 	public static void forceTexturePack(Player p, Region r){
 		SpoutPlayer sp = (SpoutPlayer)p;
@@ -55,12 +55,12 @@ public class SpoutRegion {
 		SpoutPlayer sp = (SpoutPlayer) p;
 		sp.getMainScreen().attachWidget(Regios.regios, label);
 
-		if (widgetBindings.containsKey(p)) {
-			widgetBindings.get(p).add(label.getId());
+		if (widgetBindings.containsKey(p.getName())) {
+			widgetBindings.get(p.getName()).add(label.getId());
 		} else {
 			ArrayList<UUID> push = new ArrayList<UUID>();
 			push.add(label.getId());
-			widgetBindings.put(p, push);
+			widgetBindings.put(p.getName(), push);
 		}
 	}
 
@@ -70,8 +70,8 @@ public class SpoutRegion {
 	}
 
 	public static void wipeLabels(Player p) {
-		if (widgetBindings.containsKey(p)) {
-			for (UUID uuid : widgetBindings.get(p)) {
+		if (widgetBindings.containsKey(p.getName())) {
+			for (UUID uuid : widgetBindings.get(p.getName())) {
 				((SpoutPlayer) p).getMainScreen().removeWidget(((SpoutPlayer) p).getMainScreen().getWidget(uuid));
 			}
 		}
@@ -80,14 +80,14 @@ public class SpoutRegion {
 	public static void playToPlayerMusicFromUrl(Player p, Region r) {
 		int length = r.getCustomSoundUrl().length;
 		String shuffled = "";
-		if (lastSong.containsKey(p)) {
-			shuffled = lastSong.get(p);
+		if (lastSong.containsKey(p.getName())) {
+			shuffled = lastSong.get(p.getName());
 		}
 		if (length == 1) {
 			shuffled = r.getCustomSoundUrl()[0];
 		} else {
-			if (lastSong.containsKey(p)) {
-				while (lastSong.get(p).equalsIgnoreCase(shuffled)) {
+			if (lastSong.containsKey(p.getName())) {
+				while (lastSong.get(p.getName()).equalsIgnoreCase(shuffled)) {
 					int rnd = new Random().nextInt(length) + 0;
 					shuffled = r.getCustomSoundUrl()[rnd];
 				}
@@ -95,7 +95,7 @@ public class SpoutRegion {
 				shuffled = r.getCustomSoundUrl()[new Random().nextInt(length - 1)];
 			}
 		}
-		lastSong.put(p, shuffled);
+		lastSong.put(p.getName(), shuffled);
 		SoundManager sm = SpoutManager.getSoundManager();
 		if (shuffled.length() > 5){
 			sm.playCustomMusic(Regios.regios, (SpoutPlayer) p, shuffled, true);

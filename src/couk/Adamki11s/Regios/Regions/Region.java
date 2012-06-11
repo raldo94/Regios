@@ -138,15 +138,15 @@ public class Region extends PermChecks {
 			, preventExitMode = MODE.Whitelist
 			, itemMode = MODE.Whitelist;
 
-	protected HashMap<Player, Boolean> authentication = new HashMap<Player, Boolean>()
-			, welcomeMessageSent = new HashMap<Player, Boolean>()
-			, leaveMessageSent = new HashMap<Player, Boolean>();
+	protected HashMap<String, Boolean> authentication = new HashMap<String, Boolean>()
+			, welcomeMessageSent = new HashMap<String, Boolean>()
+			, leaveMessageSent = new HashMap<String, Boolean>();
 
-	protected HashMap<Player, Long> timeStamps = new HashMap<Player, Long>();
+	protected HashMap<String, Long> timeStamps = new HashMap<String, Long>();
 
-	protected ArrayList<Player> playersInRegion = new ArrayList<Player>();
+	protected ArrayList<String> playersInRegion = new ArrayList<String>();
 
-	protected HashMap<Player, PlayerInventory> inventoryCache = new HashMap<Player, PlayerInventory>();
+	protected HashMap<String, PlayerInventory> inventoryCache = new HashMap<String, PlayerInventory>();
 
 	protected ExtrasCryptography exCrypt = new ExtrasCryptography();
 
@@ -259,7 +259,7 @@ public class Region extends PermChecks {
 	}
 
 	public void addPlayer(Player p) {
-		playersInRegion.add(p);
+		playersInRegion.add(p.getName());
 	}
 
 	public boolean areChestsLocked() {
@@ -275,7 +275,7 @@ public class Region extends PermChecks {
 	}
 
 	public void cacheInventory(Player p) {
-		inventoryCache.put(p, p.getInventory());
+		inventoryCache.put(p.getName(), p.getInventory());
 	}
 
 	public boolean canBypassProtection(Player p) {
@@ -461,16 +461,16 @@ public class Region extends PermChecks {
 		return message;
 	}
 
-	public HashMap<Player, Boolean> getAuthentication() {
+	public HashMap<String, Boolean> getAuthentication() {
 		return authentication;
 	}
 
 	public boolean getAuthentication(String password, Player p) {
 		if (exCrypt.compareHashes(exCrypt.computeSHA2_384BitHash(password), exCrypt.computeSHA2_384BitHash(this.password))) {
-			authentication.put(p, true);
+			authentication.put(p.getName(), true);
 			return true;
 		} else {
-			authentication.put(p, false);
+			authentication.put(p.getName(), false);
 			return false;
 		}
 	}
@@ -520,12 +520,12 @@ public class Region extends PermChecks {
 		return healthRegen;
 	}
 
-	public HashMap<Player, PlayerInventory> getInventoryCache() {
+	public HashMap<String, PlayerInventory> getInventoryCache() {
 		return inventoryCache;
 	}
 
 	public PlayerInventory getInventoryCache(Player p) {
-		return inventoryCache.containsKey(p) ? inventoryCache.get(p) : null;
+		return inventoryCache.containsKey(p.getName()) ? inventoryCache.get(p.getName()) : null;
 	}
 
 	public MODE getItemMode() {
@@ -548,7 +548,7 @@ public class Region extends PermChecks {
 		return leaveMessage;
 	}
 
-	public HashMap<Player, Boolean> getLeaveMessageSent() {
+	public HashMap<String, Boolean> getLeaveMessageSent() {
 		return leaveMessageSent;
 	}
 
@@ -621,7 +621,7 @@ public class Region extends PermChecks {
 		return playerCap;
 	}
 
-	public ArrayList<Player> getPlayersInRegion() {
+	public ArrayList<String> getPlayersInRegion() {
 		return playersInRegion;
 	}
 
@@ -693,7 +693,7 @@ public class Region extends PermChecks {
 		return temporaryNodesCacheRem;
 	}
 
-	public HashMap<Player, Long> getTimeStamps() {
+	public HashMap<String, Long> getTimeStamps() {
 		return timeStamps;
 	}
 
@@ -709,7 +709,7 @@ public class Region extends PermChecks {
 		return welcomeMessage;
 	}
 
-	public HashMap<Player, Boolean> getWelcomeMessageSent() {
+	public HashMap<String, Boolean> getWelcomeMessageSent() {
 		return welcomeMessageSent;
 	}
 
@@ -726,8 +726,8 @@ public class Region extends PermChecks {
 	}
 
 	public boolean isAuthenticated(Player p) {
-		if (authentication.containsKey(p)) {
-			return authentication.get(p);
+		if (authentication.containsKey(p.getName())) {
+			return authentication.get(p.getName());
 		} else {
 			return false;
 		}
@@ -758,10 +758,10 @@ public class Region extends PermChecks {
 	}
 
 	private boolean isLeaveMessageSent(Player p) {
-		if (!leaveMessageSent.containsKey(p)) {
+		if (!leaveMessageSent.containsKey(p.getName())) {
 			return false;
 		} else {
-			return leaveMessageSent.get(p);
+			return leaveMessageSent.get(p.getName());
 		}
 	}
 
@@ -826,7 +826,7 @@ public class Region extends PermChecks {
 	}
 
 	public boolean isSendable(Player p) {
-		boolean outcome = (timeStamps.containsKey(p) ? (System.currentTimeMillis() > timeStamps.get(p) + 5000) : true);
+		boolean outcome = (timeStamps.containsKey(p.getName()) ? (System.currentTimeMillis() > timeStamps.get(p.getName()) + 5000) : true);
 		if (outcome) {
 			setTimestamp(p);
 		}
@@ -874,10 +874,10 @@ public class Region extends PermChecks {
 	}
 
 	private boolean isWelcomeMessageSent(Player p) {
-		if (!welcomeMessageSent.containsKey(p)) {
+		if (!welcomeMessageSent.containsKey(p.getName())) {
 			return false;
 		} else {
-			return welcomeMessageSent.get(p);
+			return welcomeMessageSent.get(p.getName());
 		}
 	}
 
@@ -904,8 +904,8 @@ public class Region extends PermChecks {
 		if (original.contains("PLAYER-LIST")) {
 			StringBuilder builder = new StringBuilder();
 			builder.append("");
-			for (Player play : playersInRegion) {
-				builder.append(ChatColor.WHITE).append(play.getName()).append(ChatColor.BLUE).append(", ");
+			for (String play : playersInRegion) {
+				builder.append(ChatColor.WHITE).append(play).append(ChatColor.BLUE).append(", ");
 			}
 			original = original.replaceAll("PLAYER-LIST", "" + builder.toString());
 		}
@@ -951,7 +951,7 @@ public class Region extends PermChecks {
 	}
 
 	public void resetAuthentication(Player p) {
-		authentication.put(p, false);
+		authentication.put(p.getName(), false);
 	}
 
 	public void sendBuildMessage(Player p) {
@@ -965,11 +965,11 @@ public class Region extends PermChecks {
 		if (!isLeaveMessageSent(p)) {
 			registerExitEvent(p);
 			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
-			if (RegiosPlayerListener.currentRegion.containsKey(p)) {
-				RegiosPlayerListener.currentRegion.remove(p);
+			if (RegiosPlayerListener.currentRegion.containsKey(p.getName())) {
+				RegiosPlayerListener.currentRegion.remove(p.getName());
 			}
-			leaveMessageSent.put(p, true);
-			welcomeMessageSent.remove(p);
+			leaveMessageSent.put(p.getName(), true);
+			welcomeMessageSent.remove(p.getName());
 			removePlayer(p);
 			if (HealthRegeneration.isRegenerator(p)) {
 				HealthRegeneration.removeRegenerator(p);
@@ -1096,9 +1096,9 @@ public class Region extends PermChecks {
 			if (useSpoutTexturePack && SpoutInterface.doesPlayerHaveSpout(p)) {
 				SpoutRegion.forceTexturePack(p, this);
 			}
-			RegiosPlayerListener.currentRegion.put(p, this);
-			welcomeMessageSent.put(p, true);
-			leaveMessageSent.remove(p);
+			RegiosPlayerListener.currentRegion.put(p.getName(), this);
+			welcomeMessageSent.put(p.getName(), true);
+			leaveMessageSent.remove(p.getName());
 			addPlayer(p);
 			if (!HealthRegeneration.isRegenerator(p)) {
 				if (healthRegen < 0 && !canBypassProtection(p)) {
@@ -1231,7 +1231,7 @@ public class Region extends PermChecks {
 		this._protectionPlace = _protectionPlace;
 	}
 
-	public void setAuthentication(HashMap<Player, Boolean> authentication) {
+	public void setAuthentication(HashMap<String, Boolean> authentication) {
 		this.authentication = authentication;
 	}
 
@@ -1291,7 +1291,7 @@ public class Region extends PermChecks {
 		this.healthRegen = healthRegen;
 	}
 
-	public void setInventoryCache(HashMap<Player, PlayerInventory> inventoryCache) {
+	public void setInventoryCache(HashMap<String, PlayerInventory> inventoryCache) {
 		this.inventoryCache = inventoryCache;
 	}
 
@@ -1323,7 +1323,7 @@ public class Region extends PermChecks {
 		this.leaveMessage = leaveMessage;
 	}
 
-	public void setLeaveMessageSent(HashMap<Player, Boolean> leaveMessageSent) {
+	public void setLeaveMessageSent(HashMap<String, Boolean> leaveMessageSent) {
 		this.leaveMessageSent = leaveMessageSent;
 	}
 
@@ -1383,7 +1383,7 @@ public class Region extends PermChecks {
 		this.playerCap = playerCap;
 	}
 
-	public void setPlayersInRegion(ArrayList<Player> playersInRegion) {
+	public void setPlayersInRegion(ArrayList<String> playersInRegion) {
 		this.playersInRegion = playersInRegion;
 	}
 
@@ -1496,10 +1496,10 @@ public class Region extends PermChecks {
 	}
 
 	private void setTimestamp(Player p) {
-		timeStamps.put(p, System.currentTimeMillis());
+		timeStamps.put(p.getName(), System.currentTimeMillis());
 	}
 
-	public void setTimeStamps(HashMap<Player, Long> timeStamps) {
+	public void setTimeStamps(HashMap<String, Long> timeStamps) {
 		this.timeStamps = timeStamps;
 	}
 
@@ -1523,7 +1523,7 @@ public class Region extends PermChecks {
 		this.welcomeMessage = welcomeMessage;
 	}
 
-	public void setWelcomeMessageSent(HashMap<Player, Boolean> welcomeMessageSent) {
+	public void setWelcomeMessageSent(HashMap<String, Boolean> welcomeMessageSent) {
 		this.welcomeMessageSent = welcomeMessageSent;
 	}
 

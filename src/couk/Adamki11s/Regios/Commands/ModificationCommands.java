@@ -225,9 +225,9 @@ public class ModificationCommands extends PermissionsCore {
 			}
 			p.sendMessage(ChatColor.GREEN + "[Regios] Modifying points for region " + ChatColor.BLUE + region);
 		}
-		CreationCommands.modRegion.put(p, r);
-		CreationCommands.modding.put(p, true);
-		CreationCommands.setting.put(p, false);
+		CreationCommands.modRegion.put(p.getName(), r);
+		CreationCommands.modding.put(p.getName(), true);
+		CreationCommands.setting.put(p.getName(), false);
 	}
 
 }

@@ -23,26 +23,26 @@ import couk.Adamki11s.Regios.Restrictions.RestrictionParameters;
 
 public class CreationCommands {
 
-	public static HashMap<Player, Location> point1 = new HashMap<Player, Location>();
-	public static HashMap<Player, Location> point2 = new HashMap<Player, Location>();
-	public static HashMap<Player, Boolean> setting = new HashMap<Player, Boolean>();
+	public static HashMap<String, Location> point1 = new HashMap<String, Location>();
+	public static HashMap<String, Location> point2 = new HashMap<String, Location>();
+	public static HashMap<String, Boolean> setting = new HashMap<String, Boolean>();
 
-	public static HashMap<Player, Boolean> modding = new HashMap<Player, Boolean>();
-	public static HashMap<Player, Location> mod1 = new HashMap<Player, Location>();
-	public static HashMap<Player, Location> mod2 = new HashMap<Player, Location>();
+	public static HashMap<String, Boolean> modding = new HashMap<String, Boolean>();
+	public static HashMap<String, Location> mod1 = new HashMap<String, Location>();
+	public static HashMap<String, Location> mod2 = new HashMap<String, Location>();
 
-	public static HashMap<Player, Region> modRegion = new HashMap<Player, Region>();
+	public static HashMap<String, Region> modRegion = new HashMap<String, Region>();
 
 	private static char[] invalidModifiers = { '!', '\'', '£', '$', '%', '^', '&', '*', '¬', '`', '/', '?', '<', '>', '|', '\\' };
 
 	static GlobalRegionManager grm = new GlobalRegionManager();
 
 	public boolean isSetting(Player p) {
-		return (setting.containsKey(p) ? setting.get(p) : false);
+		return (setting.containsKey(p.getName()) ? setting.get(p.getName()) : false);
 	}
 
 	public boolean isModding(Player p) {
-		return (modding.containsKey(p) ? modding.get(p) : false);
+		return (modding.containsKey(p.getName()) ? modding.get(p.getName()) : false);
 	}
 
 	public void giveTool(Player p) {
@@ -59,8 +59,8 @@ public class CreationCommands {
 			p.sendMessage(ChatColor.RED + "[Regios] You are already setting a region!");
 			return;
 		} else {
-			setting.put(p, true);
-			modding.put(p, false);
+			setting.put(p.getName(), true);
+			modding.put(p.getName(), false);
 		}
 		if (!p.getInventory().contains(new ItemStack(ConfigurationData.defaultSelectionTool, 1))) {
 			ItemStack is = new ItemStack(ConfigurationData.defaultSelectionTool, 1);
@@ -132,9 +132,9 @@ public class CreationCommands {
 			return;
 		}
 
-		double width = Math.max(point1.get(p).getX(), point2.get(p).getX()) - Math.min(point1.get(p).getX(), point2.get(p).getX()), height = Math.max(point1.get(p).getY(),
-				point2.get(p).getY()) - Math.min(point1.get(p).getY(), point2.get(p).getY()), length = Math.max(point1.get(p).getZ(), point2.get(p).getZ())
-				- Math.min(point1.get(p).getZ(), point2.get(p).getZ());
+		double width = Math.max(point1.get(p.getName()).getX(), point2.get(p.getName()).getX()) - Math.min(point1.get(p.getName()).getX(), point2.get(p.getName()).getX()), height = Math.max(point1.get(p.getName()).getY(),
+				point2.get(p.getName()).getY()) - Math.min(point1.get(p.getName()).getY(), point2.get(p.getName()).getY()), length = Math.max(point1.get(p.getName()).getZ(), point2.get(p.getName()).getZ())
+				- Math.min(point1.get(p.getName()).getZ(), point2.get(p.getName()).getZ());
 		int rCount = GlobalRegionManager.getOwnedRegions(p.getName());
 
 		RestrictionParameters params = RestrictionParameters.getRestrictions(p);
@@ -162,11 +162,11 @@ public class CreationCommands {
 			return;
 		}
 
-		new CubeRegion(p.getName(), name, point1.get(p), point2.get(p), p.getWorld(), null, true);
+		new CubeRegion(p.getName(), name, point1.get(p.getName()), point2.get(p.getName()), p.getWorld(), null, true);
 		p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + name + ChatColor.GREEN + " created successfully!");
 		clearPoints(p);
-		modding.put(p, false);
-		setting.put(p, false);
+		modding.put(p.getName(), false);
+		setting.put(p.getName(), false);
 	}
 
 	public void createBlueprint(Player p, String name) {
@@ -196,10 +196,10 @@ public class CreationCommands {
 			return;
 		}
 
-		RBF_Core.rbf_save.startSave(null, point1.get(p), point2.get(p), name, p, true);
+		RBF_Core.rbf_save.startSave(null, point1.get(p.getName()), point2.get(p.getName()), name, p, true);
 		clearPoints(p);
-		modding.put(p, false);
-		setting.put(p, false);
+		modding.put(p.getName(), false);
+		setting.put(p.getName(), false);
 	}
 
 	public static void createBlueprint(String name, Location l1, Location l2) {
@@ -231,11 +231,11 @@ public class CreationCommands {
 	}
 
 	public boolean arePointsSet(Player p) {
-		return point1.containsKey(p) && point2.containsKey(p);
+		return point1.containsKey(p.getName()) && point2.containsKey(p.getName());
 	}
 
 	public boolean areModPointsSet(Player p) {
-		return mod1.containsKey(p) && mod2.containsKey(p);
+		return mod1.containsKey(p.getName()) && mod2.containsKey(p.getName());
 	}
 
 	public void expandMaxSelection(Player p) {
@@ -245,13 +245,13 @@ public class CreationCommands {
 			return;
 		}
 		else if (arePointsSet(p)) {
-			point1.put(p, (new Location(p.getWorld(), point1.get(p).getX(), 0, point1.get(p).getZ())));
-			point2.put(p, (new Location(p.getWorld(), point2.get(p).getX(), p.getWorld().getMaxHeight(), point2.get(p).getZ())));
+			point1.put(p.getName(), (new Location(p.getWorld(), point1.get(p.getName()).getX(), 0, point1.get(p.getName()).getZ())));
+			point2.put(p.getName(), (new Location(p.getWorld(), point2.get(p.getName()).getX(), p.getWorld().getMaxHeight(), point2.get(p.getName()).getZ())));
 			p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
 			return;
 		} else if (areModPointsSet(p)) {
-			mod1.put(p, (new Location(p.getWorld(), mod1.get(p).getX(), 0, mod1.get(p).getZ())));
-			mod2.put(p, (new Location(p.getWorld(), mod2.get(p).getX(), p.getWorld().getMaxHeight(), mod2.get(p).getZ())));
+			mod1.put(p.getName(), (new Location(p.getWorld(), mod1.get(p.getName()).getX(), 0, mod1.get(p.getName()).getZ())));
+			mod2.put(p.getName(), (new Location(p.getWorld(), mod2.get(p.getName()).getX(), p.getWorld().getMaxHeight(), mod2.get(p.getName()).getZ())));
 			p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
 			return;
 		} else {
@@ -262,7 +262,7 @@ public class CreationCommands {
 
 	public void setFirst(Player p, Location l) {
 		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
-			point1.put(p, l);
+			point1.put(p.getName(), l);
 			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.BLUE + "[1] " + ChatColor.LIGHT_PURPLE
 					+ String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ()));
 		}
@@ -270,7 +270,7 @@ public class CreationCommands {
 
 	public void setSecond(Player p, Location l) {
 		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
-			point2.put(p, l);
+			point2.put(p.getName(), l);
 			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.BLUE + "[2] " + ChatColor.LIGHT_PURPLE
 					+ String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ()));
 		}
@@ -278,7 +278,7 @@ public class CreationCommands {
 
 	public void setFirstMod(Player p, Location l) {
 		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
-			mod1.put(p, l);
+			mod1.put(p.getName(), l);
 			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.BLUE + "[1] " + ChatColor.LIGHT_PURPLE
 					+ String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ()));
 		}
@@ -286,7 +286,7 @@ public class CreationCommands {
 
 	public void setSecondMod(Player p, Location l) {
 		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
-			mod2.put(p, l);
+			mod2.put(p.getName(), l);
 			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.BLUE + "[2] " + ChatColor.LIGHT_PURPLE
 					+ String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ()));
 		}
@@ -294,30 +294,30 @@ public class CreationCommands {
 
 	public static void clearAll(Player p) {
 		clearPoints(p);
-		if (mod1.containsKey(p)) {
-			mod1.remove(p);
+		if (mod1.containsKey(p.getName())) {
+			mod1.remove(p.getName());
 		}
-		if (mod2.containsKey(p)) {
-			mod2.remove(p);
+		if (mod2.containsKey(p.getName())) {
+			mod2.remove(p.getName());
 		}
-		if (setting.containsKey(p)) {
-			setting.remove(p);
+		if (setting.containsKey(p.getName())) {
+			setting.remove(p.getName());
 		}
-		if (modding.containsKey(p)) {
-			modding.remove(p);
+		if (modding.containsKey(p.getName())) {
+			modding.remove(p.getName());
 		}
-		if (RegiosPlayerListener.loadingTerrain.containsKey(p)) {
-			RegiosPlayerListener.loadingTerrain.remove(p);
+		if (RegiosPlayerListener.loadingTerrain.containsKey(p.getName())) {
+			RegiosPlayerListener.loadingTerrain.remove(p.getName());
 		}
 		p.sendMessage(ChatColor.RED + "[Regios] Region setting cancelled.");
 	}
 
 	public static void clearPoints(Player p) {
-		if (point1.containsKey(p)) {
-			point1.remove(p);
+		if (point1.containsKey(p.getName())) {
+			point1.remove(p.getName());
 		}
-		if (point2.containsKey(p)) {
-			point2.remove(p);
+		if (point2.containsKey(p.getName())) {
+			point2.remove(p.getName());
 		}
 	}
 

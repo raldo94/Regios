@@ -53,36 +53,36 @@ public class RegiosPlayerListener implements Listener {
 	private static final SubRegionManager srm = new SubRegionManager();
 	private static final CreationCommands creationCommands = new CreationCommands();
 
-	public static HashMap<Player, Region> regionBinding = new HashMap<Player, Region>();
-	public static HashMap<Player, Region> currentRegion = new HashMap<Player, Region>();
+	public static HashMap<String, Region> regionBinding = new HashMap<String, Region>();
+	public static HashMap<String, Region> currentRegion = new HashMap<String, Region>();
 
-	private static HashMap<Player, Location> outsideRegionLocation = new HashMap<Player, Location>();
-	private static HashMap<Player, Location> insideRegionLocation = new HashMap<Player, Location>();
+	private static HashMap<String, Location> outsideRegionLocation = new HashMap<String, Location>();
+	private static HashMap<String, Location> insideRegionLocation = new HashMap<String, Location>();
 
-	public static HashMap<Player, Long> timeStampsProtection = new HashMap<Player, Long>();
-	public static HashMap<Player, Long> timeStampsAuth = new HashMap<Player, Long>();
-	public static HashMap<Player, Long> timeStampsPreventEntry = new HashMap<Player, Long>();
-	public static HashMap<Player, Long> timeStampsPreventExit = new HashMap<Player, Long>();
-	public static HashMap<Player, Long> timeStampsEconomy = new HashMap<Player, Long>();
+	public static HashMap<String, Long> timeStampsProtection = new HashMap<String, Long>();
+	public static HashMap<String, Long> timeStampsAuth = new HashMap<String, Long>();
+	public static HashMap<String, Long> timeStampsPreventEntry = new HashMap<String, Long>();
+	public static HashMap<String, Long> timeStampsPreventExit = new HashMap<String, Long>();
+	public static HashMap<String, Long> timeStampsEconomy = new HashMap<String, Long>();
 
-	public static HashMap<Player, ShareData> loadingTerrain = new HashMap<Player, ShareData>();
+	public static HashMap<String, ShareData> loadingTerrain = new HashMap<String, ShareData>();
 
 	private static void setTimestamp(Player p, MSG msg) {
 		switch (msg) {
 		case PROTECTION:
-			timeStampsProtection.put(p, System.currentTimeMillis());
+			timeStampsProtection.put(p.getName(), System.currentTimeMillis());
 			break;
 		case AUTHENTICATION:
-			timeStampsAuth.put(p, System.currentTimeMillis());
+			timeStampsAuth.put(p.getName(), System.currentTimeMillis());
 			break;
 		case PREVENT_ENTRY:
-			timeStampsPreventEntry.put(p, System.currentTimeMillis());
+			timeStampsPreventEntry.put(p.getName(), System.currentTimeMillis());
 			break;
 		case PREVENT_EXIT:
-			timeStampsPreventExit.put(p, System.currentTimeMillis());
+			timeStampsPreventExit.put(p.getName(), System.currentTimeMillis());
 			break;
 		case ECONOMY:
-			timeStampsEconomy.put(p, System.currentTimeMillis());
+			timeStampsEconomy.put(p.getName(), System.currentTimeMillis());
 			break;
 		}
 	}
@@ -91,19 +91,19 @@ public class RegiosPlayerListener implements Listener {
 		boolean outcome = false;
 		switch (msg) {
 		case PROTECTION:
-			outcome = (timeStampsProtection.containsKey(p) ? (System.currentTimeMillis() > timeStampsProtection.get(p) + 5000) : true);
+			outcome = (timeStampsProtection.containsKey(p.getName()) ? (System.currentTimeMillis() > timeStampsProtection.get(p.getName()) + 5000) : true);
 			break;
 		case AUTHENTICATION:
-			outcome = (timeStampsAuth.containsKey(p) ? (System.currentTimeMillis() > timeStampsAuth.get(p) + 5000) : true);
+			outcome = (timeStampsAuth.containsKey(p.getName()) ? (System.currentTimeMillis() > timeStampsAuth.get(p.getName()) + 5000) : true);
 			break;
 		case PREVENT_ENTRY:
-			outcome = (timeStampsPreventEntry.containsKey(p) ? (System.currentTimeMillis() > timeStampsPreventEntry.get(p) + 5000) : true);
+			outcome = (timeStampsPreventEntry.containsKey(p.getName()) ? (System.currentTimeMillis() > timeStampsPreventEntry.get(p.getName()) + 5000) : true);
 			break;
 		case PREVENT_EXIT:
-			outcome = (timeStampsPreventExit.containsKey(p) ? (System.currentTimeMillis() > timeStampsPreventExit.get(p) + 5000) : true);
+			outcome = (timeStampsPreventExit.containsKey(p.getName()) ? (System.currentTimeMillis() > timeStampsPreventExit.get(p.getName()) + 5000) : true);
 			break;
 		case ECONOMY:
-			outcome = (timeStampsEconomy.containsKey(p) ? (System.currentTimeMillis() > timeStampsEconomy.get(p) + 5000) : true);
+			outcome = (timeStampsEconomy.containsKey(p.getName()) ? (System.currentTimeMillis() > timeStampsEconomy.get(p.getName()) + 5000) : true);
 			break;
 		}
 		if (outcome) {
@@ -123,14 +123,14 @@ public class RegiosPlayerListener implements Listener {
 		}
 		for (Region r : GlobalRegionManager.getRegions()) {
 			if (r.isAuthenticated(p)) {
-				r.getAuthentication().put(p, false);
+				r.getAuthentication().put(p.getName(), false);
 			}
 		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent evt) {
-		SpoutInterface.spoutEnabled.put(evt.getPlayer(), false);
+		SpoutInterface.spoutEnabled.put(evt.getPlayer().getName(), false);
 		if (EconomyPending.isPending(evt.getPlayer())) {
 			EconomyPending.loadAndSendPending(evt.getPlayer());
 		}
@@ -148,15 +148,15 @@ public class RegiosPlayerListener implements Listener {
 		Region r = GlobalRegionManager.getRegion(l);
 
 		if (evt.getAction() == Action.LEFT_CLICK_BLOCK) {
-			if (loadingTerrain.containsKey(p)) {
+			if (loadingTerrain.containsKey(p.getName())) {
 				if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
-					ShareData sd = loadingTerrain.get(p);
+					ShareData sd = loadingTerrain.get(p.getName());
 					try {
 						RBF_Core.rbf_load_share.loadSharedRegion(sd.shareName, sd.player, l);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					loadingTerrain.remove(p);
+					loadingTerrain.remove(p.getName());
 				}
 			}
 		}
@@ -406,23 +406,23 @@ public class RegiosPlayerListener implements Listener {
 
 		if (regionSet.isEmpty()) {
 			if (evt.getFrom().getBlockY() == evt.getTo().getBlockY()) { // To prevent people getting stuck if jumping into a region
-				outsideRegionLocation.put(p, p.getLocation());
+				outsideRegionLocation.put(p.getName(), p.getLocation());
 			}
 			return;
 		}
 
 		boolean authenticated = false;
 
-		if (regionBinding.containsKey(p)) {
-			Region binding = regionBinding.get(p);
+		if (regionBinding.containsKey(p.getName())) {
+			Region binding = regionBinding.get(p.getName());
 			if (binding == null) {
 				return;
 			}
 			if (binding.isPreventEntry() && extReg.isInsideCuboid(p, binding.getL1(), binding.getL2())) {
 				if (!binding.canEnter(p)) {
 					if (!binding.isPasswordEnabled()) {
-						if (outsideRegionLocation.containsKey(p)) {
-							p.teleport(outsideRegionLocation.get(p));
+						if (outsideRegionLocation.containsKey(p.getName())) {
+							p.teleport(outsideRegionLocation.get(p.getName()));
 						}
 						if (isSendable(p, MSG.PREVENT_ENTRY)) {
 							binding.sendPreventEntryMessage(p);
@@ -433,8 +433,8 @@ public class RegiosPlayerListener implements Listener {
 							if (isSendable(p, MSG.AUTHENTICATION)) {
 								p.sendMessage(ChatColor.RED + "Authentication required! Do /regios auth <password>");
 							}
-							if (outsideRegionLocation.containsKey(p)) {
-								p.teleport(outsideRegionLocation.get(p));
+							if (outsideRegionLocation.containsKey(p.getName())) {
+								p.teleport(outsideRegionLocation.get(p.getName()));
 							}
 							return;
 						} else {
@@ -447,8 +447,8 @@ public class RegiosPlayerListener implements Listener {
 			if (binding.isPreventExit() && !extReg.isInsideCuboid(p, binding.getL1(), binding.getL2())) {
 				if (!binding.canExit(p)) {
 					if (!binding.isPasswordEnabled()) {
-						if (insideRegionLocation.containsKey(p)) {
-							p.teleport(insideRegionLocation.get(p));
+						if (insideRegionLocation.containsKey(p.getName())) {
+							p.teleport(insideRegionLocation.get(p.getName()));
 						}
 						if (isSendable(p, MSG.PREVENT_EXIT)) {
 							binding.sendPreventExitMessage(p);
@@ -459,8 +459,8 @@ public class RegiosPlayerListener implements Listener {
 							if (isSendable(p, MSG.AUTHENTICATION)) {
 								p.sendMessage(ChatColor.RED + "Authentication required! Do /regios auth <password>");
 							}
-							if (insideRegionLocation.containsKey(p)) {
-								p.teleport(insideRegionLocation.get(p));
+							if (insideRegionLocation.containsKey(p.getName())) {
+								p.teleport(insideRegionLocation.get(p.getName()));
 							}
 							return;
 						} else {
@@ -481,8 +481,8 @@ public class RegiosPlayerListener implements Listener {
 		for (Region reg : regionSet) {
 			if (extReg.isInsideCuboid(p, reg.getL1(), reg.getL2())) {
 				currentRegionSet.add(reg);
-				if (insideRegionLocation.containsKey(p)) {
-					insideRegionLocation.put(p, p.getLocation());
+				if (insideRegionLocation.containsKey(p.getName())) {
+					insideRegionLocation.put(p.getName(), p.getLocation());
 				}
 			}
 		}
@@ -491,22 +491,22 @@ public class RegiosPlayerListener implements Listener {
 			// inside region then cancel the
 			// check.
 			if (evt.getFrom().getBlockY() == evt.getTo().getBlockY()) { // To prevent people getting stuck if jumping into a region
-				outsideRegionLocation.put(p, p.getLocation());
+				outsideRegionLocation.put(p.getName(), p.getLocation());
 			}
 			return;
 		}
 
 		if (currentRegionSet.size() > 1) {
 			r = srm.getCurrentRegion(currentRegionSet);
-			regionBinding.put(p, r);
+			regionBinding.put(p.getName(), r);
 		} else {
 			r = currentRegionSet.get(0);
-			regionBinding.put(p, r);
+			regionBinding.put(p.getName(), r);
 		}
 
 		if (r.isRegionFull(p)) {
-			if (outsideRegionLocation.containsKey(p)) {
-				p.teleport(outsideRegionLocation.get(p));
+			if (outsideRegionLocation.containsKey(p.getName())) {
+				p.teleport(outsideRegionLocation.get(p.getName()));
 			}
 			LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to enter region but it was full."));
 			if (isSendable(p, MSG.PREVENT_ENTRY)) {
@@ -518,8 +518,8 @@ public class RegiosPlayerListener implements Listener {
 		if (r.isPreventEntry() && !authenticated) {
 			if (!r.canEnter(p)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to enter but did not have permissions."));
-				if (outsideRegionLocation.containsKey(p)) {
-					p.teleport(outsideRegionLocation.get(p));
+				if (outsideRegionLocation.containsKey(p.getName())) {
+					p.teleport(outsideRegionLocation.get(p.getName()));
 				}
 				if (isSendable(p, MSG.PREVENT_ENTRY)) {
 					r.sendPreventEntryMessage(p);
@@ -529,7 +529,7 @@ public class RegiosPlayerListener implements Listener {
 		}
 
 		r.sendWelcomeMessage(p);
-		insideRegionLocation.put(p, p.getLocation());
+		insideRegionLocation.put(p.getName(), p.getLocation());
 
 		// __________________________________
 		// ^^^^ Messages & Entry control ^^^^

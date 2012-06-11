@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ExtrasInventory extends InventoryMethods {
 	
-	private HashMap<Player, ItemStack[]> playerInventory = new HashMap<Player, ItemStack[]>();
+	private HashMap<String, ItemStack[]> playerInventory = new HashMap<String, ItemStack[]>();
  
 	@Override
 	public void addToInventory(Player p, Material m, int quantity) {
@@ -166,7 +166,7 @@ public class ExtrasInventory extends InventoryMethods {
 	@Override
 	public boolean storeInventory(Player p) {
 		if(p != null){
-			playerInventory.put(p, p.getInventory().getContents());
+			playerInventory.put(p.getName(), p.getInventory().getContents());
 			return true;
 		} else {
 			return false;
@@ -175,8 +175,8 @@ public class ExtrasInventory extends InventoryMethods {
 
 	@Override
 	public ItemStack[] retrieveInventory(Player p) {
-		if(playerInventory.containsKey(p)){
-			return playerInventory.get(p);
+		if(playerInventory.containsKey(p.getName())){
+			return playerInventory.get(p.getName());
 		} else {
 			return null;
 		}

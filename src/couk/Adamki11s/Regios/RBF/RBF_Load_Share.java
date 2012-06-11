@@ -33,7 +33,7 @@ import couk.Adamki11s.jnbt.Tag;
 
 public class RBF_Load_Share extends PermissionsCore {
 
-	public static HashMap<Player, ArrayList<PBD>> undoCache = new HashMap<Player, ArrayList<PBD>>();
+	public static HashMap<String, ArrayList<PBD>> undoCache = new HashMap<String, ArrayList<PBD>>();
 
 	private Tag getChildTag(Map<String, Tag> items, String key, Class<? extends Tag> expected) {
 		Tag tag = items.get(key);
@@ -41,18 +41,18 @@ public class RBF_Load_Share extends PermissionsCore {
 	}
 
 	public void undoLoad(Player p) {
-		if (!undoCache.containsKey(p)) {
+		if (!undoCache.containsKey(p.getName())) {
 			p.sendMessage(ChatColor.RED + "[Regios] Nothing to undo!");
 			return;
 		} else {
 			ArrayList<PBD> bb = new ArrayList<PBD>();
-			bb = undoCache.get(p);
+			bb = undoCache.get(p.getName());
 			for (PBD b : bb) {
 				Block block = p.getWorld().getBlockAt(b.getL());
 				block.setTypeId(b.getId());
 			}
 			bb.clear();
-			undoCache.remove(p);
+			undoCache.remove(p.getName());
 			p.sendMessage(ChatColor.GREEN + "[Regios] Undo successful!");
 		}
 	}
@@ -60,12 +60,12 @@ public class RBF_Load_Share extends PermissionsCore {
 	@SuppressWarnings("unchecked")
 	public void loadSharedRegion(String sharename, Player p, Location l) throws IOException {
 
-		if (undoCache.containsKey(p)) {
-			undoCache.remove(p);
+		if (undoCache.containsKey(p.getName())) {
+			undoCache.remove(p.getName());
 		}
 
 		ArrayList<PBD> blockss = new ArrayList<PBD>();
-		undoCache.put(p, blockss);
+		undoCache.put(p.getName(), blockss);
 
 		File f = new File("plugins" + File.separator + "Regios" + File.separator + "Blueprints" + File.separator + sharename + ".blp");
 
@@ -163,7 +163,7 @@ public class RBF_Load_Share extends PermissionsCore {
 			}
 		}
 
-		undoCache.put(p, blockss);
+		undoCache.put(p.getName(), blockss);
 
 		fis.close();
 		nbt.close();
