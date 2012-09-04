@@ -1,6 +1,6 @@
 name: Regios
-main: couk.Adamki11s.Regios.Main.Regios
-version: 5.0.53
+main: net.jzx7.regios.RegiosPlugin
+version: 5.6.0
 authors: [Adamki11s, johnnyzerox7]
 commands:
   regios:

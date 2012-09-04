@@ -1,5 +1,6 @@
 package couk.Adamki11s.Extras.Regions;
 
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public abstract class RegionMethods {
+public interface RegionMethods {
 	
 	/**
 	 * Check whether the specified player is within the two points specified.
@@ -20,7 +21,35 @@ public abstract class RegionMethods {
 	 * @return A boolean value indicating whether the player is within the specified region or not.
 	 */
 	public abstract boolean isInsideCuboid(Player p, Location point1, Location point2);
+	
+	/**
+	 * Check whether the specified player is within the two points specified.
+	 * @param l The location to check.
+	 * @param point1 Point 1.
+	 * @param point2 Point 2.
+	 * @return A boolean value indicating whether the player is within the specified region or not.
+	 */
 	public abstract boolean isInsideCuboid(Location l, Location point1, Location point2);
+	
+	/**
+	 * Check whether the specified player is within the polygon specified.
+	 * @param p The player to check.
+	 * @param poly The polygon to check in.
+	 * @param minY The lower bounds of the polygon.
+	 * @param maxY The upper bounds of the polygon.
+	 * @return A boolean value indicating whether the player is within the specified region or not.
+	 */
+	boolean isInsidePolygon(Player p, Polygon poly, double minY, double maxY);
+	
+	/**
+	 * Check whether the specified player is within the polygon specified.
+	 * @param l The location to check.
+	 * @param poly The polygon to check in.
+	 * @param minY The lower bounds of the polygon.
+	 * @param maxY The upper bounds of the polygon.
+	 * @return A boolean value indicating whether the player is within the specified region or not.
+	 */
+	public boolean isInsidePolygon(Location l, Polygon poly, double minY, double maxY);
 	
 	/**
 	 * Check whether the specified player is within the radius specified.
@@ -95,6 +124,5 @@ public abstract class RegionMethods {
 	 * @param c2 Chunk 2
 	 * @return Returns whether or not chunks are equal
 	 */
-	
 	public abstract boolean areChunksEqual(Chunk c1, Chunk c2);
 }

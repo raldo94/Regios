@@ -1,5 +1,6 @@
 package couk.Adamki11s.Extras.Regions;
 
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class ExtrasRegions extends RegionMethods {
+public class ExtrasRegions implements RegionMethods {
 
 	@Override
 	public boolean isInsideCuboid(Player p, Location point1, Location point2) {
@@ -43,6 +44,24 @@ public class ExtrasRegions extends RegionMethods {
 		return (px >= min.getX() && px <= max.getX() && py >= min.getY() && py <= max.getY() && pz >= min.getZ() && pz <= max.getZ());
 	}
 
+	@Override
+	public boolean isInsidePolygon(Player p, Polygon poly, double minY, double maxY) {
+		Location l = p.getLocation();
+		return isInsidePolygon(l, poly, minY, maxY);
+	}
+	
+	@Override
+	public boolean isInsidePolygon(Location l, Polygon poly, double minY, double maxY) {
+		if (poly.getBounds2D().contains(l.getX(), l.getZ())) {
+			if (poly.contains(l.getX(), l.getZ())) {
+				if ((minY <= l.getY()) && (l.getY() <= maxY)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean isInsideRadius(Player p, Location centre, int radius) {
 		Location point1 = new Location(centre.getWorld(), centre.getX() - radius, centre.getY() - radius, centre.getZ() - radius);
@@ -297,5 +316,4 @@ public class ExtrasRegions extends RegionMethods {
 	public boolean areChunksEqual(Chunk c1, Chunk c2) {
 		return (c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
 	}
-
 }
