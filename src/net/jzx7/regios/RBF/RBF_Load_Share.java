@@ -132,7 +132,7 @@ public class RBF_Load_Share extends PermissionsCore {
 							ih.getInventory().clear();
 						}
 
-						b.setTypeId((int) blocks[index]);
+						b.setTypeId(blocks[index]);
 						b.setData(blockData[index]);
 
 						if(b.getType().equals(Material.CHEST)) { //Added to load chest/furnace/etc inventory from backup

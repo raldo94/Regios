@@ -15,7 +15,6 @@ import org.getspout.spoutapi.gui.Container;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.GenericContainer;
 import org.getspout.spoutapi.gui.GenericLabel;
-import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTextField;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.TextField;
@@ -376,11 +375,11 @@ public class RegionScreen4 {
 		((GenericLabel) sh.page4Widgets[0]).setText("Exceptions");
 		((GenericLabel) sh.page4Widgets[0]).setTooltip(ChatColor.YELLOW + "  Toggle between exceptions");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[0])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[0].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[0].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[0])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[0].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[0].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[0]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[0]);
 		}
 
 		((GenericButton) sh.page4Widgets[1]).setText("Players");
@@ -391,11 +390,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[1]).setHoverColor(RGB.YELLOW.getColour());
 		((GenericButton) sh.page4Widgets[1]).setTextColor(RGB.GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[1])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[1].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[1].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[1])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[1].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[1].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[1]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[1]);
 		}
 
 		((GenericButton) sh.page4Widgets[2]).setText("Nodes");
@@ -405,11 +404,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[2]).setY(55);
 		((GenericButton) sh.page4Widgets[2]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[2])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[2].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[2].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[2])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[2].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[2].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[2]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[2]);
 		}
 
 		((GenericButton) sh.page4Widgets[3]).setText("Sub Owners");
@@ -419,11 +418,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[3]).setY(55);
 		((GenericButton) sh.page4Widgets[3]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[3])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[3].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[3].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[3])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[3].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[3].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[3]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[3]);
 		}
 
 		((GenericButton) sh.page4Widgets[4]).setText("Items");
@@ -433,11 +432,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[4]).setY(55);
 		((GenericButton) sh.page4Widgets[4]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[4])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[4].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[4].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[4])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[4].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[4].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[4]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[4]);
 		}
 
 		switchToggle(sp, ExToggle.PLAYER, sh, r, ((GenericButton) sh.page4Widgets[1]), true);
@@ -451,11 +450,11 @@ public class RegionScreen4 {
 		((GenericTextField) sh.page4Widgets[5]).setFieldColor(RGB.BLACK.getColour());
 		((GenericTextField) sh.page4Widgets[5]).setBorderColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[5])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[5].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[5].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[5])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[5].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[5].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[5]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[5]);
 		}
 
 		((GenericButton) sh.page4Widgets[6]).setText("Add Exception");
@@ -466,11 +465,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[6]).setHoverColor(RGB.YELLOW.getColour());
 		((GenericButton) sh.page4Widgets[6]).setTextColor(RGB.GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[6])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[6].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[6].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[6])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[6].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[6].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[6]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[6]);
 		}
 
 		((GenericButton) sh.page4Widgets[7]).setText("Remove Exception");
@@ -481,11 +480,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[7]).setHoverColor(RGB.YELLOW.getColour());
 		((GenericButton) sh.page4Widgets[7]).setTextColor(RGB.RED.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[7])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[7].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[7].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[7])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[7].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[7].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[7]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[7]);
 		}
 
 		((GenericButton) sh.page4Widgets[8]).setText("Erase Exceptions");
@@ -495,11 +494,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[8]).setY(185);
 		((GenericButton) sh.page4Widgets[8]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[8])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[8].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[8].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[8])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[8].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[8].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[8]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[8]);
 		}
 
 		((GenericLabel) sh.page4Widgets[9]).setX(215);
@@ -510,11 +509,11 @@ public class RegionScreen4 {
 		((GenericLabel) sh.page4Widgets[9]).setText("Page 1 / " + getExceptionPages(r.getExceptions().size()));
 		((GenericLabel) sh.page4Widgets[9]).setTooltip(ChatColor.YELLOW + "  Toggle between exception types");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[9])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[9].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[9].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[9])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[9].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[9].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[9]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[9]);
 		}
 
 		((GenericButton) sh.page4Widgets[10]).setX(215);
@@ -524,11 +523,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[10]).setTextColor(RGB.YELLOW.getColour());
 		((GenericButton) sh.page4Widgets[10]).setText("<");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[10])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[10].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[10].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[10])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[10].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[10].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[10]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[10]);
 		}
 
 		((GenericButton) sh.page4Widgets[11]).setX(345);
@@ -538,11 +537,11 @@ public class RegionScreen4 {
 		((GenericButton) sh.page4Widgets[11]).setTextColor(RGB.YELLOW.getColour());
 		((GenericButton) sh.page4Widgets[11]).setText(">");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[11])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[11].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[11].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[11])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[11].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[11].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[11]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[11]);
 		}
 
 		((GenericContainer) sh.page4Widgets[12]).setX(215);
@@ -550,9 +549,9 @@ public class RegionScreen4 {
 		((GenericContainer) sh.page4Widgets[12]).setWidth(100);
 		((GenericContainer) sh.page4Widgets[12]).setHeight(85);
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[12])) {
-			for (Widget w : ((Container) ((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[12].getId())).getChildren()) {
-				((Container) ((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[12].getId())).removeChild(w);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[12])) {
+			for (Widget w : ((Container) RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[12].getId())).getChildren()) {
+				((Container) RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[12].getId())).removeChild(w);
 			}
 		}
 
@@ -568,11 +567,11 @@ public class RegionScreen4 {
 			}
 		}
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page4Widgets[12])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[12].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page4Widgets[12].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page4Widgets[12])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[12].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page4Widgets[12].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page4Widgets[12]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page4Widgets[12]);
 		}
 
 		updateExceptionPages(sp, 1, sh, r);

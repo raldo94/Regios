@@ -192,8 +192,8 @@ public class MiscCommands extends PermissionsCore {
 				rv2 = ((CuboidRegion) r).getL2().toVector();
 			}
 			double x_mid, z_mid;
-			x_mid = (double)(Math.max(rv1.getX(), rv2.getX()) - Math.min(rv1.getX(), rv2.getX()));
-			z_mid = (double)(Math.max(rv1.getZ(), rv2.getZ()) - Math.min(rv1.getZ(), rv2.getZ()));
+			x_mid = (Math.max(rv1.getX(), rv2.getX()) - Math.min(rv1.getX(), rv2.getX()));
+			z_mid = (Math.max(rv1.getZ(), rv2.getZ()) - Math.min(rv1.getZ(), rv2.getZ()));
 			double hypot_x, hypot_z;
 			hypot_x = origin.getX()- x_mid;
 			hypot_z = origin.getZ() - z_mid;

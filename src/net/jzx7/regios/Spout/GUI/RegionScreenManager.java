@@ -15,7 +15,6 @@ import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.gui.InGameHUD;
-import org.getspout.spoutapi.gui.PopupScreen;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -43,10 +42,10 @@ public class RegionScreenManager {
 		editing.put(sp, r);
 
 		if (popup.containsKey(sp)) {
-			((GenericPopup) popup.get(sp)).removeWidgets(plugin);
+			popup.get(sp).removeWidgets(plugin);
 		}
 
-		popup.put((SpoutPlayer) sp, new GenericPopup());
+		popup.put(sp, new GenericPopup());
 
 		page.put(sp, 1);
 
@@ -65,7 +64,7 @@ public class RegionScreenManager {
 		texture.setHeight(hud.getHeight());
 		texture.setPriority(RenderPriority.Highest);
 
-		((GenericPopup) popup.get(sp)).attachWidget(plugin, texture);
+		popup.get(sp).attachWidget(plugin, texture);
 
 		GenericButton tmp1 = new GenericButton("Close");
 		tmp1.setColor(RGB.RED.getColour());
@@ -80,7 +79,7 @@ public class RegionScreenManager {
 
 		escButton.put(sp, tmp1);
 
-		((GenericPopup) popup.get(sp)).attachWidget(plugin, escButton.get(sp));
+		popup.get(sp).attachWidget(plugin, escButton.get(sp));
 
 		GenericLabel tracker = new GenericLabel("Page : " + page.get(sp) + " / " + pages);
 		tracker.setX((hud.getWidth() / 2) - 37);
@@ -92,7 +91,7 @@ public class RegionScreenManager {
 
 		sh.pageTracker = tracker;
 
-		((GenericPopup) popup.get(sp)).attachWidget(plugin, pageTracker.get(sp));
+		popup.get(sp).attachWidget(plugin, pageTracker.get(sp));
 
 		GenericButton tm2 = new GenericButton(">");
 		tm2.setWidth(35);
@@ -106,7 +105,7 @@ public class RegionScreenManager {
 
 		sh.pageForward = tm2;
 
-		((GenericPopup) popup.get(sp)).attachWidget(plugin, pageForward.get(sp));
+		popup.get(sp).attachWidget(plugin, pageForward.get(sp));
 
 		GenericButton back = new GenericButton("<");
 		back.setWidth(35);
@@ -120,9 +119,9 @@ public class RegionScreenManager {
 
 		sh.pageBackwards = back;
 
-		((GenericPopup) popup.get(sp)).attachWidget(plugin, pageBackwards.get(sp));
+		popup.get(sp).attachWidget(plugin, pageBackwards.get(sp));
 
-		hud.attachPopupScreen((PopupScreen) popup.get(sp));
+		hud.attachPopupScreen(popup.get(sp));
 
 	}
 
@@ -221,7 +220,7 @@ public class RegionScreenManager {
 	}
 
 	public static enum RGB {
-		SPRING_GREEN(new Color((float) 0, (float) 0.803, (float) 0.4)), GREEN(new Color(0 / 255, 255 / 255, 0 / 255)), RED(new Color(255 / 255, 0 / 255, 0 / 255)), MIDNIGHT_BLUE(
+		SPRING_GREEN(new Color(0, (float) 0.803, (float) 0.4)), GREEN(new Color(0 / 255, 255 / 255, 0 / 255)), RED(new Color(255 / 255, 0 / 255, 0 / 255)), MIDNIGHT_BLUE(
 				new Color((float) 0.098, (float) 0.098, (float) 0.439)), YELLOW(new Color((float) 255 / 255, (float) 255 / 255, (float) 0 / 255)), WHITE(new Color(255 / 255,
 				255 / 255, 255 / 255)), FIREBRICK((new Color((float) 0.698, (float) 0.13, (float) 0.13))), BLACK(new Color(0 / 255, 0 / 255, 0 / 255)), DARK_GREY(new Color(
 				128 / 255, 128 / 255, 128 / 255));

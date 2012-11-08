@@ -43,6 +43,7 @@ public class ExtrasScheduler extends SchedulerMethods {
 		if(_method != null){
 			taskid = s.getScheduler().scheduleAsyncRepeatingTask(p, new Runnable() {	
 
+				@Override
 				public void run() {
 					try {
 						_method.invoke(_class.newInstance(), (Object[])null);
@@ -68,6 +69,7 @@ public class ExtrasScheduler extends SchedulerMethods {
 		}
 	}
 
+	@Override
 	protected int getUniqueTaskId() {
 		int taskid = 0;
 		boolean uniqueID = false;
@@ -103,6 +105,7 @@ public class ExtrasScheduler extends SchedulerMethods {
 		if(_method != null){
 			taskid = s.getScheduler().scheduleSyncRepeatingTask(p, new Runnable() {	
 
+				@Override
 				public void run() {
 					try {
 						_method.invoke(_class.newInstance(), (Object[])null);
@@ -146,6 +149,7 @@ public class ExtrasScheduler extends SchedulerMethods {
 		if(_method != null){
 			taskid = s.getScheduler().scheduleAsyncDelayedTask(p, new Runnable() {	
 
+				@Override
 				public void run() {
 					try {
 						_method.invoke(_class.newInstance(), (Object[])null);
@@ -188,6 +192,7 @@ public class ExtrasScheduler extends SchedulerMethods {
 		if(_method != null){
 			taskid = s.getScheduler().scheduleSyncDelayedTask(p, new Runnable() {	
 
+				@Override
 				public void run() {
 					try {
 						_method.invoke(_class.newInstance(), (Object[])null);
@@ -217,7 +222,7 @@ public class ExtrasScheduler extends SchedulerMethods {
 	public void killTask(String taskReference) {
 		if(taskIDs.containsKey(taskReference)){
 			s.getScheduler().cancelTask(taskIDs.get(taskReference));
-			idLookup.remove((Object)taskIDs.get(taskReference));
+			idLookup.remove(taskIDs.get(taskReference));
 			taskIDs.remove(taskReference);
 			return;
 		}

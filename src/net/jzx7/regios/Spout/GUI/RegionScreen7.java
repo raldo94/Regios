@@ -15,7 +15,6 @@ import org.getspout.spoutapi.gui.Container;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.GenericContainer;
 import org.getspout.spoutapi.gui.GenericLabel;
-import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTextField;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.TextField;
@@ -150,11 +149,11 @@ public class RegionScreen7 {
 		((GenericTextField) sh.page7Widgets[0]).setHeight(15);
 		((GenericTextField) sh.page7Widgets[0]).setMaximumCharacters(256);
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[0])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[0].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[0].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[0])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[0].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[0].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[0]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[0]);
 		}
 
 		((GenericLabel) sh.page7Widgets[1]).setText("Spout Music");
@@ -163,11 +162,11 @@ public class RegionScreen7 {
 		((GenericLabel) sh.page7Widgets[1]).setTextColor(RGB.YELLOW.getColour());
 		((GenericLabel) sh.page7Widgets[1]).setTooltip(ChatColor.YELLOW + "  Music collection played whilst inside a region.");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[1])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[1].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[1].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[1])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[1].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[1].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[1]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[1]);
 		}
 
 		((GenericButton) sh.page7Widgets[6]).setText("Add Music");
@@ -178,11 +177,11 @@ public class RegionScreen7 {
 		((GenericButton) sh.page7Widgets[6]).setTextColor(RGB.GREEN.getColour());
 		((GenericButton) sh.page7Widgets[6]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[6])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[6].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[6].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[6])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[6].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[6].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[6]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[6]);
 		}
 
 		((GenericButton) sh.page7Widgets[7]).setText("Remove Music");
@@ -193,11 +192,11 @@ public class RegionScreen7 {
 		((GenericButton) sh.page7Widgets[7]).setTextColor(RGB.RED.getColour());
 		((GenericButton) sh.page7Widgets[7]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[7])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[7].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[7].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[7])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[7].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[7].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[7]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[7]);
 		}
 
 		((GenericButton) sh.page7Widgets[8]).setText("Clear Music");
@@ -208,11 +207,11 @@ public class RegionScreen7 {
 		((GenericButton) sh.page7Widgets[8]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page7Widgets[8]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[8])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[8].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[8].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[8])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[8].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[8].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[8]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[8]);
 		}
 
 		((GenericLabel) sh.page7Widgets[2]).setText("Page : ");
@@ -220,11 +219,11 @@ public class RegionScreen7 {
 		((GenericLabel) sh.page7Widgets[2]).setY(200);
 		((GenericLabel) sh.page7Widgets[2]).setTextColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[2])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[2].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[2].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[2])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[2].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[2].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[2]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[2]);
 		}
 		
 		((GenericButton) sh.page7Widgets[4]).setText("<");
@@ -235,11 +234,11 @@ public class RegionScreen7 {
 		((GenericButton) sh.page7Widgets[4]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page7Widgets[4]).setHoverColor(RGB.GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[4])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[4].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[4].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[4])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[4].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[4].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[4]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[4]);
 		}
 		
 		((GenericButton) sh.page7Widgets[5]).setText(">");
@@ -250,11 +249,11 @@ public class RegionScreen7 {
 		((GenericButton) sh.page7Widgets[5]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page7Widgets[5]).setHoverColor(RGB.GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[5])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[5].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[5].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[5])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[5].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[5].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[5]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[5]);
 		}
 
 		((GenericContainer) sh.page7Widgets[3]).setX(15);
@@ -262,9 +261,9 @@ public class RegionScreen7 {
 		((GenericContainer) sh.page7Widgets[3]).setWidth(400);
 		((GenericContainer) sh.page7Widgets[3]).setHeight(80);
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[3])) {
-			for (Widget w : ((Container) ((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[3].getId())).getChildren()) {
-				((Container) ((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[3].getId())).removeChild(w);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[3])) {
+			for (Widget w : ((Container) RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[3].getId())).getChildren()) {
+				((Container) RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[3].getId())).removeChild(w);
 			}
 		}
 		
@@ -280,12 +279,12 @@ public class RegionScreen7 {
 			}
 		}
 		
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page7Widgets[3])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[3].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page7Widgets[3].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page7Widgets[3])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[3].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page7Widgets[3].getId()).setDirty(true);
 
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page7Widgets[3]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page7Widgets[3]);
 		}
 
 		updatePages(sp, 1, sh, r);

@@ -32,9 +32,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
-import org.bukkit.event.painting.PaintingBreakByEntityEvent;
-import org.bukkit.event.painting.PaintingBreakEvent;
-import org.bukkit.event.painting.PaintingPlaceEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 
 import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 
@@ -55,7 +55,8 @@ public class RegiosEntityListener implements Listener {
 				ce == EntityType.VILLAGER || 
 				ce == EntityType.OCELOT || 
 				ce == EntityType.IRON_GOLEM || 
-				ce == EntityType.WOLF) {
+				ce == EntityType.WOLF ||
+				ce == EntityType.BAT) {
 			return true;
 		} else {
 			return false;
@@ -163,22 +164,22 @@ public class RegiosEntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPaintingBreak(PaintingBreakEvent evt) {
+	public void onHangingBreak(HangingBreakEvent evt) {
 
 		Player cause;
 
-		if (!(evt instanceof PaintingBreakByEntityEvent)) {
+		if (!(evt instanceof HangingBreakByEntityEvent)) {
 			return;
 		}
 
-		PaintingBreakByEntityEvent event = (PaintingBreakByEntityEvent) evt;
+		HangingBreakByEntityEvent event = (HangingBreakByEntityEvent) evt;
 		if (!(event.getRemover() instanceof Player)) {
 			return;
 		}
 
 		cause = (Player) event.getRemover();
 
-		Location l = evt.getPainting().getLocation();
+		Location l = evt.getEntity().getLocation();
 		RegiosWorld w = wm.getRegiosWorld(l.getWorld());
 
 		Region r = rm.getRegion(l);
@@ -197,7 +198,7 @@ public class RegiosEntityListener implements Listener {
 
 		if (r.is_protectionBreak()) {
 			if (!r.canBypassProtection(cause)) {
-				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Painting break was prevented."));
+				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Hanging break was prevented."));
 				r.sendBuildMessage(cause);
 				evt.setCancelled(true);
 				return;
@@ -207,11 +208,11 @@ public class RegiosEntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPaintingPlace(PaintingPlaceEvent evt) {
+	public void onHangingPlace(HangingPlaceEvent evt) {
 
 		Player cause = evt.getPlayer();
 
-		Location l = evt.getPainting().getLocation();
+		Location l = evt.getEntity().getLocation();
 		RegiosWorld w = wm.getRegiosWorld(l.getWorld());
 
 		Region r = rm.getRegion(l);
@@ -230,7 +231,7 @@ public class RegiosEntityListener implements Listener {
 
 		if (r.is_protectionPlace()) {
 			if (!r.canBypassProtection(cause)) {
-				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Painting place was prevented."));
+				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Hanging place was prevented."));
 				r.sendBuildMessage(cause);
 				evt.setCancelled(true);
 				return;
@@ -314,10 +315,7 @@ public class RegiosEntityListener implements Listener {
 					EntityDamageByEntityEvent edevt = (EntityDamageByEntityEvent) evt;
 					Entity damager;
 					if (edevt.getDamager() instanceof Player && edevt.getEntity() instanceof Player) {
-						damager = (Player) edevt.getDamager();
-						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
-								+ (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-						((Player) damager).sendMessage(ChatColor.RED + "[Regios] You cannot fight within regions in this world!");
+						damager = edevt.getDamager();
 						evt.setCancelled(true);
 						evt.setDamage(0);
 						return;
@@ -325,9 +323,6 @@ public class RegiosEntityListener implements Listener {
 						Projectile arrow = (Arrow) edevt.getDamager();
 						damager = arrow.getShooter(); //get the arrows shooter
 						if(damager.getType() == EntityType.PLAYER) { //if shot by a player, cancel the event
-							LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
-									+ (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-							((Player) damager).sendMessage(ChatColor.RED + "[Regios] You cannot fight within regions in this world!");
 							evt.setCancelled(true);
 							evt.setDamage(0);
 						}
@@ -336,9 +331,6 @@ public class RegiosEntityListener implements Listener {
 						Projectile potion = (ThrownPotion) edevt.getDamager();
 						damager = potion.getShooter(); //get the potion's thrower
 						if(damager.getType() == EntityType.PLAYER) { //if it was thrown by a player, cancel the event
-							LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
-									+ (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-							((Player) damager).sendMessage(ChatColor.RED + "[Regios] You cannot fight within regions in this world!");
 							evt.setCancelled(true);
 							evt.setDamage(0);
 						}
@@ -347,6 +339,7 @@ public class RegiosEntityListener implements Listener {
 						return;
 					}
 				}
+				return;
 			}
 			return;
 		}
@@ -362,7 +355,7 @@ public class RegiosEntityListener implements Listener {
 				EntityDamageByEntityEvent edevt = (EntityDamageByEntityEvent) evt;
 				Entity damager;
 				if (edevt.getDamager() instanceof Player && edevt.getEntity() instanceof Player) {
-					damager = (Player) edevt.getDamager();
+					damager = edevt.getDamager();
 					LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 							+ (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
 					((Player) damager).sendMessage(ChatColor.RED + "[Regios] You cannot fight within regions in this world!");

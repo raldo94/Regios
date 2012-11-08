@@ -47,6 +47,7 @@ public class RBF_Save extends PermissionsCore {
 
 		Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(RegiosPlugin.regios, new Runnable() {
 
+			@Override
 			public void run() {
 				for(char c : bckn.toCharArray()){
 					for(char il : ILLEGAL_CHARACTERS){
@@ -80,6 +81,7 @@ public class RBF_Save extends PermissionsCore {
 
 		Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(RegiosPlugin.regios, new Runnable() {
 
+			@Override
 			public void run() {
 				for(char c : backupname.toCharArray()){
 					for(char il : ILLEGAL_CHARACTERS){
@@ -207,7 +209,7 @@ public class RBF_Save extends PermissionsCore {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
 					blockID[index] = (byte) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getTypeId();
-					blockData[index] = (byte) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getData();
+					blockData[index] = w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getData();
 					if(blockID[index] == 54) { //Save Chest contents for later restoration - jzx7
 						Chest chest = (Chest) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
 						containerData.add(chest.getBlockInventory().getContents());
@@ -328,7 +330,7 @@ public class RBF_Save extends PermissionsCore {
 				for (int y = 0; y < height; y++) {
 					for (int z = 0; z < length; z++) {
 						blockID[index] = (byte) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getTypeId();
-						blockData[index] = (byte) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getData();
+						blockData[index] = w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getData();
 						if(blockID[index] == 54) { //Save Chest contents for later restoration - jzx7
 							Chest chest = (Chest) w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z).getState();
 							containerData.add(chest.getBlockInventory().getContents());
@@ -448,7 +450,7 @@ public class RBF_Save extends PermissionsCore {
 					for (int z = 0; z < length; z++) {
 						if (polygon.contains(x, z)) {
 							blockID[index] = (byte) w.getBlockAt((int) rect.getMinX() + x, minY + y, (int) rect.getMinY() + z).getTypeId();
-							blockData[index] = (byte) w.getBlockAt((int) rect.getMinX() + x, minY + y, (int) rect.getMinY() + z).getData();
+							blockData[index] = w.getBlockAt((int) rect.getMinX() + x, minY + y, (int) rect.getMinY() + z).getData();
 							if(blockID[index] == 54) { //Save Chest contents for later restoration - jzx7
 								Chest chest = (Chest) w.getBlockAt((int) rect.getMinX() + x, minY + y, (int) rect.getMinY() + z).getState();
 								containerData.add(chest.getBlockInventory().getContents());

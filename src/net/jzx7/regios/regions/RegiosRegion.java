@@ -38,6 +38,10 @@ import couk.Adamki11s.Extras.Cryptography.ExtrasCryptography;
 public class RegiosRegion extends PermChecks implements Region {
 
 	protected static final RegionManager rm = new RegionManager();
+	
+	protected GameModeCacheManager gmcm = new GameModeCacheManager();
+	
+	protected InventoryCacheManager icm = new InventoryCacheManager();
 
 	protected static final Saveable saveable = new Saveable();
 
@@ -960,7 +964,7 @@ public class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public void removeItemException(int id) {
-		if (items.contains((Object) id)) {
+		if (items.contains(id)) {
 			items.remove((Object) id);
 		}
 	}
@@ -1001,31 +1005,31 @@ public class RegiosRegion extends PermChecks implements Region {
 			}
 			if (permWipeOnExit) {
 				if (!canBypassProtection(p)) {
-					InventoryCacheManager.wipeInventory(p);
+					icm.wipeInventory(p);
 				}
 			}
 			if (wipeAndCacheOnEnter) {
 				if (!canBypassProtection(p)) {
-					if (InventoryCacheManager.doesCacheContain(p)) {
-						InventoryCacheManager.restoreInventory(p);
+					if (icm.doesCacheContain(p)) {
+						icm.restoreInventory(p);
 						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon exit"));
 					}
 				}
 			}
 			if (wipeAndCacheOnExit) {
 				if (!canBypassProtection(p)) {
-					if (!InventoryCacheManager.doesCacheContain(p)) {
-						InventoryCacheManager.cacheInventory(p);
-						InventoryCacheManager.wipeInventory(p);
+					if (!icm.doesCacheContain(p)) {
+						icm.cacheInventory(p);
+						icm.wipeInventory(p);
 						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory cached upon exit"));
 					}
 				}
 			}
 
 			if (changeGameMode) {
-				if (GameModeCacheManager.doesCacheContain(p))
+				if (gmcm.doesCacheContain(p))
 				{
-					GameModeCacheManager.restoreGameMode(p);
+					gmcm.restoreGameMode(p);
 				}
 			}
 
@@ -1137,29 +1141,29 @@ public class RegiosRegion extends PermChecks implements Region {
 			}
 			if (permWipeOnEnter) {
 				if (!canBypassProtection(p)) {
-					InventoryCacheManager.wipeInventory(p);
+					icm.wipeInventory(p);
 				}
 			}
 			if (wipeAndCacheOnEnter) {
 				if (!canBypassProtection(p)) {
-					if (!InventoryCacheManager.doesCacheContain(p)) {
-						InventoryCacheManager.cacheInventory(p);
-						InventoryCacheManager.wipeInventory(p);
+					if (!icm.doesCacheContain(p)) {
+						icm.cacheInventory(p);
+						icm.wipeInventory(p);
 						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory cached upon entry"));
 					}
 				}
 			}
 			if (wipeAndCacheOnExit) {
 				if (!canBypassProtection(p)) {
-					if (InventoryCacheManager.doesCacheContain(p)) {
-						InventoryCacheManager.restoreInventory(p);
+					if (icm.doesCacheContain(p)) {
+						icm.restoreInventory(p);
 						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon entry"));
 					}
 				}
 			}
 			if (changeGameMode) {
-				if(!GameModeCacheManager.doesCacheContain(p)) {
-					GameModeCacheManager.cacheGameMode(p);
+				if(!gmcm.doesCacheContain(p)) {
+					gmcm.cacheGameMode(p);
 					p.setGameMode(getGameMode());
 				}
 			}

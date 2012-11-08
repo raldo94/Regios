@@ -121,6 +121,7 @@ public class SpoutRegion {
 	private static void cancelMusicTask() {
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RegiosPlugin.regios, new Runnable() {
 
+			@Override
 			public void run() {
 				SpoutManager.getSoundManager().stopMusic((SpoutPlayer) currentPlayer, false, 2500); // 2.5s
 																									// Fadeout.

@@ -26,8 +26,8 @@ public class EconomyCore {
 		return economy.getBalance(p) >= price;
 	}
 	public static void buyRegion(Region r, String buyer, String seller, int price){
-		economy.depositPlayer(seller, (double)price);
-		economy.withdrawPlayer(buyer, (double)price);
+		economy.depositPlayer(seller, price);
+		economy.withdrawPlayer(buyer, price);
 		buy(seller, buyer, r, price);
 	}
 	

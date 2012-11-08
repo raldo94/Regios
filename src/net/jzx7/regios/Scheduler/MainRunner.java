@@ -22,6 +22,7 @@ public class MainRunner {
 	private static final void mainRunner(){
 		taskid = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(RegiosPlugin.regios, new Runnable() {	
 
+			@Override
 			public void run() {
 				HealthRegeneration.loopRegenerators();
 				LightningRunner.executeStrikes();

@@ -6,6 +6,7 @@ import net.jzx7.regios.Mutable.MutableAdministration;
 import net.jzx7.regios.Permissions.PermissionsCore;
 import net.jzx7.regiosapi.regions.Region;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -14,12 +15,35 @@ public class AdministrationCommands extends PermissionsCore {
 	
 	MutableAdministration mutable = new MutableAdministration();
 	
-	public void listRegions(Player p){
-		p.sendMessage(mutable.listRegions());
-	}
-	
-	public void listOwnedRegions(Player p){
-		p.sendMessage(mutable.listOwnedRegions(p));
+	public void listRegions(Player p, String[] args){
+		if (args.length == 1) {
+			if (PermissionsCore.doesHaveNode(p, "regios.data.list")) {
+				p.sendMessage(mutable.listRegions());
+			} else {
+				PermissionsCore.sendInvalidPerms(p);
+			}
+		} else if (args.length == 2) {
+			if (args[1].equalsIgnoreCase("owned")) {
+				if (PermissionsCore.doesHaveNode(p, "regios.data.list-owned")) {
+					p.sendMessage(mutable.listOwnedRegions(p));
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			} else {
+				if (Bukkit.getPlayer(args[1].toString()) != null) {
+					if (PermissionsCore.doesHaveNode(p, "regios.data.list-player")) {
+						p.sendMessage(mutable.listOwnedRegions(Bukkit.getPlayer(args[1].toString())));
+					} else {
+						PermissionsCore.sendInvalidPerms(p);
+					}
+				} else {
+					p.sendMessage("[Regios] Invalid player specified!");
+				}
+			}
+		} else {
+			p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+			p.sendMessage("Proper usage: /regios list [owned/playername]");
+		}
 	}
 	
 	public void reload(Player p){

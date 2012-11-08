@@ -497,9 +497,9 @@ public class RegiosPlayerListener implements Listener {
 			}
 
 			if (binding instanceof PolyRegion) {
-				inRegion = extReg.isInsidePolygon(p, ((PolyRegion) binding).get2DPolygon(), ((PolyRegion) binding).getMinY(), ((PolyRegion) binding).getMaxY());
+				inRegion = extReg.isInsidePolygon(p, ((PolyRegion) binding).get2DPolygon(), ((PolyRegion) binding).getMinY(), ((PolyRegion) binding).getMaxY()) && (p.getWorld().getName() == binding.getWorld().getName());
 			} else if (binding instanceof CuboidRegion) {
-				inRegion = extReg.isInsideCuboid(p, ((CuboidRegion) binding).getL1(), ((CuboidRegion) binding).getL2());
+				inRegion = extReg.isInsideCuboid(p, ((CuboidRegion) binding).getL1(), ((CuboidRegion) binding).getL2()) && (p.getWorld().getName() == binding.getWorld().getName());
 			}
 
 			if (binding.isPreventEntry() && inRegion) {
@@ -555,11 +555,11 @@ public class RegiosPlayerListener implements Listener {
 			}
 
 			if (binding instanceof PolyRegion) {
-				if (!extReg.isInsidePolygon(p, ((PolyRegion) binding).get2DPolygon(), ((PolyRegion) binding).getMinY(), ((PolyRegion) binding).getMaxY())) {
+				if (!extReg.isInsidePolygon(p, ((PolyRegion) binding).get2DPolygon(), ((PolyRegion) binding).getMinY(), ((PolyRegion) binding).getMaxY()) && (p.getWorld().getName() == binding.getWorld().getName())) {
 					binding.sendLeaveMessage(p);
 				}
 			} else if (binding instanceof CuboidRegion) {
-				if (!extReg.isInsideCuboid(p, ((CuboidRegion) binding).getL1(), ((CuboidRegion) binding).getL2())) {
+				if (!extReg.isInsideCuboid(p, ((CuboidRegion) binding).getL1(), ((CuboidRegion) binding).getL2()) && (p.getWorld() == binding.getWorld()) && (p.getWorld().getName() == binding.getWorld().getName())) {
 					binding.sendLeaveMessage(p);
 				}
 			}
@@ -572,14 +572,14 @@ public class RegiosPlayerListener implements Listener {
 		for (Region reg : rm.getRegions()) {
 			if (reg instanceof PolyRegion) {
 				PolyRegion pr = (PolyRegion) reg;
-				if (extReg.isInsidePolygon(p, pr.get2DPolygon(), pr.getMinY(), pr.getMaxY())) {
+				if (extReg.isInsidePolygon(p, pr.get2DPolygon(), pr.getMinY(), pr.getMaxY()) && (p.getWorld().getName() == reg.getWorld().getName())) {
 					currentRegionSet.add(reg);
 					if (insideRegionLocation.containsKey(p.getName())) {
 						insideRegionLocation.put(p.getName(), p.getLocation());
 					}
 				}
 			} else if (reg instanceof CuboidRegion) {
-				if (extReg.isInsideCuboid(p, ((CuboidRegion) reg).getL1(), ((CuboidRegion) reg).getL2())) {
+				if (extReg.isInsideCuboid(p, ((CuboidRegion) reg).getL1(), ((CuboidRegion) reg).getL2()) && (p.getWorld().getName() == reg.getWorld().getName())) {
 					currentRegionSet.add(reg);
 					if (insideRegionLocation.containsKey(p.getName())) {
 						insideRegionLocation.put(p.getName(), p.getLocation());

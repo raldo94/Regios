@@ -68,7 +68,7 @@ public class CommandCore implements CommandExecutor {
 			if (args.length == 0) {
 				help.help(p, args);
 			}
-			
+
 			else if (args[0].equalsIgnoreCase("help")) {
 				help.help(p, args);
 			}
@@ -962,20 +962,8 @@ public class CommandCore implements CommandExecutor {
 				}
 			}
 
-			else if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
-				if (PermissionsCore.doesHaveNode(p, "regios.data.list")) {
-					admin.listRegions(p);
-				} else {
-					PermissionsCore.sendInvalidPerms(p);
-				}
-			}
-
-			else if (args.length == 1 && args[0].equalsIgnoreCase("list-owned")) {
-				if (PermissionsCore.doesHaveNode(p, "regios.data.list-owned")) {
-					admin.listOwnedRegions(p);
-				} else {
-					PermissionsCore.sendInvalidPerms(p);
-				}
+			else if (args[0].equalsIgnoreCase("list")) {
+				admin.listRegions(p, args);
 			}
 
 			else if (args.length == 3 && args[0].equalsIgnoreCase("inherit")) {

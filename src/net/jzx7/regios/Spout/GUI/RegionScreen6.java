@@ -7,7 +7,6 @@ import net.jzx7.regiosapi.regions.Region;
 import org.bukkit.ChatColor;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.GenericLabel;
-import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTextField;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.Widget;
@@ -37,11 +36,11 @@ public class RegionScreen6 {
 		((GenericTextField) sh.page6Widgets[0]).setMaximumCharacters(26);
 		((GenericTextField) sh.page6Widgets[0]).setText(r.getSpoutWelcomeMessage());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[0])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[0].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[0].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[0])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[0].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[0].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[0]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[0]);
 		}
 
 		((GenericTextField) sh.page6Widgets[1]).setX(15);
@@ -53,11 +52,11 @@ public class RegionScreen6 {
 		((GenericTextField) sh.page6Widgets[1]).setMaximumCharacters(26);
 		((GenericTextField) sh.page6Widgets[1]).setText(r.getSpoutLeaveMessage());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[1])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[1].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[1].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[1])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[1].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[1].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[1]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[1]);
 		}
 
 		((GenericButton) sh.page6Widgets[2]).setText("Reset");
@@ -68,11 +67,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[2]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[2]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[2])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[2].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[2].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[2])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[2].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[2].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[2]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[2]);
 		}
 
 		((GenericButton) sh.page6Widgets[3]).setText("Reset");
@@ -83,11 +82,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[3]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[3]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[3])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[3].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[3].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[3])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[3].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[3].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[3]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[3]);
 		}
 
 		((GenericButton) sh.page6Widgets[5]).setText("Clear");
@@ -98,11 +97,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[5]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[5]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[5])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[5].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[5].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[5])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[5].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[5].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[5]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[5]);
 		}
 		
 		((GenericButton) sh.page6Widgets[22]).setText("Enabled");
@@ -113,11 +112,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[22]).setTextColor(RegionScreenManager.getColourToken(r.isSpoutLeaveEnabled()));
 		((GenericButton) sh.page6Widgets[22]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[22])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[22].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[22].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[22])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[22].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[22].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[22]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[22]);
 		}
 
 
@@ -129,11 +128,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[4]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[4]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[4])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[4].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[4].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[4])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[4].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[4].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[4]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[4]);
 		}
 		
 		((GenericButton) sh.page6Widgets[23]).setText("Enabled");
@@ -144,11 +143,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[23]).setTextColor(RegionScreenManager.getColourToken(r.isSpoutWelcomeEnabled()));
 		((GenericButton) sh.page6Widgets[23]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[23])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[23].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[23].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[23])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[23].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[23].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[23]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[23]);
 		}
 
 		((GenericButton) sh.page6Widgets[6]).setText("Update");
@@ -159,11 +158,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[6]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[6]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[6])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[6].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[6].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[6])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[6].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[6].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[6]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[6]);
 		}
 
 		((GenericTextField) sh.page6Widgets[7]).setX(15);
@@ -175,11 +174,11 @@ public class RegionScreen6 {
 		((GenericTextField) sh.page6Widgets[7]).setMaximumCharacters(4);
 		((GenericTextField) sh.page6Widgets[7]).setText(Integer.toString(r.getSpoutWelcomeMaterial().getId()));
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[7])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[7].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[7].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[7])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[7].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[7].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[7]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[7]);
 		}
 
 		((GenericLabel) sh.page6Widgets[18]).setText("Spout Welcome Icon ID");
@@ -188,11 +187,11 @@ public class RegionScreen6 {
 		((GenericLabel) sh.page6Widgets[18]).setTextColor(RGB.YELLOW.getColour());
 		((GenericLabel) sh.page6Widgets[18]).setTooltip(ChatColor.YELLOW + "  Block Icon shown upon entering a region.");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[18])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[18].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[18].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[18])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[18].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[18].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[18]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[18]);
 		}
 
 		((GenericButton) sh.page6Widgets[9]).setText("Update");
@@ -203,11 +202,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[9]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[9]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[9])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[9].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[9].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[9])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[9].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[9].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[9]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[9]);
 		}
 
 		((GenericTextField) sh.page6Widgets[8]).setX(15);
@@ -219,11 +218,11 @@ public class RegionScreen6 {
 		((GenericTextField) sh.page6Widgets[8]).setMaximumCharacters(4);
 		((GenericTextField) sh.page6Widgets[8]).setText(Integer.toString(r.getSpoutLeaveMaterial().getId()));
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[8])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[8].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[8].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[8])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[8].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[8].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[8]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[8]);
 		}
 
 		((GenericLabel) sh.page6Widgets[19]).setText("Spout Leave Icon ID");
@@ -232,11 +231,11 @@ public class RegionScreen6 {
 		((GenericLabel) sh.page6Widgets[19]).setTextColor(RGB.YELLOW.getColour());
 		((GenericLabel) sh.page6Widgets[19]).setTooltip(ChatColor.YELLOW + "  Block Icon shown upon leaving a region.");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[19])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[19].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[19].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[19])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[19].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[19].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[19]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[19]);
 		}
 
 		((GenericButton) sh.page6Widgets[10]).setText("Update");
@@ -247,11 +246,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[10]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[10]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[10])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[10].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[10].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[10])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[10].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[10].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[10]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[10]);
 		}
 
 		((GenericTextField) sh.page6Widgets[11]).setX(15);
@@ -263,11 +262,11 @@ public class RegionScreen6 {
 		((GenericTextField) sh.page6Widgets[11]).setMaximumCharacters(70);
 		((GenericTextField) sh.page6Widgets[11]).setText(r.getSpoutTexturePack());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[11])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[11].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[11].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[11])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[11].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[11].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[11]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[11]);
 		}
 
 		((GenericLabel) sh.page6Widgets[20]).setText("Spout Texture Pack URL");
@@ -276,11 +275,11 @@ public class RegionScreen6 {
 		((GenericLabel) sh.page6Widgets[20]).setTextColor(RGB.YELLOW.getColour());
 		((GenericLabel) sh.page6Widgets[20]).setTooltip(ChatColor.YELLOW + "  Force a texture pack upon entering a region.");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[20])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[20].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[20].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[20])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[20].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[20].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[20]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[20]);
 		}
 
 		((GenericButton) sh.page6Widgets[12]).setText("Reset");
@@ -291,11 +290,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[12]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[12]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[12])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[12].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[12].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[12])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[12].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[12].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[12]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[12]);
 		}
 
 		((GenericButton) sh.page6Widgets[13]).setText("Clear");
@@ -306,11 +305,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[13]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[13]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[13])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[13].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[13].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[13])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[13].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[13].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[13]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[13]);
 		}
 
 		((GenericButton) sh.page6Widgets[14]).setText("Paste");
@@ -321,11 +320,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[14]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[14]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[14])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[14].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[14].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[14])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[14].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[14].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[14]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[14]);
 		}
 		
 		((GenericButton) sh.page6Widgets[21]).setText("Update");
@@ -336,11 +335,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[21]).setTextColor(RGB.WHITE.getColour());
 		((GenericButton) sh.page6Widgets[21]).setHoverColor(RGB.SPRING_GREEN.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[21])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[21].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[21].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[21])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[21].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[21].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[21]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[21]);
 		}
 
 		((GenericButton) sh.page6Widgets[15]).setText("Use Textures");
@@ -351,11 +350,11 @@ public class RegionScreen6 {
 		((GenericButton) sh.page6Widgets[15]).setTextColor(RegionScreenManager.getColourToken(r.isUseSpoutTexturePack()));
 		((GenericButton) sh.page6Widgets[15]).setHoverColor(RGB.YELLOW.getColour());
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[15])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[15].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[15].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[15])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[15].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[15].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[15]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[15]);
 		}
 
 		((GenericLabel) sh.page6Widgets[16]).setText("Spout Welcome Message");
@@ -364,11 +363,11 @@ public class RegionScreen6 {
 		((GenericLabel) sh.page6Widgets[16]).setTextColor(RGB.YELLOW.getColour());
 		((GenericLabel) sh.page6Widgets[16]).setTooltip(ChatColor.YELLOW + "  Popup Message shown upon entering a region.");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[16])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[16].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[16].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[16])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[16].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[16].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[16]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[16]);
 		}
 
 		((GenericLabel) sh.page6Widgets[17]).setText("Spout Leave Message");
@@ -377,11 +376,11 @@ public class RegionScreen6 {
 		((GenericLabel) sh.page6Widgets[17]).setTextColor(RGB.YELLOW.getColour());
 		((GenericLabel) sh.page6Widgets[17]).setTooltip(ChatColor.YELLOW + "  Popup Message shown upon entering a region.");
 
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page6Widgets[17])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[17].getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(sh.page6Widgets[17].getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page6Widgets[17])) {
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[17].getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget(sh.page6Widgets[17].getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page6Widgets[17]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page6Widgets[17]);
 		}
 
 	}

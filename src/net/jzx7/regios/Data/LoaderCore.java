@@ -292,7 +292,7 @@ public class LoaderCore {
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Ocelot", true)){ rw.addCreatureSpawn(EntityType.OCELOT); }
 		}
 	}
-	
+
 	public void loadRegions(boolean silent) {
 		File[] children = db_root.listFiles();
 		if (children.length > 0) {
@@ -440,22 +440,27 @@ public class LoaderCore {
 				Region r;
 
 				if (l11 == null && l22 == null) {
-					String[] xPointsStr = xp.split(","), zPointsStr = zp.split(",");
-					int[] xPoints = new int[xPointsStr.length], zPoints = new int[zPointsStr.length];
-					int i = 0;
+					try {
+						String[] xPointsStr = xp.split(","), zPointsStr = zp.split(",");
+						int[] xPoints = new int[xPointsStr.length], zPoints = new int[zPointsStr.length];
+						int i = 0;
 
-					for (String s : xPointsStr) {
-						xPoints[i] = Integer.parseInt(s);
-						i++;
+						for (String s : xPointsStr) {
+							xPoints[i] = Integer.parseInt(s);
+							i++;
+						}
+						i = 0;
+						for (String s : zPointsStr) {
+							zPoints[i] = Integer.parseInt(s);
+							i++;
+						}
+
+
+						r = new RegiosPolyRegion(owner, name, xPoints, zPoints, Integer.parseInt(np), Double.parseDouble(miY), Double.parseDouble(maY), world, null, false);
+					} catch (Exception ex) {
+						//TODO: figure out what to do here.
+						r = new RegiosCuboidRegion(owner, name, toLocation(l11), toLocation(l22), world, null, false);
 					}
-					i = 0;
-					for (String s : zPointsStr) {
-						zPoints[i] = Integer.parseInt(s);
-						i++;
-					}
-
-
-					r = new RegiosPolyRegion(owner, name, xPoints, zPoints, Integer.parseInt(np), Double.parseDouble(miY), Double.parseDouble(maY), world, null, false);
 				} else {
 					r = new RegiosCuboidRegion(owner, name, toLocation(l11), toLocation(l22), world, null, false);
 				}

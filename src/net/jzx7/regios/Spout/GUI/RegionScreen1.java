@@ -7,7 +7,6 @@ import net.jzx7.regiosapi.regions.Region;
 
 import org.getspout.spoutapi.gui.Color;
 import org.getspout.spoutapi.gui.GenericButton;
-import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.InGameHUD;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.Widget;
@@ -174,11 +173,11 @@ public class RegionScreen1 {
 				break;
 			}
 
-			if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget((Widget) b)) {
-				((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(((Widget) b).getId()).setVisible(true);
-				((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget(((Widget) b).getId()).setDirty(true);
+			if (RegionScreenManager.popup.get(sp).containsWidget(b)) {
+				RegionScreenManager.popup.get(sp).getWidget(b.getId()).setVisible(true);
+				RegionScreenManager.popup.get(sp).getWidget(b.getId()).setDirty(true);
 			} else {
-				((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, (Widget) b);
+				RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, b);
 			}
 		}
 		
@@ -190,11 +189,11 @@ public class RegionScreen1 {
 		((GenericButton) (sh.page1Widgets[24])).setTextColor(RegionScreenManager.getColourToken(r.is_protectionPlace() || r.isProtected()));
 		((GenericButton) (sh.page1Widgets[24])).setDirty(true);
 		
-		if (((GenericPopup) RegionScreenManager.popup.get(sp)).containsWidget(sh.page1Widgets[24])) {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget((sh.page1Widgets[24]).getId()).setVisible(true);
-			((GenericPopup) RegionScreenManager.popup.get(sp)).getWidget((sh.page1Widgets[24]).getId()).setDirty(true);
+		if (RegionScreenManager.popup.get(sp).containsWidget(sh.page1Widgets[24])) {
+			RegionScreenManager.popup.get(sp).getWidget((sh.page1Widgets[24]).getId()).setVisible(true);
+			RegionScreenManager.popup.get(sp).getWidget((sh.page1Widgets[24]).getId()).setDirty(true);
 		} else {
-			((GenericPopup) RegionScreenManager.popup.get(sp)).attachWidget(RegiosPlugin.regios, sh.page1Widgets[24]);
+			RegionScreenManager.popup.get(sp).attachWidget(RegiosPlugin.regios, sh.page1Widgets[24]);
 		}
 	}
 

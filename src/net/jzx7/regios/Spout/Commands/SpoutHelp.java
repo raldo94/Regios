@@ -12,7 +12,6 @@ import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.gui.InGameHUD;
-import org.getspout.spoutapi.gui.PopupScreen;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -28,7 +27,7 @@ public class SpoutHelp {
 	public static void pinLabels(SpoutPlayer sp, ArrayList<GenericLabel> labels, ArrayList<GenericLabel> oldLabels, ScreenHolder sh) {
 		if (oldLabels != null) {
 			for (GenericLabel gl : oldLabels) {
-				((GenericPopup) helps.get(sp)).removeWidget(gl);
+				helps.get(sp).removeWidget(gl);
 				gl.setDirty(true);
 			}
 		}
@@ -39,7 +38,7 @@ public class SpoutHelp {
 			l.setY(pinY);
 			l.setWidth(150);
 			l.setHeight(150);
-			((GenericPopup) helps.get(sp)).attachWidget(RegiosPlugin.regios, l);
+			helps.get(sp).attachWidget(RegiosPlugin.regios, l);
 			pinY += 10;
 		}
 	}
@@ -49,10 +48,10 @@ public class SpoutHelp {
 		InGameHUD hud = p.getMainScreen();
 
 		if (helps.containsKey(p)) {
-			((GenericPopup) helps.get(p)).removeWidgets(RegiosPlugin.regios);
+			helps.get(p).removeWidgets(RegiosPlugin.regios);
 		}
 
-		helps.put((SpoutPlayer) p, new GenericPopup());
+		helps.put(p, new GenericPopup());
 
 		GenericTexture texture = new GenericTexture("http://dl.dropbox.com/u/27260323/Regios/GUI/Help%20GUI%20Texture.png");
 
@@ -61,7 +60,7 @@ public class SpoutHelp {
 		texture.setHeight(hud.getHeight());
 		texture.setPriority(RenderPriority.Highest);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, texture);
+		helps.get(p).attachWidget(RegiosPlugin.regios, texture);
 
 		GenericButton tmp1 = new GenericButton("Close");
 		tmp1.setColor(RGB.RED.getColour());
@@ -76,7 +75,7 @@ public class SpoutHelp {
 
 		escButton.put(p, tmp1);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, escButton.get(p));
+		helps.get(p).attachWidget(RegiosPlugin.regios, escButton.get(p));
 
 		sh.generalData = new GenericButton("General");
 		sh.generalData.setColor(RGB.RED.getColour());
@@ -86,7 +85,7 @@ public class SpoutHelp {
 		sh.generalData.setWidth(100);
 		sh.generalData.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.generalData);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.generalData);
 
 		sh.protection = new GenericButton("Protection");
 		sh.protection.setColor(RGB.RED.getColour());
@@ -96,7 +95,7 @@ public class SpoutHelp {
 		sh.protection.setWidth(100);
 		sh.protection.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.protection);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.protection);
 
 		sh.fun = new GenericButton("Fun");
 		sh.fun.setColor(RGB.RED.getColour());
@@ -106,7 +105,7 @@ public class SpoutHelp {
 		sh.fun.setWidth(100);
 		sh.fun.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.fun);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.fun);
 
 		sh.data = new GenericButton("Data");
 		sh.data.setColor(RGB.RED.getColour());
@@ -116,7 +115,7 @@ public class SpoutHelp {
 		sh.data.setWidth(100);
 		sh.data.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.data);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.data);
 
 		sh.messages = new GenericButton("Messages");
 		sh.messages.setColor(RGB.RED.getColour());
@@ -126,7 +125,7 @@ public class SpoutHelp {
 		sh.messages.setWidth(100);
 		sh.messages.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.messages);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.messages);
 
 		sh.inventory = new GenericButton("Inventory");
 		sh.inventory.setColor(RGB.RED.getColour());
@@ -136,7 +135,7 @@ public class SpoutHelp {
 		sh.inventory.setWidth(100);
 		sh.inventory.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.inventory);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.inventory);
 
 		sh.modes = new GenericButton("Modes");
 		sh.modes.setColor(RGB.RED.getColour());
@@ -146,7 +145,7 @@ public class SpoutHelp {
 		sh.modes.setWidth(100);
 		sh.modes.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.modes);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.modes);
 
 		sh.modify = new GenericButton("Modify");
 		sh.modify.setColor(RGB.RED.getColour());
@@ -156,7 +155,7 @@ public class SpoutHelp {
 		sh.modify.setWidth(100);
 		sh.modify.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.modify);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.modify);
 
 		sh.exceptions = new GenericButton("Exceptions");
 		sh.exceptions.setColor(RGB.RED.getColour());
@@ -166,7 +165,7 @@ public class SpoutHelp {
 		sh.exceptions.setWidth(100);
 		sh.exceptions.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.exceptions);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.exceptions);
 
 		sh.spout = new GenericButton("Spout");
 		sh.spout.setColor(RGB.RED.getColour());
@@ -176,7 +175,7 @@ public class SpoutHelp {
 		sh.spout.setWidth(100);
 		sh.spout.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.spout);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.spout);
 
 		sh.perms = new GenericButton("Permissions");
 		sh.perms.setColor(RGB.RED.getColour());
@@ -186,7 +185,7 @@ public class SpoutHelp {
 		sh.perms.setWidth(100);
 		sh.perms.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.perms);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.perms);
 
 		sh.other = new GenericButton("Other");
 		sh.other.setColor(RGB.RED.getColour());
@@ -196,9 +195,9 @@ public class SpoutHelp {
 		sh.other.setWidth(100);
 		sh.other.setHeight(20);
 
-		((GenericPopup) helps.get(p)).attachWidget(RegiosPlugin.regios, sh.other);
+		helps.get(p).attachWidget(RegiosPlugin.regios, sh.other);
 
-		hud.attachPopupScreen((PopupScreen) helps.get(p));
+		hud.attachPopupScreen(helps.get(p));
 	}
 
 }

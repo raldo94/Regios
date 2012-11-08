@@ -26,10 +26,10 @@ public class CreationCommands extends PermissionsCore {
 	public static HashMap<String, Location> point2 = new HashMap<String, Location>();
 	public static HashMap<String, ArrayList<Location>> points = new HashMap<String, ArrayList<Location>>();
 	public static HashMap<String, ArrayList<Location>> mpoints = new HashMap<String, ArrayList<Location>>();
-	
+
 	public static HashMap<String, String> setting = new HashMap<String, String>();
 	public static HashMap<String, String> modding = new HashMap<String, String>();
-	
+
 	public static HashMap<String, Location> mod1 = new HashMap<String, Location>();
 	public static HashMap<String, Location> mod2 = new HashMap<String, Location>();
 
@@ -127,7 +127,7 @@ public class CreationCommands extends PermissionsCore {
 			return;
 		}
 	}
-	
+
 	private void giveTool(Player p, String type) {
 		if (isSetting(p)) {
 			if (!p.getInventory().contains(new ItemStack(ConfigurationData.defaultSelectionTool, 1))) {
@@ -304,17 +304,29 @@ public class CreationCommands extends PermissionsCore {
 				return;
 			}
 			else if (arePointsSet(p)) {
-				point1.put(p.getName(), (new Location(p.getWorld(), point1.get(p.getName()).getX(), 0, point1.get(p.getName()).getZ())));
-				point2.put(p.getName(), (new Location(p.getWorld(), point2.get(p.getName()).getX(), p.getWorld().getMaxHeight(), point2.get(p.getName()).getZ())));
-				p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
-				return;
+				if (setting.get(p.getName()).equalsIgnoreCase("cuboid")) {
+					point1.put(p.getName(), (new Location(p.getWorld(), point1.get(p.getName()).getX(), 0, point1.get(p.getName()).getZ())));
+					point2.put(p.getName(), (new Location(p.getWorld(), point2.get(p.getName()).getX(), p.getWorld().getMaxHeight(), point2.get(p.getName()).getZ())));
+					p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
+					return;
+				} else if (setting.get(p.getName()).equalsIgnoreCase("polygon")) {
+					points.get(p.getName()).get(points.get(p.getName()).size() - 1).setY(p.getWorld().getMaxHeight());
+					points.get(p.getName()).get(points.get(p.getName()).size() - 2).setY(0);
+					p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
+					return;
+				}
 			} else if (areModPointsSet(p)) {
-				mod1.put(p.getName(), (new Location(p.getWorld(), mod1.get(p.getName()).getX(), 0, mod1.get(p.getName()).getZ())));
-				mod2.put(p.getName(), (new Location(p.getWorld(), mod2.get(p.getName()).getX(), p.getWorld().getMaxHeight(), mod2.get(p.getName()).getZ())));
-				p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
-				return;
+				if (modding.get(p.getName()).equalsIgnoreCase("cuboid")) {
+					mod1.put(p.getName(), (new Location(p.getWorld(), mod1.get(p.getName()).getX(), 0, mod1.get(p.getName()).getZ())));
+					mod2.put(p.getName(), (new Location(p.getWorld(), mod2.get(p.getName()).getX(), p.getWorld().getMaxHeight(), mod2.get(p.getName()).getZ())));
+					p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
+					return;
+				} else if (modding.get(p.getName()).equalsIgnoreCase("cuboid")) {
+					//TODO: Implement polygon modification
+					p.sendMessage("[Regios] Not implemented yet. Sorry! :(");
+				}
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points!");
+				p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points for cuboid selections or 3 for polygonal!");
 				return;
 			}
 		} else {
@@ -350,7 +362,7 @@ public class CreationCommands extends PermissionsCore {
 					+ String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + ChatColor.BLUE + "removed.");
 		}
 	}
-	
+
 	public void addMPoint(Player p, Location l) {
 		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
 			try {

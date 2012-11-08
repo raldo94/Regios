@@ -6,8 +6,7 @@ public enum HelpText {
 			, ("/r delete <region>")
 			, ("/r rename <oldname> <newname>")
 			, ("/r info <region>")
-			, ("/r list")
-			, ("/r list-owned")
+			, ("/r list [owned/playername]")
 			, ("/r list-for-sale")
 			, ("/r delete <region>")
 			, ("/r reload")
@@ -62,8 +61,7 @@ public enum HelpText {
 			, ("/r list-for-sale")
 			, ("/r buy <region>") }),
 
-	MISC (new String[] { ("/r set-creature-spawns <region> <T/F>")
-			, ("/r set-monster-spawns <region> <T/F>")
+	MISC (new String[] { ("/r setmobspawns <passive/hostile> <region> <true/false>")
 			, ("/r cmdset add/remove <region> <cmd>")
 			, ("/r cmdset list/reset <region>")
 			, ("/r cmdset enabled <region> <T/F>")

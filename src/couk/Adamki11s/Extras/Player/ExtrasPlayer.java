@@ -23,8 +23,9 @@ public class ExtrasPlayer extends PlayerMethods {
 		}
 	}
 	
+	@Override
 	public void mountEntity(Player p, Entity e){
-        e.setPassenger((Entity)p);
+        e.setPassenger(p);
 	}
 
 	@Override
@@ -39,13 +40,14 @@ public class ExtrasPlayer extends PlayerMethods {
 		}
 	}
 	
+	@Override
 	public void setBlockOnPlayerHead(Player p, Material m){
 		p.getInventory().setHelmet(new ItemStack(m, 1));
 	}
 
 	@Override
 	public void mountPlayer(Player mounter, Player target) {
-		((Entity)target).setPassenger((Entity)mounter);
+		((Entity)target).setPassenger(mounter);
 	}
 
 	@Override

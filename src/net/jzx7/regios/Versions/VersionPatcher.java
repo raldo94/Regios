@@ -21,10 +21,10 @@ public class VersionPatcher {
 	static final File patch4071F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "4.0.71.rv");
 	static final File patch5021F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.21.rv");
 	static final File patch5051F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.51.rv");
-	static final File patch590F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "6.0.0.rv");
+	static final File patch590F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.9.0.rv");
 
 	public static void runPatch(String version) throws IOException {
-		if (version.equalsIgnoreCase("5.9.0")) {
+		if (version.equalsIgnoreCase("5.9.3")) {
 			if (!patch4057F.exists()) {
 				patch4057(version);
 				patch4057F.createNewFile();
@@ -59,7 +59,7 @@ public class VersionPatcher {
 		outstream.println("[Regios][Patch] Modifying general configuration file...");
 		File generalconfig = new File(config_root + File.separator + "GeneralSettings.config");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(generalconfig);
-		String value = (String) c.getString("Regios.Economy", "NONE");
+		String value = c.getString("Regios.Economy", "NONE");
 		int oldID = c.getInt("Region.Tools.Setting.ID", 271);
 		c = YamlConfiguration.loadConfiguration(generalconfig);
 		c.set("Region.LogsEnabled", true);
@@ -127,7 +127,7 @@ public class VersionPatcher {
 		outstream.println("[Regios][Patch] Modifying general configuration file...");
 		File generalconfig = new File(config_root + File.separator + "GeneralSettings.config");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(generalconfig);
-		String value = (String) c.getString("Region.Economy", "NONE");
+		String value = c.getString("Region.Economy", "NONE");
 		int oldID = c.getInt("Region.Tools.Setting.ID", 271);
 		boolean oldLog = c.getBoolean("Region.LogsEnabled", true);
 		c = YamlConfiguration.loadConfiguration(generalconfig);

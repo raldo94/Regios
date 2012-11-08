@@ -62,6 +62,8 @@ public final class NBTUtils {
             return "TAG_End";
         } else if (clazz.equals(FloatTag.class)) {
             return "TAG_Float";
+        } else if (clazz.equals(IntArrayTag.class)) {
+        	return "TAG_Int_Array";
         } else if (clazz.equals(IntTag.class)) {
             return "TAG_Int";
         } else if (clazz.equals(ListTag.class)) {
@@ -104,6 +106,8 @@ public final class NBTUtils {
             return NBTConstants.TYPE_END;
         } else if (clazz.equals(FloatTag.class)) {
             return NBTConstants.TYPE_FLOAT;
+        } else if (clazz.equals(IntArrayTag.class)) {
+        	return NBTConstants.TYPE_INT_ARRAY;
         } else if (clazz.equals(IntTag.class)) {
             return NBTConstants.TYPE_INT;
         } else if (clazz.equals(ListTag.class)) {
@@ -157,6 +161,8 @@ public final class NBTUtils {
             return ListTag.class;
         case NBTConstants.TYPE_COMPOUND:
             return CompoundTag.class;
+    	case NBTConstants.TYPE_INT_ARRAY:
+    		return IntArrayTag.class;
         case NBTConstants.TYPE_LISTSTRING_ARRAY:
             return ListStringArrayTag.class;
         case NBTConstants.TYPE_LISTITEMSTACK_ARRAY:

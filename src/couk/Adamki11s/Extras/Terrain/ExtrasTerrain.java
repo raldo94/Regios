@@ -322,6 +322,7 @@ public class ExtrasTerrain extends TerrainMethods {
 		}
 	}
 	
+	@Override
 	public void replaceBlocks(int toReplace, Byte toReplaceData,
 			int replaceWith, Byte replaceWithData, Location point1,
 			Location point2) {
