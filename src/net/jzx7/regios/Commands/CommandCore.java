@@ -278,6 +278,10 @@ public class CommandCore implements CommandExecutor {
 			else if (args[0].equalsIgnoreCase("shrink")) {
 				mod.shrink(p, args);
 			}
+			
+			else if (args[0].equalsIgnoreCase("shift")) {
+				mod.shift(p, args);
+			}
 
 			/*
 			 * End Region Modification
@@ -432,7 +436,7 @@ public class CommandCore implements CommandExecutor {
 			}
 
 			else if (args.length == 3 && (args[0].equalsIgnoreCase("explosionsenabled") || args[0].equalsIgnoreCase("explosions-enabled") || args[0].equalsIgnoreCase("explenabled"))) {
-				if (PermissionsCore.doesHaveNode(p, "regios.protection.tnt-enabled")) {
+				if (PermissionsCore.doesHaveNode(p, "regios.protection.explosions-enabled")) {
 					misc.setTNTEnabled(rm.getRegion(args[1]), args[1], args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
@@ -980,7 +984,7 @@ public class CommandCore implements CommandExecutor {
 
 			else if (args.length == 3 && (args[0].equalsIgnoreCase("backup-region") || args[0].equalsIgnoreCase("save-region"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.backup-region")) {
-					RBF_Core.rbf_save.startSave(rm.getRegion(args[1]), null, null, args[2], p, false);
+					RBF_Core.backup.startSave(rm.getRegion(args[1]), args[2], p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -997,22 +1001,54 @@ public class CommandCore implements CommandExecutor {
 						}
 					} else {
 						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
-						p.sendMessage("Proper usage: /regios save-blueprint <region>");
+						p.sendMessage("Proper usage: /regios save-blueprint <blp-name>");
 					}
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			}
 
-			else if (args.length == 2 && (args[0].equalsIgnoreCase("load-blueprint") || args[0].equalsIgnoreCase("loadblueprint"))) {
+			else if (args.length == 2 && (args[0].equalsIgnoreCase("load-blueprint") || args[0].equalsIgnoreCase("loadblueprint") || args[0].equalsIgnoreCase("loadbp"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.load-blueprint")) {
 					File f = new File("plugins" + File.separator + "Regios" + File.separator + "Blueprints" + File.separator + args[1] + ".blp");
 
 					if (!f.exists()) {
 						p.sendMessage(ChatColor.RED + "[Regios] A Blueprint file with the name " + ChatColor.BLUE + args[1] + ChatColor.RED + " does not exist!");
 					}
-					RegiosPlayerListener.loadingTerrain.put(p.getName(), new ShareData(args[1], p));
+					RegiosPlayerListener.loadingTerrain.put(p.getName(), new ShareData(args[1], "blp", p));
 					p.sendMessage(ChatColor.GREEN + "[Regios] Click the block where you wish to paste the blueprint.");
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			else if (args[0].equalsIgnoreCase("save-schematic") || args[0].equalsIgnoreCase("saveschematic") || args[0].equalsIgnoreCase("savesch")) {
+				if (PermissionsCore.doesHaveNode(p, "regios.data.save-schematic")) {
+					if (args.length == 2) {
+						if(ConfigurationData.useWorldEdit)
+						{
+							new WorldEditCommands().createSchematicWE(p, args[1]);
+						} else {
+							creation.createSchematic(p, args[1]);
+						}
+					} else {
+						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("Proper usage: /regios save-schematic <sch-name>");
+					}
+				} else {
+					PermissionsCore.sendInvalidPerms(p);
+				}
+			}
+			
+			else if (args.length == 2 && (args[0].equalsIgnoreCase("load-schematic") || args[0].equalsIgnoreCase("loadschematic") || args[0].equalsIgnoreCase("loadsch"))) {
+				if (PermissionsCore.doesHaveNode(p, "regios.data.load-blueprint")) {
+					File f = new File("plugins" + File.separator + "Regios" + File.separator + "Schematics" + File.separator + args[1] + ".schematic");
+
+					if (!f.exists()) {
+						p.sendMessage(ChatColor.RED + "[Regios] A schematic file with the name " + ChatColor.BLUE + args[1] + ChatColor.RED + " does not exist!");
+					}
+					RegiosPlayerListener.loadingTerrain.put(p.getName(), new ShareData(args[1], "sch", p));
+					p.sendMessage(ChatColor.GREEN + "[Regios] Click the block where you wish to paste the schematic.");
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -1020,7 +1056,7 @@ public class CommandCore implements CommandExecutor {
 
 			else if (args.length == 1 && (args[0].equalsIgnoreCase("undo"))) {
 				if (PermissionsCore.doesHaveNode(p, "regios.data.load-blueprint")) {
-					RBF_Core.rbf_load_share.undoLoad(p);
+					RBF_Core.undoLoad(p);
 				} else {
 					PermissionsCore.sendInvalidPerms(p);
 				}
@@ -1029,7 +1065,7 @@ public class CommandCore implements CommandExecutor {
 			else if (args.length == 3 && (args[0].equalsIgnoreCase("restore-region") || args[0].equalsIgnoreCase("load-region"))) {
 				try {
 					if (PermissionsCore.doesHaveNode(p, "regios.data.restore-region")) {
-						RBF_Core.rbf_load.loadRegion(rm.getRegion(args[1]), args[2], p);
+						RBF_Core.backup.loadBackup(rm.getRegion(args[1]), args[2], p);
 					} else {
 						PermissionsCore.sendInvalidPerms(p);
 					}
@@ -1055,6 +1091,8 @@ public class CommandCore implements CommandExecutor {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			} else {
+				p.sendMessage("Invalid command! Use /regios help for a list of commands.");
 			}
 
 			RegionCommandEvent event = new RegionCommandEvent("RegionCommandEvent");

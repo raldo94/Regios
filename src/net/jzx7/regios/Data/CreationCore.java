@@ -21,6 +21,7 @@ public class CreationCore {
 				, updates = new File("plugins" + File.separator + "Update")
 				, other = new File(root + File.separator + "Other")
 				, shares = new File(root + File.separator + "Blueprints")
+				, schematics = new File(root + File.separator + "Schematics")
 				, depend = new File(root + File.separator + "Dependancies")
 				, restrict = new File(root + File.separator + "Restrictions");
 
@@ -87,6 +88,12 @@ public class CreationCore {
 			flawless = false;
 			shares.mkdir();
 			log.info(prefix + " Creating directory @_root/plugins/Regios/Blueprints");
+		}
+		
+		if (!schematics.exists()) {
+			flawless = false;
+			schematics.mkdir();
+			log.info(prefix + " Creating directory @_root/plugins/Regios/Schematics");
 		}
 
 		if (!(new File(other + File.separator + "Pending").exists())) {
@@ -158,7 +165,7 @@ public class CreationCore {
 
 			c.set("DefaultSettings.Protection.FireProtection", false);
 			c.set("DefaultSettings.Protection.FireSpread", true);
-			c.set("DefaultSettings.Protection.TNTEnabled", true);
+			c.set("DefaultSettings.Protection.ExplosionsEnabled", true);
 			c.set("DefaultSettings.Protection.EndermanBlock", false);
 
 			c.set("DefaultSettings.Messages.WelcomeMessage", "<BGREEN>Welcome to <BLUE>[NAME] <BGREEN>owned by <YELLOW>[OWNER]");
@@ -280,6 +287,4 @@ public class CreationCore {
 		add("regios.restrictions.1000");
 		
 	}};
-
-
 }

@@ -3,6 +3,7 @@ package net.jzx7.regios.Listeners;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.DataFormatException;
 
 import net.jzx7.regios.Commands.CreationCommands;
 import net.jzx7.regios.Data.ConfigurationData;
@@ -20,6 +21,7 @@ import net.jzx7.regios.regions.SubRegionManager;
 import net.jzx7.regiosapi.regions.CuboidRegion;
 import net.jzx7.regiosapi.regions.PolyRegion;
 import net.jzx7.regiosapi.regions.Region;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -152,10 +154,20 @@ public class RegiosPlayerListener implements Listener {
 			if (loadingTerrain.containsKey(p.getName())) {
 				if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
 					ShareData sd = loadingTerrain.get(p.getName());
-					try {
-						RBF_Core.rbf_load_share.loadSharedRegion(sd.shareName, sd.player, l);
-					} catch (IOException e) {
-						e.printStackTrace();
+					if (sd.getShareType().equalsIgnoreCase("blp")) {
+						try {
+							RBF_Core.blueprint.loadBlueprint(sd.getShareName(), sd.getPlayer(), l);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} else if (sd.getShareType().equalsIgnoreCase("sch")) {
+						try {
+							RBF_Core.schematic.loadSchematic(sd.getShareName(), sd.getPlayer(), l);
+						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (DataFormatException e) {
+							e.printStackTrace();
+						}
 					}
 					loadingTerrain.remove(p.getName());
 				}
@@ -339,7 +351,7 @@ public class RegiosPlayerListener implements Listener {
 					if (!r.canBypassProtection(p)) {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 								+ (" Player '" + p.getName() + "' tried to fill a " + evt.getBucket().toString() + " but was prevented."));
-						r.sendBuildMessage(p);
+						rm.sendBuildMessage(p, r);
 						evt.setCancelled(true);
 						return;
 					}
@@ -388,7 +400,7 @@ public class RegiosPlayerListener implements Listener {
 					for (int x = -8; x <= 8; x++) {
 						for (int y = -8; y <= 8; y++) {
 							for (int z = -8; z <= 8; z++) {
-								if (extReg.isInsidePolygon(l.add(x, y, z),pr.get2DPolygon(), pr.getMinY(), pr.getMaxY())) {
+								if (extReg.isInsidePolygon(l.add(x, y, z),pr.get2DPolygon(), pr.getMinY(), pr.getMaxY()) && (p.getWorld().getName() == pr.getWorld().getName())) {
 									currentRegionSet.add(reg);
 									break Outerloop;
 								}
@@ -401,7 +413,7 @@ public class RegiosPlayerListener implements Listener {
 					for (int x = -8; x <= 8; x++) {
 						for (int y = -8; y <= 8; y++) {
 							for (int z = -8; z <= 8; z++) {
-								if (extReg.isInsideCuboid(l.add(x, y, z), cr.getL1(), cr.getL2())) {
+								if (extReg.isInsideCuboid(l.add(x, y, z), cr.getL1(), cr.getL2()) && (p.getWorld().getName() == cr.getWorld().getName())) {
 									currentRegionSet.add(reg);
 									break Outerloop;
 								}
@@ -421,7 +433,7 @@ public class RegiosPlayerListener implements Listener {
 					if (!r.canBuild(p)) {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 								+ (" Player '" + p.getName() + "' tried to empty a " + evt.getBucket().toString() + " but was prevented."));
-						r.sendBuildMessage(p);
+						rm.sendBuildMessage(p, r);
 						evt.setCancelled(true);
 						return;
 					}
@@ -509,7 +521,7 @@ public class RegiosPlayerListener implements Listener {
 							p.teleport(outsideRegionLocation.get(p.getName()));
 						}
 						if (isSendable(p, MSG.PREVENT_ENTRY)) {
-							binding.sendPreventEntryMessage(p);
+							rm.sendPreventEntryMessage(p, binding);
 						}
 						return;
 					} else {
@@ -535,7 +547,7 @@ public class RegiosPlayerListener implements Listener {
 							p.teleport(insideRegionLocation.get(p.getName()));
 						}
 						if (isSendable(p, MSG.PREVENT_EXIT)) {
-							binding.sendPreventExitMessage(p);
+							rm.sendPreventExitMessage(p, binding);
 						}
 						return;
 					} else {
@@ -555,12 +567,12 @@ public class RegiosPlayerListener implements Listener {
 			}
 
 			if (binding instanceof PolyRegion) {
-				if (!extReg.isInsidePolygon(p, ((PolyRegion) binding).get2DPolygon(), ((PolyRegion) binding).getMinY(), ((PolyRegion) binding).getMaxY()) && (p.getWorld().getName() == binding.getWorld().getName())) {
-					binding.sendLeaveMessage(p);
+				if (!(extReg.isInsidePolygon(p, ((PolyRegion) binding).get2DPolygon(), ((PolyRegion) binding).getMinY(), ((PolyRegion) binding).getMaxY()) && (p.getWorld().getName() == binding.getWorld().getName()))) {
+					rm.sendLeaveMessage(p, binding);
 				}
 			} else if (binding instanceof CuboidRegion) {
-				if (!extReg.isInsideCuboid(p, ((CuboidRegion) binding).getL1(), ((CuboidRegion) binding).getL2()) && (p.getWorld() == binding.getWorld()) && (p.getWorld().getName() == binding.getWorld().getName())) {
-					binding.sendLeaveMessage(p);
+				if (!(extReg.isInsideCuboid(p, ((CuboidRegion) binding).getL1(), ((CuboidRegion) binding).getL2()) && (p.getWorld() == binding.getWorld()) && (p.getWorld().getName() == binding.getWorld().getName()))) {
+					rm.sendLeaveMessage(p, binding);
 				}
 			}
 
@@ -623,13 +635,13 @@ public class RegiosPlayerListener implements Listener {
 					p.teleport(outsideRegionLocation.get(p.getName()));
 				}
 				if (isSendable(p, MSG.PREVENT_ENTRY)) {
-					r.sendPreventEntryMessage(p);
+					rm.sendPreventEntryMessage(p, r);
 				}
 				return;
 			}
 		}
 
-		r.sendWelcomeMessage(p);
+		rm.sendWelcomeMessage(p, r);
 		insideRegionLocation.put(p.getName(), p.getLocation());
 
 		// __________________________________
@@ -641,6 +653,17 @@ public class RegiosPlayerListener implements Listener {
 		}
 
 	}
+
+	//I don't think this is necessary atm. Keeping for sentimental value. :P
+	//	@EventHandler(priority = EventPriority.HIGHEST)
+	//	public void onPlayerTeleport(PlayerTeleportEvent evt) {
+	//		Bukkit.getServer().getPluginManager().callEvent(new PlayerMoveEvent(evt.getPlayer(), evt.getFrom(), evt.getTo()));
+	//	}
+	//	
+	//	@EventHandler(priority = EventPriority.HIGHEST)
+	//	public void onPlayerPortal(PlayerPortalEvent evt) {
+	//		Bukkit.getServer().getPluginManager().callEvent(new PlayerMoveEvent(evt.getPlayer(), evt.getFrom(), evt.getTo()));
+	//	}
 
 	public String getLocation(Location l) {
 		return l.getX() + " | " + l.getY() + " | " + l.getZ();

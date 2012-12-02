@@ -364,6 +364,7 @@ public final class NBTOutputStream implements Closeable {
 				for(ItemStack is : isa) {
 					if(is != null) {
 						string.append(is.serialize() + "|");
+						System.out.print(is.serialize());
 					} else {
 						string.append("null|");
 					}

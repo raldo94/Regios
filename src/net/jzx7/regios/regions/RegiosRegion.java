@@ -8,23 +8,15 @@ import net.jzx7.regios.Data.ConfigurationData;
 import net.jzx7.regios.Data.Saveable;
 import net.jzx7.regios.GameMode.GameModeCacheManager;
 import net.jzx7.regios.Inventory.InventoryCacheManager;
-import net.jzx7.regios.Listeners.RegiosPlayerListener;
 import net.jzx7.regios.Permissions.PermChecks;
-import net.jzx7.regios.Permissions.PermissionsCacheManager;
-import net.jzx7.regios.Scheduler.HealthRegeneration;
 import net.jzx7.regios.Scheduler.LightningRunner;
 import net.jzx7.regios.Scheduler.LogRunner;
-import net.jzx7.regios.Spout.SpoutInterface;
-import net.jzx7.regios.Spout.SpoutRegion;
 import net.jzx7.regiosapi.regions.Region;
 import net.jzx7.regiosapi.data.MODE;
 import net.jzx7.regiosapi.events.RegionCreateEvent;
-import net.jzx7.regiosapi.events.RegionEnterEvent;
-import net.jzx7.regiosapi.events.RegionExitEvent;
 import net.jzx7.regiosapi.events.RegionLoadEvent;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,113 +30,78 @@ import couk.Adamki11s.Extras.Cryptography.ExtrasCryptography;
 public class RegiosRegion extends PermChecks implements Region {
 
 	protected static final RegionManager rm = new RegionManager();
-	
-	protected GameModeCacheManager gmcm = new GameModeCacheManager();
-	
-	protected InventoryCacheManager icm = new InventoryCacheManager();
 
 	protected static final Saveable saveable = new Saveable();
 
-	protected World world;
+	protected boolean _protection = false, _protectionPlace = false,
+			_protectionBreak = false, preventEntry = false,
+			preventExit = false, mobSpawns = true, monsterSpawns = true,
+			healthEnabled = true, pvp = true, doorsLocked = false,
+			chestsLocked = false, dispensersLocked = false,
+			preventInteraction = false, showPvpWarning = true,
+			passwordEnabled = false, showWelcomeMessage = true,
+			showLeaveMessage = true, showProtectionMessage = true,
+			showPreventEntryMessage = true, showPreventExitMessage = true,
+			fireProtection = false, fireSpread = true,
+			playCustomSoundUrl = false, permWipeOnEnter = false,
+			permWipeOnExit = false, wipeAndCacheOnEnter = false,
+			wipeAndCacheOnExit = false, forceCommand = false, blockForm = true,
+			forSale = false, useSpoutTexturePack = false,
+			spoutWelcomeEnabled = false, spoutLeaveEnabled = false,
+			explosionsEnabled = true, changeGameMode = false,
+			blockEndermanMod = false;
 
-	protected Location warp = null;
+	protected HashMap<String, Boolean> authentication = new HashMap<String, Boolean>(),
+			welcomeMessageSent = new HashMap<String, Boolean>(),
+			leaveMessageSent = new HashMap<String, Boolean>();
 
-	protected String[] customSoundUrl,
-	commandSet,
-	temporaryNodesCacheAdd,
-	temporaryNodesCacheRem,
-	permanentNodesCacheAdd,
-	permanentNodesCacheRemove,
-	permanentGroupAdd,
-	permanentGroupRemove,
-	temporaryGroupAdd,
-	temporaryGroupRemove,
-	subOwners;
+	protected String[] customSoundUrl, commandSet, temporaryNodesCacheAdd,
+			temporaryNodesCacheRem, permanentNodesCacheAdd,
+			permanentNodesCacheRemove, permanentGroupAdd, permanentGroupRemove,
+			temporaryGroupAdd, temporaryGroupRemove, subOwners;
 
-	protected ArrayList<String> exceptions = new ArrayList<String>()
-			, nodes = new ArrayList<String>();
-
-	protected ArrayList<Integer> items = new ArrayList<Integer>();
-
-	protected String welcomeMessage = ""
-			, leaveMessage = ""
-			, protectionMessage = ""
-			, preventEntryMessage = ""
-			, preventExitMessage = ""
-			, password = ""
-			, name = ""
-			, owner = ""
-			, spoutEntryMessage = ""
-			, spoutExitMessage = ""
-			, spoutTexturePack = "";
-
-	protected Material spoutEntryMaterial = Material.GRASS
-			, spoutExitMaterial = Material.DIRT;
-
-	protected boolean _protection = false
-			, _protectionPlace = false
-			, _protectionBreak = false
-			, preventEntry = false
-			, preventExit = false
-			, mobSpawns = true
-			, monsterSpawns = true
-			, healthEnabled = true
-			, pvp = true
-			, doorsLocked = false
-			, chestsLocked = false
-			, dispensersLocked = false
-			, preventInteraction = false
-			, showPvpWarning = true
-			, passwordEnabled = false
-			, showWelcomeMessage = true
-			, showLeaveMessage = true
-			, showProtectionMessage = true
-			, showPreventEntryMessage = true
-			, showPreventExitMessage = true
-			, fireProtection = false
-			, fireSpread = true
-			, playCustomSoundUrl = false
-			, permWipeOnEnter = false
-			, permWipeOnExit = false
-			, wipeAndCacheOnEnter = false
-			, wipeAndCacheOnExit = false
-			, forceCommand = false
-			, blockForm = true
-			, forSale = false
-			, useSpoutTexturePack = false
-			, spoutWelcomeEnabled = false
-			, spoutLeaveEnabled = false
-			, explosionsEnabled = true
-			, changeGameMode = false
-			, blockEndermanMod = false;
-
-	protected int LSPS = 0
-			, healthRegen = 0
-			, playerCap = 0
-			, salePrice = 0;
-
-	protected GameMode gameMode = GameMode.SURVIVAL;
-
-	protected double velocityWarp = 0;
-
-	protected MODE protectionMode = MODE.Whitelist
-			, preventEntryMode = MODE.Whitelist
-			, preventExitMode = MODE.Whitelist
-			, itemMode = MODE.Whitelist;
-
-	protected HashMap<String, Boolean> authentication = new HashMap<String, Boolean>()
-			, welcomeMessageSent = new HashMap<String, Boolean>()
-			, leaveMessageSent = new HashMap<String, Boolean>();
-
-	protected HashMap<String, Long> timeStamps = new HashMap<String, Long>();
-
-	protected ArrayList<String> playersInRegion = new ArrayList<String>();
-
-	protected HashMap<String, PlayerInventory> inventoryCache = new HashMap<String, PlayerInventory>();
+	protected ArrayList<String> exceptions = new ArrayList<String>(),
+			nodes = new ArrayList<String>();
 
 	protected ExtrasCryptography exCrypt = new ExtrasCryptography();
 
-	public RegiosRegion(String owner, String name, World world, Player p, boolean save) {
+	protected GameMode gameMode = GameMode.SURVIVAL;
+
+	protected GameModeCacheManager gmcm = new GameModeCacheManager();
+
+	protected InventoryCacheManager icm = new InventoryCacheManager();
+
+	protected HashMap<String, PlayerInventory> inventoryCache = new HashMap<String, PlayerInventory>();
+
+	protected ArrayList<Integer> items = new ArrayList<Integer>();
+
+	protected int LSPS = 0, healthRegen = 0, playerCap = 0, salePrice = 0;
+
+	protected ArrayList<String> playersInRegion = new ArrayList<String>();
+
+	protected MODE protectionMode = MODE.Whitelist,
+			preventEntryMode = MODE.Whitelist,
+			preventExitMode = MODE.Whitelist, itemMode = MODE.Whitelist;
+
+	protected Material spoutEntryMaterial = Material.GRASS,
+			spoutExitMaterial = Material.DIRT;
+
+	protected HashMap<String, Long> timeStamps = new HashMap<String, Long>();
+
+	protected double velocityWarp = 0;
+
+	protected Location warp = null;
+
+	protected String welcomeMessage = "", leaveMessage = "",
+			protectionMessage = "", preventEntryMessage = "",
+			preventExitMessage = "", password = "", name = "", owner = "",
+			spoutEntryMessage = "", spoutExitMessage = "",
+			spoutTexturePack = "";
+
+	protected World world;
+
+	public RegiosRegion(String owner, String name, World world, Player p,
+			boolean save) {
 		this.owner = owner;
 		this.name = name;
 
@@ -167,9 +124,12 @@ public class RegiosRegion extends PermChecks implements Region {
 		welcomeMessage = ConfigurationData.defaultWelcomeMessage.toString();
 
 		leaveMessage = ConfigurationData.defaultLeaveMessage.toString();
-		protectionMessage = (ConfigurationData.defaultProtectionMessage.toString());
-		preventEntryMessage = (ConfigurationData.defaultPreventEntryMessage.toString());
-		preventExitMessage = (ConfigurationData.defaultPreventExitMessage.toString());
+		protectionMessage = (ConfigurationData.defaultProtectionMessage
+				.toString());
+		preventEntryMessage = (ConfigurationData.defaultPreventEntryMessage
+				.toString());
+		preventExitMessage = (ConfigurationData.defaultPreventExitMessage
+				.toString());
 		if (ConfigurationData.passwordEnabled) {
 			passwordEnabled = true;
 			password = ConfigurationData.password;
@@ -237,22 +197,19 @@ public class RegiosRegion extends PermChecks implements Region {
 			LightningRunner.removeRegion(this);
 		}
 	}
-	
-	@Override
-	public void setBiome(Biome biome, Player p) {
-		//Placeholder for setBiome
-	}
-	
+
 	@Override
 	public void addException(String exception) {
 		exceptions.add(exception);
-		LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception '" + exception + "' added."));
+		LogRunner.addLogMessage(this, LogRunner.getPrefix(this)
+				+ (" Exception '" + exception + "' added."));
 	}
 
 	@Override
 	public void addExceptionNode(String node) {
 		nodes.add(node);
-		LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception node '" + node + "' added."));
+		LogRunner.addLogMessage(this, LogRunner.getPrefix(this)
+				+ (" Exception node '" + node + "' added."));
 	}
 
 	@Override
@@ -281,23 +238,13 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean canBypassProtection(Player p) {
-		return super.canBypassProtection(p, this);
-	}
-
-	@Override
-	public boolean canModify(Player p) {
-		return super.canModify(p, this);
-	}
-
-	@Override
 	public boolean canBuild(Player p) {
 		return super.canBypassProtection(p, this);
 	}
 
 	@Override
-	public boolean canPlaceItem(Player p, Material m) {
-		return super.canItemBePlaced(p, m, this);
+	public boolean canBypassProtection(Player p) {
+		return super.canBypassProtection(p, this);
 	}
 
 	@Override
@@ -311,47 +258,23 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public GameMode getGameMode() {
-		return gameMode;
-	}
-
-	@Override
-	public void setGameMode(GameMode gm) {
-		gameMode = gm;
-	}
-
-	@Override
-	public void setChangeGameMode(boolean val)
-	{
-		changeGameMode = val;
-	}
-
-	@Override
-	public boolean isChangeGameMode()
-	{
-		return changeGameMode;
-	}
-
-	@Override
-	public void setBlockEndermanMod(boolean val)
-	{
-		blockEndermanMod = val;
-	}
-
-	@Override
-	public boolean isBlockEndermanMod()
-	{
-		return blockEndermanMod;
-	}
-
-	@Override
 	public boolean canMobsSpawn() {
 		return mobSpawns;
 	}
 
 	@Override
+	public boolean canModify(Player p) {
+		return super.canModify(p, this);
+	}
+
+	@Override
 	public boolean canMonstersSpawn() {
 		return monsterSpawns;
+	}
+
+	@Override
+	public boolean canPlaceItem(Player p, Material m) {
+		return super.canItemBePlaced(p, m, this);
 	}
 
 	@Override
@@ -361,7 +284,8 @@ public class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public boolean getAuthentication(String password, Player p) {
-		if (exCrypt.compareHashes(exCrypt.computeSHA2_384BitHash(password), exCrypt.computeSHA2_384BitHash(this.password))) {
+		if (exCrypt.compareHashes(exCrypt.computeSHA2_384BitHash(password),
+				exCrypt.computeSHA2_384BitHash(this.password))) {
 			authentication.put(p.getName(), true);
 			return true;
 		} else {
@@ -372,7 +296,9 @@ public class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public File getBackupsDirectory() {
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + "Backups");
+		return new File("plugins" + File.separator + "Regios" + File.separator
+				+ "Database" + File.separator + name + File.separator
+				+ "Backups");
 	}
 
 	@Override
@@ -382,7 +308,8 @@ public class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public File getConfigFile() {
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + name
+		return new File("plugins" + File.separator + "Regios" + File.separator
+				+ "Database" + File.separator + name + File.separator + name
 				+ ".rz");
 	}
 
@@ -392,13 +319,16 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public File getDirectory(){
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name);
+	public File getDirectory() {
+		return new File("plugins" + File.separator + "Regios" + File.separator
+				+ "Database" + File.separator + name);
 	}
 
 	@Override
 	public File getExceptionDirectory() {
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + "Exceptions");
+		return new File("plugins" + File.separator + "Regios" + File.separator
+				+ "Database" + File.separator + name + File.separator
+				+ "Exceptions");
 	}
 
 	@Override
@@ -412,8 +342,21 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public GameMode getGameMode() {
+		return gameMode;
+	}
+
+	public GameModeCacheManager getGMCM() {
+		return gmcm;
+	}
+
+	@Override
 	public int getHealthRegen() {
 		return healthRegen;
+	}
+
+	public InventoryCacheManager getICM() {
+		return icm;
 	}
 
 	@Override
@@ -423,7 +366,8 @@ public class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public PlayerInventory getInventoryCache(Player p) {
-		return inventoryCache.containsKey(p.getName()) ? inventoryCache.get(p.getName()) : null;
+		return inventoryCache.containsKey(p.getName()) ? inventoryCache.get(p
+				.getName()) : null;
 	}
 
 	@Override
@@ -448,8 +392,9 @@ public class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public File getLogFile() {
-		return new File("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + "Logs" + File.separator
-				+ name + ".log");
+		return new File("plugins" + File.separator + "Regios" + File.separator
+				+ "Database" + File.separator + name + File.separator + "Logs"
+				+ File.separator + name + ".log");
 	}
 
 	@Override
@@ -478,18 +423,13 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public String[] getPermAddNodes() {
-		return permanentNodesCacheAdd;
-	}
-
-	@Override
-	public String[] getPermRemoveNodes() {
-		return permanentNodesCacheRemove;
-	}
-
-	@Override
 	public String[] getPermAddGroups() {
 		return permanentGroupAdd;
+	}
+
+	@Override
+	public String[] getPermAddNodes() {
+		return permanentNodesCacheAdd;
 	}
 
 	@Override
@@ -498,33 +438,8 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public String[] getTempAddGroups() {
-		return temporaryGroupAdd;
-	}
-
-	@Override
-	public String[] getTempRemoveGroups() {
-		return temporaryGroupRemove;
-	}
-
-	@Override
-	public void setPermAddGroups(String[] val) {
-		permanentGroupAdd = val;
-	}
-
-	@Override
-	public void setPermRemoveGroups(String[] val) {
-		permanentGroupRemove = val;
-	}
-
-	@Override
-	public void setTempAddGroups(String[] val) {
-		temporaryGroupAdd = val;
-	}
-
-	@Override
-	public void setTempRemoveGroups(String[] val) {
-		temporaryGroupRemove = val;
+	public String[] getPermRemoveNodes() {
+		return permanentNodesCacheRemove;
 	}
 
 	@Override
@@ -568,8 +483,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public File getRawConfigFile(){
-		return new File(("plugins" + File.separator + "Regios" + File.separator + "Database" + File.separator + name + File.separator + name + ".rz"));
+	public File getRawConfigFile() {
+		return new File(
+				("plugins" + File.separator + "Regios" + File.separator
+						+ "Database" + File.separator + name + File.separator
+						+ name + ".rz"));
 	}
 
 	@Override
@@ -608,6 +526,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public String[] getTempAddGroups() {
+		return temporaryGroupAdd;
+	}
+
+	@Override
 	public String[] getTempNodesCacheAdd() {
 		return temporaryNodesCacheAdd;
 	}
@@ -615,6 +538,16 @@ public class RegiosRegion extends PermChecks implements Region {
 	@Override
 	public String[] getTempNodesCacheRem() {
 		return temporaryNodesCacheRem;
+	}
+
+	@Override
+	public String[] getTempRemoveGroups() {
+		return temporaryGroupRemove;
+	}
+
+	@Override
+	public long getTimestamp(Player p) {
+		return timeStamps.get(p);
 	}
 
 	@Override
@@ -667,8 +600,23 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public boolean isBlockEndermanMod() {
+		return blockEndermanMod;
+	}
+
+	@Override
 	public boolean isBlockForm() {
 		return blockForm;
+	}
+
+	@Override
+	public boolean isChangeGameMode() {
+		return changeGameMode;
+	}
+
+	@Override
+	public boolean isExplosionsEnabled() {
+		return explosionsEnabled;
 	}
 
 	@Override
@@ -696,7 +644,8 @@ public class RegiosRegion extends PermChecks implements Region {
 		return healthEnabled;
 	}
 
-	private boolean isLeaveMessageSent(Player p) {
+	@Override
+	public boolean isLeaveMessageSent(Player p) {
 		if (!leaveMessageSent.containsKey(p.getName())) {
 			return false;
 		} else {
@@ -775,14 +724,6 @@ public class RegiosRegion extends PermChecks implements Region {
 		}
 	}
 
-	private boolean isSendable(Player p) {
-		boolean outcome = (timeStamps.containsKey(p.getName()) ? (System.currentTimeMillis() > timeStamps.get(p.getName()) + 5000) : true);
-		if (outcome) {
-			setTimestamp(p);
-		}
-		return outcome;
-	}
-
 	@Override
 	public boolean isShowLeaveMessage() {
 		return showLeaveMessage;
@@ -824,16 +765,12 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean isExplosionsEnabled() {
-		return explosionsEnabled;
-	}
-
-	@Override
 	public boolean isUseSpoutTexturePack() {
 		return useSpoutTexturePack;
 	}
 
-	private boolean isWelcomeMessageSent(Player p) {
+	@Override
+	public boolean isWelcomeMessageSent(Player p) {
 		if (!welcomeMessageSent.containsKey(p.getName())) {
 			return false;
 		} else {
@@ -852,112 +789,19 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public String liveFormat(String original, Player p) {
-		original = original.replaceAll("\\[", "");
-		original = original.replaceAll("\\]", "");
-		if (original.contains("PLAYER-COUNT")) {
-			original = original.replaceAll("PLAYER-COUNT", "" + getPlayersInRegion().size());
-		}
-		if (original.contains("BUILD-RIGHTS")) {
-			original = original.replaceAll("BUILD-RIGHTS", "" + canBypassProtection(p));
-		}
-		if (original.contains("PLAYER")) {
-			original = original.replaceAll("PLAYER", "" + p.getName());
-		}
-		if (original.contains("PLAYER-LIST")) {
-			StringBuilder builder = new StringBuilder();
-			builder.append("");
-			for (String play : playersInRegion) {
-				builder.append(ChatColor.WHITE).append(play).append(ChatColor.BLUE).append(", ");
-			}
-			original = original.replaceAll("PLAYER-LIST", "" + builder.toString());
-		}
-		return original;
-	}
-
-	@Override
-	public String colourFormat(String message) {
-		message = message.replaceAll("<BLACK>", "\u00A70");
-		message = message.replaceAll("<0>", "\u00A70");
-
-		message = message.replaceAll("<DBLUE>", "\u00A71");
-		message = message.replaceAll("<1>", "\u00A71");
-
-		message = message.replaceAll("<DGREEN>", "\u00A72");
-		message = message.replaceAll("<2>", "\u00A72");
-
-		message = message.replaceAll("<DTEAL>", "\u00A73");
-		message = message.replaceAll("<3>", "\u00A73");
-
-		message = message.replaceAll("<DRED>", "\u00A74");
-		message = message.replaceAll("<4>", "\u00A74");
-
-		message = message.replaceAll("<PURPLE>", "\u00A75");
-		message = message.replaceAll("<5>", "\u00A75");
-
-		message = message.replaceAll("<GOLD>", "\u00A76");
-		message = message.replaceAll("<6>", "\u00A76");
-
-		message = message.replaceAll("<GREY>", "\u00A77");
-		message = message.replaceAll("<7>", "\u00A77");
-
-		message = message.replaceAll("<DGREY>", "\u00A78");
-		message = message.replaceAll("<8>", "\u00A78");
-
-		message = message.replaceAll("<BLUE>", "\u00A79");
-		message = message.replaceAll("<9>", "\u00A79");
-
-		message = message.replaceAll("<BGREEN>", "\u00A7a");
-		message = message.replaceAll("<A>", "\u00A7a");
-
-		message = message.replaceAll("<TEAL>", "\u00A7b");
-		message = message.replaceAll("<B>", "\u00A7b");
-
-		message = message.replaceAll("<RED>", "\u00A7c");
-		message = message.replaceAll("<C>", "\u00A7c");
-
-		message = message.replaceAll("<PINK>", "\u00A7d");
-		message = message.replaceAll("<D>", "\u00A7d");
-
-		message = message.replaceAll("<YELLOW>", "\u00A7e");
-		message = message.replaceAll("<E>", "\u00A7e");
-
-		message = message.replaceAll("<WHITE>", "\u00A7f");
-		message = message.replaceAll("<F>", "\u00A7f");
-
-		message = message.replaceAll("\\[", "");
-		message = message.replaceAll("\\]", "");
-		message = message.replaceAll("OWNER", this.getOwner());
-		message = message.replaceAll("NAME", this.getName());
-
-		return message;
-	}
-
-	private void registerExitEvent(Player p) {
-		RegionExitEvent event = new RegionExitEvent("RegionExitEvent");
-		event.setProperties(p, this);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-	}
-
-
-	private void registerWelcomeEvent(Player p) {
-		RegionEnterEvent event = new RegionEnterEvent("RegionEnterEvent");
-		event.setProperties(p, this);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-	}
-
-	@Override
 	public void removeException(String exception) {
 		if (exceptions.contains(exception)) {
 			exceptions.remove(exception);
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception '" + exception + "' removed."));
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this)
+					+ (" Exception '" + exception + "' removed."));
 		}
 	}
 
 	@Override
 	public void removeExceptionNode(String node) {
 		if (nodes.contains(node)) {
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Exception node '" + node + "' removed."));
+			LogRunner.addLogMessage(this, LogRunner.getPrefix(this)
+					+ (" Exception node '" + node + "' removed."));
 			nodes.remove(node);
 		}
 	}
@@ -982,278 +826,6 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void sendBuildMessage(Player p) {
-		if (showProtectionMessage && isSendable(p)) {
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to build but did not have permissions."));
-			p.sendMessage(colourFormat(liveFormat(protectionMessage, p)));
-		}
-	}
-
-	@Override
-	public void sendLeaveMessage(Player p) {
-		if (!isLeaveMessageSent(p)) {
-			registerExitEvent(p);
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
-			if (RegiosPlayerListener.currentRegion.containsKey(p.getName())) {
-				RegiosPlayerListener.currentRegion.remove(p.getName());
-			}
-			leaveMessageSent.put(p.getName(), true);
-			welcomeMessageSent.remove(p.getName());
-			removePlayer(p);
-			if (HealthRegeneration.isRegenerator(p)) {
-				HealthRegeneration.removeRegenerator(p);
-			}
-			if (permWipeOnExit) {
-				if (!canBypassProtection(p)) {
-					icm.wipeInventory(p);
-				}
-			}
-			if (wipeAndCacheOnEnter) {
-				if (!canBypassProtection(p)) {
-					if (icm.doesCacheContain(p)) {
-						icm.restoreInventory(p);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon exit"));
-					}
-				}
-			}
-			if (wipeAndCacheOnExit) {
-				if (!canBypassProtection(p)) {
-					if (!icm.doesCacheContain(p)) {
-						icm.cacheInventory(p);
-						icm.wipeInventory(p);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory cached upon exit"));
-					}
-				}
-			}
-
-			if (changeGameMode) {
-				if (gmcm.doesCacheContain(p))
-				{
-					gmcm.restoreGameMode(p);
-				}
-			}
-
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' left region."));
-
-			try {
-				/*
-				 * Permission Nodes
-				 */
-				if (temporaryNodesCacheAdd != null) {
-					if (temporaryNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.unCacheAddNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add node caches wiped upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-				if (temporaryNodesCacheRem != null) {
-					if (temporaryNodesCacheRem.length > 0) {
-						PermissionsCacheManager.unCacheRemNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove node caches restored upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-				if (permanentNodesCacheRemove != null) {
-					if (permanentNodesCacheRemove.length > 0) {
-						PermissionsCacheManager.permRemoveNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes wiped upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-				/*
-				 * End Permission Nodes
-				 */
-				/*
-				 * Groups
-				 */
-				if (temporaryGroupAdd != null) {
-					if (temporaryNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.unCacheAddGroups(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add groups wiped upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-				if (temporaryGroupRemove != null) {
-					if (temporaryGroupRemove.length > 0) {
-						PermissionsCacheManager.unCacheRemoveGroups(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove groups restored upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-				if (permanentGroupRemove != null) {
-					if (permanentGroupRemove.length > 0) {
-						PermissionsCacheManager.permRemoveGroups(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent groups wiped upon region exit for player '" + p.getName() + "'"));
-					}
-				}
-				/*
-				 * End Groups
-				 */
-			} catch (Exception ex) {
-				// Fail silently if the operation is unsupported
-			}
-			if (showLeaveMessage) {
-				p.sendMessage(colourFormat(liveFormat(leaveMessage, p)));
-			}
-			if (SpoutInterface.doesPlayerHaveSpout(p)) {
-				if (spoutLeaveEnabled) {
-					SpoutRegion.sendLeaveMessage(p, this);
-				}
-				if (playCustomSoundUrl) {
-					SpoutRegion.stopMusicPlaying(p, this);
-				}
-				if (useSpoutTexturePack) {
-					SpoutRegion.resetTexturePack(p);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void sendPreventEntryMessage(Player p) {
-		if (showPreventEntryMessage && isSendable(p)) {
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to enter but did not have permissions."));
-			p.sendMessage(colourFormat(liveFormat(preventEntryMessage, p)));
-		}
-	}
-
-	@Override
-	public void sendPreventExitMessage(Player p) {
-		if (showPreventExitMessage && isSendable(p)) {
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' tried to leave but did not have permissions."));
-			p.sendMessage(colourFormat(liveFormat(preventExitMessage, p)));
-		}
-	}
-
-	@Override
-	public void sendWelcomeMessage(Player p) {
-		if (!isWelcomeMessageSent(p)) {
-			registerWelcomeEvent(p);
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' entered region."));
-			if (useSpoutTexturePack && SpoutInterface.doesPlayerHaveSpout(p)) {
-				SpoutRegion.forceTexturePack(p, this);
-			}
-			RegiosPlayerListener.currentRegion.put(p.getName(), this);
-			welcomeMessageSent.put(p.getName(), true);
-			leaveMessageSent.remove(p.getName());
-			addPlayer(p);
-			if (!HealthRegeneration.isRegenerator(p)) {
-				if (healthRegen < 0 && !canBypassProtection(p)) {
-					HealthRegeneration.addRegenerator(p, healthRegen);
-				} else if (healthRegen > 0) {
-					HealthRegeneration.addRegenerator(p, healthRegen);
-				}
-			}
-			if (permWipeOnEnter) {
-				if (!canBypassProtection(p)) {
-					icm.wipeInventory(p);
-				}
-			}
-			if (wipeAndCacheOnEnter) {
-				if (!canBypassProtection(p)) {
-					if (!icm.doesCacheContain(p)) {
-						icm.cacheInventory(p);
-						icm.wipeInventory(p);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory cached upon entry"));
-					}
-				}
-			}
-			if (wipeAndCacheOnExit) {
-				if (!canBypassProtection(p)) {
-					if (icm.doesCacheContain(p)) {
-						icm.restoreInventory(p);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' inventory restored upon entry"));
-					}
-				}
-			}
-			if (changeGameMode) {
-				if(!gmcm.doesCacheContain(p)) {
-					gmcm.cacheGameMode(p);
-					p.setGameMode(getGameMode());
-				}
-			}
-			LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player '" + p.getName() + "' entered region."));
-			if (forceCommand) {
-				if (commandSet != null) {
-					if (commandSet.length > 0) {
-						for (String s : commandSet) {
-							if (s.length() > 1) {
-								LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Player forced command '" + s + "' upon enter."));
-								p.performCommand(s.trim());
-							}
-						}
-					}
-				}
-			}
-			try {
-				/*
-				 * Permission Nodes
-				 */
-				if (temporaryNodesCacheAdd != null) {
-					if (temporaryNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.cacheAddNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add node caches added upon region enter for player '" + p.getName() + "'"));
-					}
-
-				}
-				if (temporaryNodesCacheRem != null) {
-					if (temporaryNodesCacheRem.length > 0) {
-						PermissionsCacheManager.cacheRemNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove node caches wiped upon region enter for player '" + p.getName() + "'"));
-					}
-
-				}
-				if (permanentNodesCacheAdd != null) {
-					if (permanentNodesCacheAdd.length > 0) {
-						PermissionsCacheManager.permAddNodes(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent nodes added upon region enter for player '" + p.getName() + "'"));
-					}
-				}
-				/*
-				 * End Permission Nodes
-				 */
-				/*
-				 * Groups
-				 */
-				if (temporaryGroupAdd != null) {
-					if (temporaryGroupAdd.length > 0) {
-						PermissionsCacheManager.cacheAddGroups(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary add groups added upon region enter for player '" + p.getName() + "'"));
-					}
-
-				}
-				if (temporaryGroupRemove != null) {
-					if (temporaryGroupRemove.length > 0) {
-						PermissionsCacheManager.cacheRemoveGroups(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Temporary remove groups wiped upon region enter for player '" + p.getName() + "'"));
-					}
-
-				}
-				if (permanentGroupAdd != null) {
-					if (permanentGroupAdd.length > 0) {
-						PermissionsCacheManager.permAddGroups(p, this);
-						LogRunner.addLogMessage(this, LogRunner.getPrefix(this) + (" Permanent groups added upon region enter for player '" + p.getName() + "'"));
-					}
-				}
-				/*
-				 * End Groups
-				 */
-			} catch (Exception ex) {
-				// Fail silently if the operation is unsupported
-			}
-			if (showWelcomeMessage) {
-				p.sendMessage(colourFormat(liveFormat(welcomeMessage, p)));
-			}
-			if (SpoutInterface.doesPlayerHaveSpout(p)) {
-				if (spoutWelcomeEnabled) {
-					SpoutRegion.sendWelcomeMessage(p, this);
-				}
-				if (playCustomSoundUrl) {
-					SpoutRegion.playToPlayerMusicFromUrl(p, this);
-				}
-				if (useSpoutTexturePack) {
-					SpoutRegion.forceTexturePack(p, this);
-				}
-			}
-		}
-	}
-
-	@Override
 	public void set_protection(boolean _protection) {
 		this._protection = _protection;
 	}
@@ -1274,8 +846,23 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public void setBiome(Biome biome, Player p) {
+		// Placeholder for setBiome set inheriting classes for implementation.
+	}
+
+	@Override
+	public void setBlockEndermanMod(boolean val) {
+		blockEndermanMod = val;
+	}
+
+	@Override
 	public void setBlockForm(boolean blockForm) {
 		this.blockForm = blockForm;
+	}
+
+	@Override
+	public void setChangeGameMode(boolean val) {
+		changeGameMode = val;
 	}
 
 	@Override
@@ -1294,6 +881,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public void setDispensersLocked(boolean dispensersLocked) {
+		this.dispensersLocked = dispensersLocked;
+	}
+
+	@Override
 	public void setDoorsLocked(boolean doorsLocked) {
 		this.doorsLocked = doorsLocked;
 	}
@@ -1301,6 +893,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	@Override
 	public void setExceptions(ArrayList<String> exceptions) {
 		this.exceptions = exceptions;
+	}
+
+	@Override
+	public void setExplosionsEnabled(boolean explosionsEnabled) {
+		this.explosionsEnabled = explosionsEnabled;
 	}
 
 	@Override
@@ -1324,6 +921,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public void setGameMode(GameMode gm) {
+		gameMode = gm;
+	}
+
+	@Override
 	public void setHealthEnabled(boolean healthEnabled) {
 		this.healthEnabled = healthEnabled;
 	}
@@ -1334,7 +936,8 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void setInventoryCache(HashMap<String, PlayerInventory> inventoryCache) {
+	public void setInventoryCache(
+			HashMap<String, PlayerInventory> inventoryCache) {
 		this.inventoryCache = inventoryCache;
 	}
 
@@ -1399,6 +1002,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public void setPermAddGroups(String[] val) {
+		permanentGroupAdd = val;
+	}
+
+	@Override
 	public void setPermanentNodesCacheAdd(String[] permanentNodesCacheAdd) {
 		this.permanentNodesCacheAdd = permanentNodesCacheAdd;
 	}
@@ -1406,6 +1014,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	@Override
 	public void setPermanentNodesCacheRemove(String[] permanentNodesCacheRemove) {
 		this.permanentNodesCacheRemove = permanentNodesCacheRemove;
+	}
+
+	@Override
+	public void setPermRemoveGroups(String[] val) {
+		permanentGroupRemove = val;
 	}
 
 	@Override
@@ -1559,6 +1172,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public void setTempAddGroups(String[] val) {
+		temporaryGroupAdd = val;
+	}
+
+	@Override
 	public void setTempNodesCacheAdd(String[] temporaryNodesCacheAdd) {
 		this.temporaryNodesCacheAdd = temporaryNodesCacheAdd;
 	}
@@ -1569,6 +1187,11 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
+	public void setTempRemoveGroups(String[] val) {
+		temporaryGroupRemove = val;
+	}
+
+	@Override
 	public void setTimestamp(Player p) {
 		timeStamps.put(p.getName(), System.currentTimeMillis());
 	}
@@ -1576,11 +1199,6 @@ public class RegiosRegion extends PermChecks implements Region {
 	@Override
 	public void setTimeStamps(HashMap<String, Long> timeStamps) {
 		this.timeStamps = timeStamps;
-	}
-
-	@Override
-	public void setExplosionsEnabled(boolean explosionsEnabled) {
-		this.explosionsEnabled = explosionsEnabled;
 	}
 
 	@Override
@@ -1604,7 +1222,8 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void setWelcomeMessageSent(HashMap<String, Boolean> welcomeMessageSent) {
+	public void setWelcomeMessageSent(
+			HashMap<String, Boolean> welcomeMessageSent) {
 		this.welcomeMessageSent = welcomeMessageSent;
 	}
 
@@ -1621,10 +1240,5 @@ public class RegiosRegion extends PermChecks implements Region {
 	@Override
 	public void setWorld(World world) {
 		this.world = world;
-	}
-
-	@Override
-	public void setDispensersLocked(boolean dispensersLocked) {
-		this.dispensersLocked = dispensersLocked;
 	}
 }

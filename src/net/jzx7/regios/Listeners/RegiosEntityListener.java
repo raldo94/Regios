@@ -199,7 +199,7 @@ public class RegiosEntityListener implements Listener {
 		if (r.is_protectionBreak()) {
 			if (!r.canBypassProtection(cause)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Hanging break was prevented."));
-				r.sendBuildMessage(cause);
+				rm.sendBuildMessage(cause, r);
 				evt.setCancelled(true);
 				return;
 			}
@@ -232,7 +232,7 @@ public class RegiosEntityListener implements Listener {
 		if (r.is_protectionPlace()) {
 			if (!r.canBypassProtection(cause)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Hanging place was prevented."));
-				r.sendBuildMessage(cause);
+				rm.sendBuildMessage(cause, r);
 				evt.setCancelled(true);
 				return;
 			}
@@ -255,7 +255,7 @@ public class RegiosEntityListener implements Listener {
 						for (int y = -6; y <= 6; y++) {
 							for (int z = -6; z <= 6; z++) {
 								Location l1 = new Location(l.getWorld(), l.getX(), l.getY(), l.getZ());
-								if (extReg.isInsidePolygon(l1.add(x, y, z),pr.get2DPolygon(), pr.getMinY(), pr.getMaxY())) {
+								if (extReg.isInsidePolygon(l1.add(x, y, z),pr.get2DPolygon(), pr.getMinY(), pr.getMaxY()) && (l.getWorld().getName() == pr.getWorld().getName())) {
 									currentRegionSet.add(reg);
 									break Outerloop;
 								}
@@ -269,7 +269,7 @@ public class RegiosEntityListener implements Listener {
 						for (int y = -6; y <= 6; y++) {
 							for (int z = -8; z <= 6; z++) {
 								Location l1 = new Location(l.getWorld(), l.getX(), l.getY(), l.getZ());
-								if (extReg.isInsideCuboid(l1.add(x, y, z), cr.getL1(), cr.getL2())) {
+								if (extReg.isInsideCuboid(l1.add(x, y, z), cr.getL1(), cr.getL2()) && (l.getWorld().getName() == cr.getWorld().getName())) {
 									currentRegionSet.add(reg);
 									break Outerloop;
 								}

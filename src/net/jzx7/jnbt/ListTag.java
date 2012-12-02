@@ -64,7 +64,7 @@ public final class ListTag extends Tag {
      * @param value
      *            The value.
      */
-    public ListTag(String name, Class<? extends Tag> type, List<Tag> value) {
+    public ListTag(String name, Class<? extends Tag> type, List<? extends Tag> value) {
         super(name);
         this.type = type;
         this.value = Collections.unmodifiableList(value);

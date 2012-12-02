@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import net.jzx7.regios.RegiosPlugin;
+import net.jzx7.regios.regions.RegionManager;
 import net.jzx7.regiosapi.regions.Region;
 
 import org.bukkit.Bukkit;
@@ -17,6 +18,8 @@ import org.getspout.spoutapi.sound.SoundManager;
 
 public class SpoutRegion {
 
+	protected static RegionManager rm = new RegionManager();
+	
 	public static HashMap<String, ArrayList<UUID>> widgetBindings = new HashMap<String, ArrayList<UUID>>();
 	public static HashMap<String, String> lastSong = new HashMap<String, String>();
 
@@ -32,7 +35,7 @@ public class SpoutRegion {
 
 	public static void sendWelcomeMessage(Player p, Region r) {
 		SpoutPlayer sp = (SpoutPlayer) p;
-		String msg = r.liveFormat(r.getSpoutWelcomeMessage(), p);
+		String msg = rm.liveFormat(r.getSpoutWelcomeMessage(), p, r);
 		if (msg.length() > 26) {
 			msg = msg.substring(0, 23);
 			msg += "...";
@@ -42,7 +45,7 @@ public class SpoutRegion {
 
 	public static void sendLeaveMessage(Player p, Region r) {
 		SpoutPlayer sp = (SpoutPlayer) p;
-		String msg = r.liveFormat(r.getSpoutLeaveMessage(), p);
+		String msg = rm.liveFormat(r.getSpoutLeaveMessage(), p, r);
 		if (msg.length() > 26) {
 			msg = msg.substring(0, 23);
 			msg += "...";

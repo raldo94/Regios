@@ -45,42 +45,46 @@ import org.bukkit.inventory.ItemStack;
  */
 public final class ListItemStackArrayTag extends Tag {
 
-    /**
-     * The value.
-     */
-    private final List<ItemStack[]> value;
+	/**
+	 * The value.
+	 */
+	private final List<ItemStack[]> value;
 
-    /**
-     * Creates the tag.
-     * 
-     * @param name
-     *            The name.
-     * @param value
-     *            The value.
-     */
-    public ListItemStackArrayTag(String name, List<ItemStack[]> value) {
-        super(name);
-        this.value = value;
-    }
+	/**
+	 * Creates the tag.
+	 * 
+	 * @param name
+	 *            The name.
+	 * @param value
+	 *            The value.
+	 */
+	public ListItemStackArrayTag(String name, List<ItemStack[]> value) {
+		super(name);
+		this.value = value;
+	}
 
-    @Override
-    public List<ItemStack[]> getValue() {
-        return value;
-    }
+	@Override
+	public List<ItemStack[]> getValue() {
+		return value;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder items = new StringBuilder();
-        for (ItemStack[] b : value) {
-            String listStacks = b.toString();
-            items.append(listStacks).append(" ");
-        }
-        String name = getName();
-        String append = "";
-        if (name != null && !name.equals("")) {
-            append = "(\"" + this.getName() + "\")";
-        }
-        return "TAG_ListItemStack_Array" + append + ": " + items.toString();
-    }
+	@Override
+	public String toString() {
+		StringBuilder items = new StringBuilder();
+		for (ItemStack[] b : value) {
+			if (b != null) {
+				String listStacks = b.toString();
+				items.append(listStacks).append(" ");
+			} else {
+				items.append("null").append(" ");
+			}
+		}
+		String name = getName();
+		String append = "";
+		if (name != null && !name.equals("")) {
+			append = "(\"" + this.getName() + "\")";
+		}
+		return "TAG_ListItemStack_Array" + append + ": " + items.toString();
+	}
 
 }

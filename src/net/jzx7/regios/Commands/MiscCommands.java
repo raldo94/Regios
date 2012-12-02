@@ -215,12 +215,12 @@ public class MiscCommands extends PermissionsCore {
 		for (Region reg : rm.getRegions()) {
 			if (reg instanceof CuboidRegion) {
 				CuboidRegion cr = (CuboidRegion)reg;
-				if (extReg.isInsideCuboid(l, cr.getL1(), cr.getL2())) {
+				if (extReg.isInsideCuboid(l, cr.getL1(), cr.getL2())  && (p.getWorld().getName() == cr.getWorld().getName())) {
 					currentRegionSet.add(reg);
 				}
 			} else if (reg instanceof PolyRegion) {
 				PolyRegion pr = (PolyRegion) reg;
-				if (extReg.isInsidePolygon(l, pr.get2DPolygon(), pr.getMinY(), pr.getMaxY())) {
+				if (extReg.isInsidePolygon(l, pr.get2DPolygon(), pr.getMinY(), pr.getMaxY())  && (p.getWorld().getName() == pr.getWorld().getName())) {
 					currentRegionSet.add(reg);
 				}
 			}

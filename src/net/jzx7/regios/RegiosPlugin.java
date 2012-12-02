@@ -7,9 +7,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
 
+import net.jzx7.Metrics.Metrics;
+import net.jzx7.Metrics.Metrics.Graph;
 import net.jzx7.regios.Commands.CommandCore;
-import net.jzx7.regios.Commands.CreationCommands;
 import net.jzx7.regios.Data.ConfigurationData;
 import net.jzx7.regios.Data.CreationCore;
 import net.jzx7.regios.Economy.EconomyCore;
@@ -31,6 +33,8 @@ import net.jzx7.regiosapi.RegiosAPI;
 import net.jzx7.regiosapi.exceptions.FileExistanceException;
 import net.jzx7.regiosapi.exceptions.InvalidNBTFormat;
 import net.jzx7.regiosapi.exceptions.RegionExistanceException;
+import net.jzx7.regiosapi.regions.CuboidRegion;
+import net.jzx7.regiosapi.regions.PolyRegion;
 import net.jzx7.regiosapi.regions.Region;
 import net.jzx7.regiosapi.worlds.RegiosWorld;
 
@@ -82,7 +86,7 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 		version = this.getDescription().getVersion();
 		authors = this.getDescription().getAuthors();
 		PluginManager pm = this.getServer().getPluginManager();
-
+		
 		Plugin p = pm.getPlugin("Spout");
 		if(p == null){
 			log.info("[Regios] Spout not detected. No Spout support.");
@@ -151,6 +155,46 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 
 		log.info(prefix + " Regios version " + version + " enabled successfully!");
 		log.info(prefix + " Regios Developed by "+ authors.toString() + ".");
+		
+		try {
+		    Metrics metrics = new Metrics(this);
+		    
+		    int aCount = 0;
+		    int bCount = 0;
+		    
+		    Graph graph = metrics.createGraph("Region Count by Type");
+		    
+		    for (Region r : getRegions()) {
+		    	if (r instanceof CuboidRegion) {
+		    		aCount++;
+		    	} else if (r instanceof PolyRegion) {
+		    		bCount++;
+		    	}
+		    }
+		    
+		    final int crCount = aCount;
+		    final int prCount = bCount;
+		    
+		    graph.addPlotter(new Metrics.Plotter("Cuboid Regions") {
+				
+				@Override
+				public int getValue() {
+					return crCount;
+				}
+			});
+		    
+		    graph.addPlotter(new Metrics.Plotter("Polygonal Regions") {
+				
+				@Override
+				public int getValue() {
+					return prCount;
+				}
+			});
+		    
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit the stats :-(
+		}
 
 	}
 
@@ -241,14 +285,14 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 	}
 
 	@Override
-	public void backupRegion(Region r, String backupName) {
-		RBF_Core.rbf_save.startSave(r, null, null, backupName, null, false);
+	public void backupRegion(Region r, String backupName, Player p) {
+		RBF_Core.backup.startSave(r, backupName, p);
 	}
 
 	@Override
-	public boolean loadBackup(Region r, String backupName) throws RegionExistanceException, FileExistanceException, InvalidNBTFormat {
+	public boolean loadBackup(Region r, String backupName, Player p) throws RegionExistanceException, FileExistanceException, InvalidNBTFormat {
 		try {
-			RBF_Core.rbf_load.loadRegion(r, backupName, null);
+			RBF_Core.backup.loadBackup(r, backupName, p);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -257,22 +301,46 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 	}
 
 	@Override
-	public void saveBlueprint(String name, Location l1, Location l2) {
-		CreationCommands.createBlueprint(name, l1, l2);
+	public void saveBlueprint(String name, Location l1, Location l2, Player p) {
+		RBF_Core.blueprint.startSave(l1, l2, name, p);
 	}
 
 	@Override
-	public boolean loadBlueprint(String name, Location pasteLocation) {
+	public boolean loadBlueprint(String name, Player p, Location pasteLocation) {
 		File f = new File("plugins" + File.separator + "Regios" + File.separator + "Blueprints" + File.separator + name + ".blp");
 		if (!f.exists()) {
 			System.out.println("[Regios] A Blueprint file with the name " + name + " does not exist!");
 			return false;
 		}
 		try {
-			RBF_Core.rbf_load_share.loadSharedRegion(name, null, pasteLocation);
+			RBF_Core.blueprint.loadBlueprint(name, p, pasteLocation);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public void saveSchematic(String name, Location l1, Location l2, Player p) {
+		RBF_Core.schematic.startSave(l1, l2, name, p);
+	}
+
+	@Override
+	public boolean loadSchematic(String name, Player p, Location pasteLocation) {
+		File f = new File("plugins" + File.separator + "Regios" + File.separator + "Schematics" + File.separator + name + ".schematic");
+		if (!f.exists()) {
+			System.out.println("[Regios] A Schematic file with the name " + name + " does not exist!");
+			return false;
+		}
+		try {
+			RBF_Core.schematic.loadSchematic(name, p, pasteLocation);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} catch (DataFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return true;
 	}

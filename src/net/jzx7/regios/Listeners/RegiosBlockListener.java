@@ -108,7 +108,7 @@ public class RegiosBlockListener implements Listener {
 							if (!r.canBypassProtection(p)) {
 								LogRunner.addLogMessage(r, LogRunner.getPrefix(r)
 										+ (" Player '" + p.getName() + "' tried to place " + evt.getBlock().getType().toString() + " but was prevented."));
-								r.sendBuildMessage(p);
+								rm.sendBuildMessage(p, r);
 								evt.setCancelled(true);
 								return;
 							}
@@ -305,7 +305,7 @@ public class RegiosBlockListener implements Listener {
 					return;
 				} else {
 					evt.setCancelled(true);
-					r.sendBuildMessage(p);
+					rm.sendBuildMessage(p, r);
 					return;
 				}
 			}
@@ -325,7 +325,7 @@ public class RegiosBlockListener implements Listener {
 			if (r.is_protectionPlace()) {
 				if (!r.canBypassProtection(p)) {
 					evt.setCancelled(true);
-					r.sendBuildMessage(p);
+					rm.sendBuildMessage(p, r);
 					return;
 				}
 			}
@@ -388,7 +388,7 @@ public class RegiosBlockListener implements Listener {
 			if (r.is_protectionBreak()) {
 				if (!r.canBypassProtection(p)) {
 					evt.setCancelled(true);
-					r.sendBuildMessage(p);
+					rm.sendBuildMessage(p, r);
 					return;
 				}
 			}
@@ -453,13 +453,15 @@ public class RegiosBlockListener implements Listener {
 				if (r != null)
 				{
 					if (r instanceof CuboidRegion) {
-						if(extReg.isInsideCuboid(evt.getBlock().getLocation(), ((CuboidRegion) r).getL1(), ((CuboidRegion) r).getL2()))
+						if(extReg.isInsideCuboid(evt.getBlock().getLocation(), ((CuboidRegion) r).getL1(), ((CuboidRegion) r).getL2()) && (b.getWorld().getName() == r.getWorld().getName()))
 						{
 							return;
 						}
 					} else if (r instanceof PolyRegion) {
 						PolyRegion py = (PolyRegion) r;
-						extReg.isInsidePolygon(evt.getBlock().getLocation(), py.get2DPolygon(), py.getMinY(), py.getMaxY());
+						if(extReg.isInsidePolygon(evt.getBlock().getLocation(), py.get2DPolygon(), py.getMinY(), py.getMaxY()) && (b.getWorld().getName() == r.getWorld().getName())) {
+							return;
+						}
 					}
 					if(r.isProtected() || r.is_protectionBreak() || r.is_protectionPlace())
 					{
@@ -483,13 +485,15 @@ public class RegiosBlockListener implements Listener {
 						if (r != null)
 						{
 							if (r instanceof CuboidRegion) {
-								if(extReg.isInsideCuboid(evt.getBlock().getLocation(), ((CuboidRegion) r).getL1(), ((CuboidRegion) r).getL2()))
+								if(extReg.isInsideCuboid(evt.getBlock().getLocation(), ((CuboidRegion) r).getL1(), ((CuboidRegion) r).getL2()) && (l.getWorld().getName() == r.getWorld().getName()))
 								{
 									return;
 								}
 							} else if (r instanceof PolyRegion) {
 								PolyRegion py = (PolyRegion) r;
-								extReg.isInsidePolygon(evt.getBlock().getLocation(), py.get2DPolygon(), py.getMinY(), py.getMaxY());
+								if(extReg.isInsidePolygon(evt.getBlock().getLocation(), py.get2DPolygon(), py.getMinY(), py.getMaxY()) && (l.getWorld().getName() == r.getWorld().getName())) {
+									return;
+								}
 							}
 							if(r.isProtected() || r.is_protectionBreak() || r.is_protectionPlace())
 							{

@@ -49,6 +49,21 @@ public class ModificationCommands extends PermissionsCore {
 		}
 	}
 
+	public void shift(Player p, String[] args) {
+		if (doesHaveNode(p, "regios.modify.shift")) {
+			if (args.length == 4) {
+				setShift(rm.getRegion(args[1]), args[1], args [3], args[2], p);
+			} else {
+				p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+				p.sendMessage("Proper usage: /regios shift north/south/east/west/up/down <region> [value]");
+				return;
+			}
+		} else {
+			sendInvalidPerms(p);
+			return;
+		}
+	}
+
 	public void delete(Player p, String[] args) {
 		if (doesHaveNode(p, "regios.data.delete")) {
 			if (args.length == 2) {
@@ -103,7 +118,7 @@ public class ModificationCommands extends PermissionsCore {
 		try {
 			val = Integer.parseInt(input);
 		} catch (Exception bfe) {
-			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be an integer!");
+			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd parameter must be an integer!");
 			return;
 		}
 		if (r == null) {
@@ -116,7 +131,7 @@ public class ModificationCommands extends PermissionsCore {
 			}
 
 			if (rm.expandRegion(r, val, direction, p)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + region + ChatColor.GREEN + " expanded up by : " + ChatColor.BLUE + val);
+				p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + region + ChatColor.GREEN + " expanded " + direction + " by : " + ChatColor.BLUE + val);
 			}
 		}
 	}
@@ -126,7 +141,7 @@ public class ModificationCommands extends PermissionsCore {
 		try {
 			val = Integer.parseInt(input);
 		} catch (Exception bfe) {
-			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be an integer!");
+			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd parameter must be an integer!");
 			return;
 		}
 		if (r == null) {
@@ -138,7 +153,29 @@ public class ModificationCommands extends PermissionsCore {
 				return;
 			}
 			if (rm.shrinkRegion(r, val, direction, p)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + region + ChatColor.GREEN + " shrunk up by : " + ChatColor.BLUE + val);
+				p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + region + ChatColor.GREEN + " shrunk " + direction + " by : " + ChatColor.BLUE + val);
+			}
+		}
+	}
+
+	private void setShift(Region r, String region, String input, String direction, Player p) {
+		int val;
+		try {
+			val = Integer.parseInt(input);
+		} catch (Exception bfe) {
+			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd parameter must be an integer!");
+			return;
+		}
+		if (r == null) {
+			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			return;
+		} else {
+			if (!r.canModify(p)) {
+				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				return;
+			}
+			if (rm.shiftRegion(r, val, direction, p)) {
+				p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + region + ChatColor.GREEN + " shifted " + direction + " by : " + ChatColor.BLUE + val);
 			}
 		}
 	}

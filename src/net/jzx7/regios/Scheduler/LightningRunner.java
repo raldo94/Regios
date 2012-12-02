@@ -118,7 +118,7 @@ public class LightningRunner {
 
 			strike = new Location(world, xStrike, yStrike, zStrike, 0, 0);
 			if (r instanceof PolyRegion) {
-				if (extReg.isInsidePolygon(strike, ((PolyRegion) r).get2DPolygon(), ((PolyRegion) r).getMinY(), ((PolyRegion) r).getMaxY())) {
+				if (extReg.isInsidePolygon(strike, ((PolyRegion) r).get2DPolygon(), ((PolyRegion) r).getMinY(), ((PolyRegion) r).getMaxY())  && (strike.getWorld().getName() == r.getWorld().getName())) {
 					return strike;
 				}
 			} else if (r instanceof CuboidRegion) {

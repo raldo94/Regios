@@ -1,6 +1,6 @@
 name: Regios
 main: net.jzx7.regios.RegiosPlugin
-version: 5.9.3
+version: 5.9.5
 authors: [Adamki11s, johnnyzerox7]
 commands:
   regios:

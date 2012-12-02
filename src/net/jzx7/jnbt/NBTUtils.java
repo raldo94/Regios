@@ -1,5 +1,7 @@
 package net.jzx7.jnbt;
 
+import java.util.Map;
+
 
 /*
  * JNBT License
@@ -173,6 +175,24 @@ public final class NBTUtils {
         }
     }
 
+    /**
+     * Get child tag of a NBT structure.
+     *
+     * @param items
+     * @param key
+     * @param expected
+     * @return child tag
+     */
+    public static <T extends Tag> T getChildTag(Map<String,Tag> items, String key,
+            Class<T> expected) {
+        if (!items.containsKey(key)) {
+        }
+        Tag tag = items.get(key);
+        if (!expected.isInstance(tag)) {
+        }
+        return expected.cast(tag);
+    }
+    
     /**
      * Default private constructor.
      */

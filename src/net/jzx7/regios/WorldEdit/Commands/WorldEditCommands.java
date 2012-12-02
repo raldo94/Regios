@@ -151,9 +151,67 @@ public class WorldEditCommands extends PermissionsCore {
 				zPoints[i] = bv.getBlockZ();
 				i++;
 			}
-			RBF_Core.rbf_save.startSave(null, xPoints, zPoints, nPoints, sel.getNativeMinimumPoint().getBlockY(), sel.getNativeMaximumPoint().getBlockY(), name, p, true);
+			RBF_Core.blueprint.startSave(xPoints, zPoints, nPoints, sel.getNativeMinimumPoint().getBlockY(), sel.getNativeMaximumPoint().getBlockY(), name, p, true);
 		} else if (sel instanceof CuboidSelection) {
-			RBF_Core.rbf_save.startSave(null, sel.getMinimumPoint(), sel.getMaximumPoint(), name, p, true);
+			RBF_Core.blueprint.startSave(sel.getMinimumPoint(), sel.getMaximumPoint(), name, p);
+		} else {
+			try {
+				throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+			} catch (CommandException e) {
+				p.sendMessage(e.getMessage());
+				return;
+			}
+		}
+	}
+
+	public void createSchematicWE(Player p, String name) {
+		StringBuilder invalidName = new StringBuilder();
+		boolean integrity = true;
+		for (char ch : name.toCharArray()) {
+			boolean valid = true;
+			for (char inv : invalidModifiers) {
+				if (ch == inv) {
+					valid = false;
+					integrity = false;
+				}
+			}
+			if (!valid) {
+				invalidName.append(ChatColor.RED).append(ch);
+			} else {
+				invalidName.append(ChatColor.GREEN).append(ch);
+			}
+		}
+
+		if (!integrity) {
+			p.sendMessage(ChatColor.RED + "[Regios] Name contained  invalid characters : " + invalidName.toString());
+			return;
+		}
+
+		WorldEditPlugin worldEdit = null;
+		try {
+			worldEdit = WorldEditInterface.getWorldEdit();
+		} catch (CommandException e) {
+			p.sendMessage(e.getMessage());
+			return;
+		}
+
+		// Attempt to get the player's selection from WorldEdit
+		Selection sel = worldEdit.getSelection(p);
+
+		if(sel == null)
+		{
+			try {
+				throw new CommandException("Select a region with WorldEdit first.");
+			} catch (CommandException e) {
+				p.sendMessage(e.getMessage());
+				return;
+			}
+		}
+
+		if (sel instanceof Polygonal2DSelection) {
+			p.sendMessage("Sorry, schematics don't support non-cuboid regions!");
+		} else if (sel instanceof CuboidSelection) {
+			RBF_Core.schematic.startSave(sel.getMinimumPoint(), sel.getMaximumPoint(), name, p);
 		} else {
 			try {
 				throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");

@@ -290,6 +290,10 @@ public class LoaderCore {
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Snowman", true)){ rw.addCreatureSpawn(EntityType.SNOWMAN); }
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.IronGolem", true)){ rw.addCreatureSpawn(EntityType.IRON_GOLEM); }
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Ocelot", true)){ rw.addCreatureSpawn(EntityType.OCELOT); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Bat", true)){ rw.addCreatureSpawn(EntityType.BAT); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Wither", true)){ rw.addCreatureSpawn(EntityType.WITHER); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.WitherSkull", true)){ rw.addCreatureSpawn(EntityType.WITHER_SKULL); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Witch", true)){ rw.addCreatureSpawn(EntityType.WITCH); }
 		}
 	}
 

@@ -22,9 +22,10 @@ public class VersionPatcher {
 	static final File patch5021F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.21.rv");
 	static final File patch5051F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.51.rv");
 	static final File patch590F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.9.0.rv");
+	static final File patch595F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.9.5.rv");
 
 	public static void runPatch(String version) throws IOException {
-		if (version.equalsIgnoreCase("5.9.3")) {
+		if (version.equalsIgnoreCase("5.9.5")) {
 			if (!patch4057F.exists()) {
 				patch4057(version);
 				patch4057F.createNewFile();
@@ -48,6 +49,10 @@ public class VersionPatcher {
 			if (!patch590F.exists()) {
 				patch590(version);
 				patch590F.createNewFile();
+			}
+			if (!patch595F.exists()) {
+				patch595(version);
+				patch595F.createNewFile();
 			}
 		}
 	}
@@ -217,13 +222,11 @@ public class VersionPatcher {
 			boolean tnt = wc.getBoolean(w.getName().substring(0, pos) + ".Protection.TNTEnabled", true);
 			boolean portal = wc.getBoolean(w.getName().substring(0, pos) + ".Protection.DragonCreatesPortal", true);
 			wc = YamlConfiguration.loadConfiguration(w);
-			if (tnt) {
-				wc.set(w.getName().substring(0, pos) + ".Protection.ExplosionsEnabled", tnt);
-				wc.set(w.getName().substring(0, pos) + ".Protection.DragonCreatesPortal", portal);
-				wc.set(w.getName().substring(0, pos) + ".Mobs.Creeper.DoesExplode", null);
-				wc.set(w.getName().substring(0, pos) + ".Mobs.Creeper", null);
-				wc.set(w.getName().substring(0, pos) + ".Protection.TNTEnabled", null);
-			}
+			wc.set(w.getName().substring(0, pos) + ".Protection.ExplosionsEnabled", tnt);
+			wc.set(w.getName().substring(0, pos) + ".Protection.DragonCreatesPortal", portal);
+			wc.set(w.getName().substring(0, pos) + ".Mobs.Creeper.DoesExplode", null);
+			wc.set(w.getName().substring(0, pos) + ".Mobs.Creeper", null);
+			wc.set(w.getName().substring(0, pos) + ".Protection.TNTEnabled", null);
 			try {
 				wc.save(w);
 			} catch (IOException e) {
@@ -234,15 +237,15 @@ public class VersionPatcher {
 		outstream.println("[Regios][Patch] Modifying DefaultRegion file...");
 		File dr = new File(config_root + File.separator + "DefaultRegion.config");
 		FileConfiguration drc = YamlConfiguration.loadConfiguration(dr);
-		boolean tnt = drc.getBoolean("DefaultSettings.General.Protection.TNTEnabled", true);
-		drc.set("DefaultSettings.General.Protection.ExplosionsEnabled", tnt);
-		drc.set("DefaultSettings.General.Protection.TNTEnabled", null);
+		boolean tnt = drc.getBoolean("DefaultSettings.Protection.TNTEnabled", true);
+		drc.set("DefaultSettings.Protection.ExplosionsEnabled", tnt);
+		drc.set("DefaultSettings.Protection.TNTEnabled", null);
 		try {
 			drc.save(dr);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		File fff = new File("plugins" + File.separator + "Regios" + File.separator + "Database");
 		for (File tmp : fff.listFiles()) {
 			if (tmp.isDirectory()) {
@@ -258,11 +261,68 @@ public class VersionPatcher {
 				}
 			}
 		}
-		
+
 		ConfigurationData.logs = true;
 		outstream.println("[Regios][Patch] TNTEnabled changed to ExplosionsEnabled in world config");
 		outstream.println("[Regios][Patch] Creepers.DoesExplode removed from world config");
 		outstream.println("[Regios][Patch] DragonCreatesPortal added to world config");
+		outstream.println("[Regios][Patch] Patch completed!");
+	}
+
+	private static void patch595(String v) {
+		outstream.println("[Regios][Patch] Patching files for version : " + v);
+		outstream.println("[Regios][Patch] Modifying World configuration files...");
+		File worldfolder = new File(config_root + File.separator + "WorldConfigurations" + File.separator);
+		for (File w : worldfolder.listFiles())
+		{
+			int pos = w.getName().lastIndexOf(".");
+			FileConfiguration wc = YamlConfiguration.loadConfiguration(w);
+			wc = YamlConfiguration.loadConfiguration(w);
+			wc.set(w.getName().substring(0, pos) + ".Mobs.Spawning.Wither", true);
+			wc.set(w.getName().substring(0, pos) + ".Mobs.Spawning.WitherSkull", true);
+			wc.set(w.getName().substring(0, pos) + ".Mobs.Spawning.Bat", true);
+			wc.set(w.getName().substring(0, pos) + ".Mobs.Spawning.Witch", true);
+			try {
+				wc.save(w);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		outstream.println("[Regios][Patch] Modifying DefaultRegion file...");
+		File dr = new File(config_root + File.separator + "DefaultRegion.config");
+		FileConfiguration drc = YamlConfiguration.loadConfiguration(dr);
+		boolean tnt = drc.getBoolean("DefaultSettings.Protection.TNTEnabled", true);
+		drc.set("DefaultSettings.Protection.ExplosionsEnabled", tnt);
+		drc.set("DefaultSettings.Protection.TNTEnabled", null);
+		drc.set("DefaultSettings.General.Protection.ExplosionsEnabled", null);
+		drc.set("DefaultSettings.General.Protection.TNTEnabled", null);
+		try {
+			drc.save(dr);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		outstream.println("[Regios][Patch] Modifying Region files...");
+		File fff = new File("plugins" + File.separator + "Regios" + File.separator + "Database");
+		for (File tmp : fff.listFiles()) {
+			if (tmp.isDirectory()) {
+				File f = new File(tmp + File.separator + tmp.getName() + ".rz");
+				FileConfiguration c = YamlConfiguration.loadConfiguration(f);
+				boolean tnt1 = c.getBoolean("Region.General.TNTEnabled" ,true);
+				c.set("Region.General.ExplosionsEnabled",tnt1);
+				c.set("Region.General.TNTEnabled", null);
+				c.set("Region.General.TNT", null);
+				try {
+					c.save(f);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		ConfigurationData.logs = true;
+		outstream.println("[Regios][Patch] Corrected incorrect patch from 5.9.0");
 		outstream.println("[Regios][Patch] Patch completed!");
 	}
 }

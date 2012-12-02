@@ -17,7 +17,7 @@ public class EconomyCommands extends PermissionsCore {
 	private static final RegionManager rm = new RegionManager();
 
 	public void listforsale(Player p, String[] args) {
-		if (PermissionsCore.doesHaveNode(p, "regios.fun.listsell")) {
+		if (PermissionsCore.doesHaveNode(p, "regios.fun.listsale")) {
 			if (args.length == 1) {
 				listRegionsForSale(p);
 			} else {

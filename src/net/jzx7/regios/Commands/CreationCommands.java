@@ -247,13 +247,13 @@ public class CreationCommands extends PermissionsCore {
 			return;
 		}
 
-		RBF_Core.rbf_save.startSave(null, point1.get(p.getName()), point2.get(p.getName()), name, p, true);
+		RBF_Core.blueprint.startSave(point1.get(p.getName()), point2.get(p.getName()), name, p);
 		clearPoints(p);
 		modding.remove(p.getName());
 		setting.remove(p.getName());
 	}
 
-	public static void createBlueprint(String name, Location l1, Location l2) {
+	public static void createBlueprint(String name, Location l1, Location l2, Player p) {
 		if (l1 == null || l2 == null) {
 			return;
 		}
@@ -278,9 +278,42 @@ public class CreationCommands extends PermissionsCore {
 			return;
 		}
 
-		RBF_Core.rbf_save.startSave(null, l1, l2, name, null, true);
+		RBF_Core.blueprint.startSave(l1, l2, name, p);
 	}
 
+	public void createSchematic(Player p, String name) {
+		if (!arePointsSet(p)) {
+			p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points!");
+			return;
+		}
+		StringBuilder invalidName = new StringBuilder();
+		boolean integrity = true;
+		for (char ch : name.toCharArray()) {
+			boolean valid = true;
+			for (char inv : invalidModifiers) {
+				if (ch == inv) {
+					valid = false;
+					integrity = false;
+				}
+			}
+			if (!valid) {
+				invalidName.append(ChatColor.RED).append(ch);
+			} else {
+				invalidName.append(ChatColor.GREEN).append(ch);
+			}
+		}
+
+		if (!integrity) {
+			p.sendMessage(ChatColor.RED + "[Regios] Name contained  invalid characters : " + invalidName.toString());
+			return;
+		}
+
+		RBF_Core.schematic.startSave(point1.get(p.getName()), point2.get(p.getName()), name, p);
+		clearPoints(p);
+		modding.remove(p.getName());
+		setting.remove(p.getName());
+	}
+	
 	public boolean arePointsSet(Player p) {
 		if (setting.containsKey(p.getName())) {
 			if (setting.get(p.getName()).equalsIgnoreCase("cuboid")) {

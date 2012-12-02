@@ -253,6 +253,7 @@ public final class NBTInputStream implements Closeable {
 									}
 									map.put(strobj[0].trim(), encmap);
 									if(strobj[1].endsWith("}}")){
+										isa[index] = ItemStack.deserialize(map);
 										index++;
 										map.clear();
 										encmap.clear();
@@ -316,6 +317,7 @@ public final class NBTInputStream implements Closeable {
 				}
 				itemstacklist.add(isa);
 			}
+			
 			return new ListItemStackArrayTag(name, itemstacklist);
 		default:
 			throw new IOException("Invalid tag type: " + type + ".");

@@ -1,7 +1,7 @@
 package net.jzx7.regios.Data;
 
 public enum HelpText {
-	GENERAL (new String[] { ("/r set cube/cuboid/poly/polygon")
+	GENERAL (new String[] { ("/r set [cube/cuboid/poly/polygon]")
 			, ("/r create <region>")
 			, ("/r delete <region>")
 			, ("/r rename <oldname> <newname>")
@@ -84,6 +84,7 @@ public enum HelpText {
 
 	MODIFICATION (new String[] { ("/r expand <region> up/down/north/south/east/west/max/out <value>")
 			, ("/r shrink <region> up/down/north/south/east/west/in <value>")
+			, ("/r shift <region> up/down/north/south/east/west <value>")
 			, ("/r modify <region>")
 			, ("/r modify confirm")
 			, ("/r inherit <toinherit> <inheritfrom>") }),

@@ -41,7 +41,7 @@ public class Saveable  {
 				c.set(world + ".PvP.OverrideServerPvP", false);
 				c.set(world + ".Protection.FireEnabled", true);
 				c.set(world + ".Protection.FireSpreadEnabled", true);
-				c.set(world + ".Protection.TNTEnabled", true);
+				c.set(world + ".Protection.ExplosionsEnabled", true);
 				c.set(world + ".Protection.DragonProtect", true);
 				c.set(world + ".Protection.EndermanBlock", false);
 				c.set(world + ".Protection.DragonCreatesPortal", true);

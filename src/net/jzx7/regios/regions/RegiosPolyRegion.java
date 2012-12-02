@@ -73,6 +73,11 @@ public class RegiosPolyRegion extends RegiosRegion  implements PolyRegion {
 	public Polygon get2DPolygon() {
 		return polySet;
 	}
+	
+	@Override
+	public void set2DPolygon(Polygon polygon) {
+		polySet = polygon;
+	}
 
 	@Override
 	public double getMinY() {
