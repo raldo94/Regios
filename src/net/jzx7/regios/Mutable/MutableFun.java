@@ -3,6 +3,7 @@ package net.jzx7.regios.Mutable;
 import java.io.IOException;
 
 import net.jzx7.regios.Scheduler.LightningRunner;
+import net.jzx7.regios.regions.RegionManager;
 import net.jzx7.regiosapi.regions.Region;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,12 +12,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class MutableFun {
 
+	static RegionManager rm = new RegionManager();
+	
 	public void editLSPS(Region r, int val){
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		c.set("Region.Other.LSPS", val);
 		r.setLSPS(val);
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -28,44 +31,44 @@ public class MutableFun {
 	}
 
 	public void editHealthRegen(Region r, int val){
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		c.set("Region.Other.HealthRegen", val);
 		r.setHealthRegen(val);
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void editVelocityWarp(Region r, double val){
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		c.set("Region.Other.VelocityWarp", val);
 		r.setVelocityWarp(val);
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void editHealthEnabled(Region r, boolean val){
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		c.set("Region.Other.HealthEnabled", val);
 		r.setHealthEnabled(val);
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void editPvPEnabled(Region r, boolean val){
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		c.set("Region.Other.PvP", val);
 		r.setPvp(val);
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

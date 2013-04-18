@@ -1,24 +1,24 @@
 package net.jzx7.regios.RBF;
 
-import org.bukkit.entity.Player;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 
 public class ShareData {
 	
-	private Player player;
+	private RegiosPlayer player;
 	private String shareName;
 	private String shareType;
 	
-	public ShareData(String name, String type, Player p){
-		this.setPlayer(p);
-		this.setShareName(name);
-		this.setShareType(type);
+	public ShareData(String name, String type, RegiosPlayer p){
+		this.player = p;
+		this.shareName = name;
+		this.shareType = type;
 	}
 
-	public Player getPlayer() {
+	public RegiosPlayer getPlayer() {
 		return player;
 	}
 
-	public void setPlayer(Player player) {
+	public void setPlayer(RegiosPlayer player) {
 		this.player = player;
 	}
 

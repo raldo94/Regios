@@ -4,36 +4,37 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
+import net.jzx7.regios.util.RegiosConversions;
 import net.jzx7.regiosapi.worlds.RegiosWorld;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 
 public class WorldManager {
 
 	private static HashMap<UUID, RegiosWorld> worlds = new HashMap<UUID, RegiosWorld>();
 	
 	public Collection<RegiosWorld> getRegiosWorlds() {
-		return worlds.values();
-	}
-
-	public RegiosWorld getRegiosWorld(World world) {
-		if (world == null) {
-			return null;
+		if (worlds != null) {
+			return worlds.values();
+		} else {
+			RegiosConversions.loadServerWorlds();
+			return worlds.values();
 		}
-		return getRegiosWorld(world.getUID());
 	}
-
+	
 	public RegiosWorld getRegiosWorld(UUID id) {
 		if (worlds.containsKey(id)) {
 			return worlds.get(id);
+		} else {
+			return null;
 		}
-		RegiosWorld world = new RegWorld(Bukkit.getServer().getWorld(id));
-		worlds.put(id, world);
-		return world;
 	}
 	
-	public void purgeWorlds(){
+	public void addRegiosWorld(UUID id, RegiosWorld w) {
+		if (!worlds.containsKey(id)) {
+			worlds.put(id, w);
+		}
+	}
+	
+	public void purgeRegiosWorlds(){
 		worlds.clear();
 		System.gc();
 	}

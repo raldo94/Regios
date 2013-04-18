@@ -1,6 +1,5 @@
 package net.jzx7.regios.regions;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,23 +10,19 @@ import net.jzx7.regios.Inventory.InventoryCacheManager;
 import net.jzx7.regios.Permissions.PermChecks;
 import net.jzx7.regios.Scheduler.LightningRunner;
 import net.jzx7.regios.Scheduler.LogRunner;
-import net.jzx7.regiosapi.regions.Region;
+import net.jzx7.regios.util.EncryptUtil;
+import net.jzx7.regios.util.RegiosConversions;
 import net.jzx7.regiosapi.data.MODE;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.events.RegionCreateEvent;
 import net.jzx7.regiosapi.events.RegionLoadEvent;
+import net.jzx7.regiosapi.location.RegiosPoint;
+import net.jzx7.regiosapi.regions.Region;
+import net.jzx7.regiosapi.worlds.RegiosWorld;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
 
-import couk.Adamki11s.Extras.Cryptography.ExtrasCryptography;
-
-public class RegiosRegion extends PermChecks implements Region {
+public abstract class RegiosRegion extends PermChecks implements Region {
 
 	protected static final RegionManager rm = new RegionManager();
 
@@ -63,15 +58,13 @@ public class RegiosRegion extends PermChecks implements Region {
 	protected ArrayList<String> exceptions = new ArrayList<String>(),
 			nodes = new ArrayList<String>();
 
-	protected ExtrasCryptography exCrypt = new ExtrasCryptography();
+	protected EncryptUtil encUtil = new EncryptUtil();
 
-	protected GameMode gameMode = GameMode.SURVIVAL;
+	protected int gameMode = 0;
 
 	protected GameModeCacheManager gmcm = new GameModeCacheManager();
 
 	protected InventoryCacheManager icm = new InventoryCacheManager();
-
-	protected HashMap<String, PlayerInventory> inventoryCache = new HashMap<String, PlayerInventory>();
 
 	protected ArrayList<Integer> items = new ArrayList<Integer>();
 
@@ -83,14 +76,14 @@ public class RegiosRegion extends PermChecks implements Region {
 			preventEntryMode = MODE.Whitelist,
 			preventExitMode = MODE.Whitelist, itemMode = MODE.Whitelist;
 
-	protected Material spoutEntryMaterial = Material.GRASS,
-			spoutExitMaterial = Material.DIRT;
+	protected int spoutEntryMaterial = 2,
+			spoutExitMaterial = 3;
 
 	protected HashMap<String, Long> timeStamps = new HashMap<String, Long>();
 
 	protected double velocityWarp = 0;
 
-	protected Location warp = null;
+	protected RegiosPoint warp = null;
 
 	protected String welcomeMessage = "", leaveMessage = "",
 			protectionMessage = "", preventEntryMessage = "",
@@ -98,9 +91,9 @@ public class RegiosRegion extends PermChecks implements Region {
 			spoutEntryMessage = "", spoutExitMessage = "",
 			spoutTexturePack = "";
 
-	protected World world;
+	protected RegiosWorld world;
 
-	public RegiosRegion(String owner, String name, World world, Player p,
+	public RegiosRegion(String owner, String name, RegiosWorld world, RegiosPlayer p,
 			boolean save) {
 		this.owner = owner;
 		this.name = name;
@@ -108,12 +101,12 @@ public class RegiosRegion extends PermChecks implements Region {
 		if (world != null) {
 			this.world = world;
 		} else {
-			world = Bukkit.getServer().getWorlds().get(0);
+			world = RegiosConversions.getRegiosWorld(Bukkit.getServer().getWorlds().get(0));
 		}
 
 		if (save) {
 			RegionCreateEvent event = new RegionCreateEvent("RegionCreateEvent");
-			event.setProperties(p, this);
+			event.setProperties(RegiosConversions.getPlayer(p), this);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 		} else {
 			RegionLoadEvent event = new RegionLoadEvent("RegionLoadEvent");
@@ -218,7 +211,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void addPlayer(Player p) {
+	public void addPlayer(RegiosPlayer p) {
 		playersInRegion.add(p.getName());
 	}
 
@@ -238,22 +231,22 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean canBuild(Player p) {
+	public boolean canBuild(RegiosPlayer p) {
 		return super.canBypassProtection(p, this);
 	}
 
 	@Override
-	public boolean canBypassProtection(Player p) {
+	public boolean canBypassProtection(RegiosPlayer p) {
 		return super.canBypassProtection(p, this);
 	}
 
 	@Override
-	public boolean canEnter(Player p) {
+	public boolean canEnter(RegiosPlayer p) {
 		return super.canEnter(p, this);
 	}
 
 	@Override
-	public boolean canExit(Player p) {
+	public boolean canExit(RegiosPlayer p) {
 		return super.canExit(p, this);
 	}
 
@@ -263,7 +256,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean canModify(Player p) {
+	public boolean canModify(RegiosPlayer p) {
 		return super.canModify(p, this);
 	}
 
@@ -273,7 +266,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean canPlaceItem(Player p, Material m) {
+	public boolean canPlaceItem(RegiosPlayer p, int m) {
 		return super.canItemBePlaced(p, m, this);
 	}
 
@@ -283,9 +276,9 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean getAuthentication(String password, Player p) {
-		if (exCrypt.compareHashes(exCrypt.computeSHA2_384BitHash(password),
-				exCrypt.computeSHA2_384BitHash(this.password))) {
+	public boolean getAuthentication(String password, RegiosPlayer p) {
+		if (encUtil.compareHashes(encUtil.computeSHA2_384BitHash(password),
+				encUtil.computeSHA2_384BitHash(this.password))) {
 			authentication.put(p.getName(), true);
 			return true;
 		} else {
@@ -295,40 +288,13 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public File getBackupsDirectory() {
-		return new File("plugins" + File.separator + "Regios" + File.separator
-				+ "Database" + File.separator + name + File.separator
-				+ "Backups");
-	}
-
-	@Override
 	public String[] getCommandSet() {
 		return commandSet;
 	}
 
 	@Override
-	public File getConfigFile() {
-		return new File("plugins" + File.separator + "Regios" + File.separator
-				+ "Database" + File.separator + name + File.separator + name
-				+ ".rz");
-	}
-
-	@Override
 	public String[] getCustomSoundUrl() {
 		return customSoundUrl;
-	}
-
-	@Override
-	public File getDirectory() {
-		return new File("plugins" + File.separator + "Regios" + File.separator
-				+ "Database" + File.separator + name);
-	}
-
-	@Override
-	public File getExceptionDirectory() {
-		return new File("plugins" + File.separator + "Regios" + File.separator
-				+ "Database" + File.separator + name + File.separator
-				+ "Exceptions");
 	}
 
 	@Override
@@ -342,7 +308,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public int getGameMode() {
 		return gameMode;
 	}
 
@@ -357,17 +323,6 @@ public class RegiosRegion extends PermChecks implements Region {
 
 	public InventoryCacheManager getICM() {
 		return icm;
-	}
-
-	@Override
-	public HashMap<String, PlayerInventory> getInventoryCache() {
-		return inventoryCache;
-	}
-
-	@Override
-	public PlayerInventory getInventoryCache(Player p) {
-		return inventoryCache.containsKey(p.getName()) ? inventoryCache.get(p
-				.getName()) : null;
 	}
 
 	@Override
@@ -388,13 +343,6 @@ public class RegiosRegion extends PermChecks implements Region {
 	@Override
 	public HashMap<String, Boolean> getLeaveMessageSent() {
 		return leaveMessageSent;
-	}
-
-	@Override
-	public File getLogFile() {
-		return new File("plugins" + File.separator + "Regios" + File.separator
-				+ "Database" + File.separator + name + File.separator + "Logs"
-				+ File.separator + name + ".log");
 	}
 
 	@Override
@@ -483,20 +431,12 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public File getRawConfigFile() {
-		return new File(
-				("plugins" + File.separator + "Regios" + File.separator
-						+ "Database" + File.separator + name + File.separator
-						+ name + ".rz"));
-	}
-
-	@Override
 	public int getSalePrice() {
 		return salePrice;
 	}
 
 	@Override
-	public Material getSpoutLeaveMaterial() {
+	public int getSpoutLeaveMaterial() {
 		return spoutExitMaterial;
 	}
 
@@ -511,7 +451,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public Material getSpoutWelcomeMaterial() {
+	public int getSpoutWelcomeMaterial() {
 		return spoutEntryMaterial;
 	}
 
@@ -546,7 +486,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public long getTimestamp(Player p) {
+	public long getTimestamp(RegiosPlayer p) {
 		return timeStamps.get(p);
 	}
 
@@ -561,7 +501,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public Location getWarp() {
+	public RegiosPoint getWarp() {
 		return warp;
 	}
 
@@ -576,7 +516,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public World getWorld() {
+	public RegiosWorld getWorld() {
 		return world;
 	}
 
@@ -591,7 +531,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean isAuthenticated(Player p) {
+	public boolean isAuthenticated(RegiosPlayer p) {
 		if (authentication.containsKey(p.getName())) {
 			return authentication.get(p.getName());
 		} else {
@@ -645,7 +585,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean isLeaveMessageSent(Player p) {
+	public boolean isLeaveMessageSent(RegiosPlayer p) {
 		if (!leaveMessageSent.containsKey(p.getName())) {
 			return false;
 		} else {
@@ -674,7 +614,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean isPlayerInRegion(Player p) {
+	public boolean isPlayerInRegion(RegiosPlayer p) {
 		if (playersInRegion.contains(p)) {
 			return true;
 		} else {
@@ -708,7 +648,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean isRegionFull(Player p) {
+	public boolean isRegionFull(RegiosPlayer p) {
 		if (playerCap > 0) {
 			if (playersInRegion.size() > playerCap) {
 				if (!canBypassProtection(p)) {
@@ -770,7 +710,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public boolean isWelcomeMessageSent(Player p) {
+	public boolean isWelcomeMessageSent(RegiosPlayer p) {
 		if (!welcomeMessageSent.containsKey(p.getName())) {
 			return false;
 		} else {
@@ -814,14 +754,14 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void removePlayer(Player p) {
+	public void removePlayer(RegiosPlayer p) {
 		if (playersInRegion.contains(p)) {
 			playersInRegion.remove(p);
 		}
 	}
 
 	@Override
-	public void resetAuthentication(Player p) {
+	public void resetAuthentication(RegiosPlayer p) {
 		authentication.put(p.getName(), false);
 	}
 
@@ -843,11 +783,6 @@ public class RegiosRegion extends PermChecks implements Region {
 	@Override
 	public void setAuthentication(HashMap<String, Boolean> authentication) {
 		this.authentication = authentication;
-	}
-
-	@Override
-	public void setBiome(Biome biome, Player p) {
-		// Placeholder for setBiome set inheriting classes for implementation.
 	}
 
 	@Override
@@ -921,7 +856,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void setGameMode(GameMode gm) {
+	public void setGameMode(int gm) {
 		gameMode = gm;
 	}
 
@@ -933,12 +868,6 @@ public class RegiosRegion extends PermChecks implements Region {
 	@Override
 	public void setHealthRegen(int healthRegen) {
 		this.healthRegen = healthRegen;
-	}
-
-	@Override
-	public void setInventoryCache(
-			HashMap<String, PlayerInventory> inventoryCache) {
-		this.inventoryCache = inventoryCache;
 	}
 
 	@Override
@@ -1132,7 +1061,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void setSpoutEntryMaterial(Material spoutEntryMaterial) {
+	public void setSpoutEntryMaterial(int spoutEntryMaterial) {
 		this.spoutEntryMaterial = spoutEntryMaterial;
 	}
 
@@ -1142,7 +1071,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void setSpoutExitMaterial(Material spoutExitMaterial) {
+	public void setSpoutExitMaterial(int spoutExitMaterial) {
 		this.spoutExitMaterial = spoutExitMaterial;
 	}
 
@@ -1192,7 +1121,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void setTimestamp(Player p) {
+	public void setTimestamp(RegiosPlayer p) {
 		timeStamps.put(p.getName(), System.currentTimeMillis());
 	}
 
@@ -1212,7 +1141,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void setWarp(Location warp) {
+	public void setWarp(RegiosPoint warp) {
 		this.warp = warp;
 	}
 
@@ -1238,7 +1167,7 @@ public class RegiosRegion extends PermChecks implements Region {
 	}
 
 	@Override
-	public void setWorld(World world) {
+	public void setWorld(RegiosWorld world) {
 		this.world = world;
 	}
 }

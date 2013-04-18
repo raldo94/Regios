@@ -3,20 +3,22 @@ package net.jzx7.regios.Mutable;
 import java.io.File;
 import java.io.IOException;
 
+import net.jzx7.regios.regions.RegionManager;
 import net.jzx7.regiosapi.regions.Region;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class MutableExceptions {
 
+	static RegionManager rm = new RegionManager();
+	
 	/*
 	 * Players
 	 */
 
 	public void addPlayerException(Region r, String ex) {
-		File playerDir = new File(r.getExceptionDirectory() + File.separator + "Players" + File.separator + ex + ".excep");
+		File playerDir = new File(rm.getExceptionDirectory(r) + File.separator + "Players" + File.separator + ex + ".excep");
 		try {
 			playerDir.createNewFile();
 		} catch (IOException e) {
@@ -26,13 +28,13 @@ public class MutableExceptions {
 	}
 
 	public void removePlayerException(Region r, String ex) {
-		File playerDir = new File(r.getExceptionDirectory() + File.separator + "Players" + File.separator + ex + ".excep");
+		File playerDir = new File(rm.getExceptionDirectory(r) + File.separator + "Players" + File.separator + ex + ".excep");
 		playerDir.delete();
 		r.removeException(ex);
 	}
 
 	public boolean checkPlayerException(Region r, String ex) {
-		for (File f : new File(r.getExceptionDirectory() + File.separator + "Players").listFiles()) {
+		for (File f : new File(rm.getExceptionDirectory(r) + File.separator + "Players").listFiles()) {
 			if (f.getName().substring(0, f.getName().lastIndexOf(".")).equals(ex)) {
 				return true;
 			}
@@ -42,15 +44,15 @@ public class MutableExceptions {
 
 	public String listPlayerExceptions(Region r) {
 		StringBuilder sb = new StringBuilder();
-		for (File f : new File(r.getExceptionDirectory() + File.separator + "Players").listFiles()) {
-			sb.append(ChatColor.WHITE + f.getName().substring(0, f.getName().lastIndexOf("."))).append(ChatColor.BLUE + ", ");
+		for (File f : new File(rm.getExceptionDirectory(r) + File.separator + "Players").listFiles()) {
+			sb.append("<WHITE>" + f.getName().substring(0, f.getName().lastIndexOf("."))).append("<BLUE>" + ", ");
 		}
 		return sb.toString();
 	}
 
 	public void eraseAllPlayerExceptions(Region r) {
-		if (new File(r.getExceptionDirectory() + File.separator + "Players").listFiles().length > 0) {
-			for (File f : new File(r.getExceptionDirectory() + File.separator + "Players").listFiles()) {
+		if (new File(rm.getExceptionDirectory(r) + File.separator + "Players").listFiles().length > 0) {
+			for (File f : new File(rm.getExceptionDirectory(r) + File.separator + "Players").listFiles()) {
 				f.delete();
 			}
 		}
@@ -62,7 +64,7 @@ public class MutableExceptions {
 	 */
 
 	public void addNodeException(Region r, String ex) {
-		File playerDir = new File(r.getExceptionDirectory() + File.separator + "Nodes" + File.separator + ex + ".excep");
+		File playerDir = new File(rm.getExceptionDirectory(r) + File.separator + "Nodes" + File.separator + ex + ".excep");
 		try {
 			playerDir.createNewFile();
 		} catch (IOException e) {
@@ -72,13 +74,13 @@ public class MutableExceptions {
 	}
 
 	public void removeNodeException(Region r, String ex) {
-		File playerDir = new File(r.getExceptionDirectory() + File.separator + "Nodes" + File.separator + ex + ".excep");
+		File playerDir = new File(rm.getExceptionDirectory(r) + File.separator + "Nodes" + File.separator + ex + ".excep");
 		playerDir.delete();
 		r.removeExceptionNode(ex);
 	}
 
 	public boolean checkNodeException(Region r, String ex) {
-		for (File f : new File(r.getExceptionDirectory() + File.separator + "Nodes").listFiles()) {
+		for (File f : new File(rm.getExceptionDirectory(r) + File.separator + "Nodes").listFiles()) {
 			if (f.getName().substring(0, f.getName().lastIndexOf(".")).equals(ex)) {
 				return true;
 			}
@@ -88,15 +90,15 @@ public class MutableExceptions {
 
 	public String listNodeExceptions(Region r) {
 		StringBuilder sb = new StringBuilder();
-		for (File f : new File(r.getExceptionDirectory() + File.separator + "Nodes").listFiles()) {
-			sb.append(ChatColor.WHITE + f.getName().substring(0, f.getName().lastIndexOf("."))).append(ChatColor.BLUE + ", ");
+		for (File f : new File(rm.getExceptionDirectory(r) + File.separator + "Nodes").listFiles()) {
+			sb.append("<WHITE>" + f.getName().substring(0, f.getName().lastIndexOf("."))).append("<BLUE>" + ", ");
 		}
 		return sb.toString();
 	}
 
 	public void eraseAllNodeExceptions(Region r) {
-		if (new File(r.getExceptionDirectory() + File.separator + "Nodes").listFiles().length > 0) {
-			for (File f : new File(r.getExceptionDirectory() + File.separator + "Nodes").listFiles()) {
+		if (new File(rm.getExceptionDirectory(r) + File.separator + "Nodes").listFiles().length > 0) {
+			for (File f : new File(rm.getExceptionDirectory(r) + File.separator + "Nodes").listFiles()) {
 				f.delete();
 			}
 		}
@@ -108,7 +110,7 @@ public class MutableExceptions {
 	 */
 
 	public void addItemException(Region r, int ex) {
-		File playerDir = new File(r.getExceptionDirectory().getParent() + File.separator + "Items" + File.separator + ex + ".excep");
+		File playerDir = new File(rm.getExceptionDirectory(r).getParent() + File.separator + "Items" + File.separator + ex + ".excep");
 		try {
 			playerDir.createNewFile();
 		} catch (IOException e) {
@@ -118,13 +120,13 @@ public class MutableExceptions {
 	}
 
 	public void removeItemException(Region r, int ex) {
-		File playerDir = new File(r.getExceptionDirectory().getParent() + File.separator + "Items" + File.separator + ex + ".excep");
+		File playerDir = new File(rm.getExceptionDirectory(r).getParent() + File.separator + "Items" + File.separator + ex + ".excep");
 		playerDir.delete();
 		r.removeItemException(ex);
 	}
 
 	public boolean checkItemException(Region r, int ex) {
-		for (File f : new File(r.getExceptionDirectory().getParent() + File.separator + "Items").listFiles()) {
+		for (File f : new File(rm.getExceptionDirectory(r).getParent() + File.separator + "Items").listFiles()) {
 			if (Integer.parseInt(f.getName().substring(0, f.getName().lastIndexOf("."))) == ex) {
 				return true;
 			}
@@ -134,15 +136,15 @@ public class MutableExceptions {
 
 	public String listItemExceptions(Region r) {
 		StringBuilder sb = new StringBuilder();
-		for (File f : new File(r.getExceptionDirectory().getParent() + File.separator + "Items").listFiles()) {
-			sb.append(ChatColor.WHITE + f.getName().substring(0, f.getName().lastIndexOf("."))).append(ChatColor.BLUE + ", ");
+		for (File f : new File(rm.getExceptionDirectory(r).getParent() + File.separator + "Items").listFiles()) {
+			sb.append("<WHITE>" + f.getName().substring(0, f.getName().lastIndexOf("."))).append("<BLUE>" + ", ");
 		}
 		return sb.toString();
 	}
 
 	public void eraseAllItemExceptions(Region r) {
-		if (new File(r.getExceptionDirectory().getParent() + File.separator + "Items").listFiles().length > 0) {
-			for (File f : new File(r.getExceptionDirectory().getParent() + File.separator + "Items").listFiles()) {
+		if (new File(rm.getExceptionDirectory(r).getParent() + File.separator + "Items").listFiles().length > 0) {
+			for (File f : new File(rm.getExceptionDirectory(r).getParent() + File.separator + "Items").listFiles()) {
 				f.delete();
 			}
 		}
@@ -154,19 +156,19 @@ public class MutableExceptions {
 	 */
 
 	public void addSubOwner(Region r, String message){
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		String current = (String)c.get("Region.Essentials.SubOwners");
 		c.set("Region.Essentials.SubOwners", current.trim() + message.trim() + ",");
 		r.setSubOwners((current.trim() + "," + message.trim()).split(","));
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void removeSubOwner(Region r, String message){
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		String current = (String)c.get("Region.Essentials.SubOwners");
 		current = current.replaceAll(" ", "");
 		current = current.replaceAll(message + ",", "");
@@ -174,7 +176,7 @@ public class MutableExceptions {
 		c.set("Region.Essentials.SubOwners", current.trim());
 		r.setSubOwners((current.trim()).split(","));
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -183,17 +185,17 @@ public class MutableExceptions {
 	public String listSubOwnersExceptions(Region r) {
 		StringBuilder sb = new StringBuilder();
 		for (String s : r.getSubOwners()) {
-			sb.append(ChatColor.WHITE + s).append(ChatColor.BLUE + ", ");
+			sb.append("<WHITE>" + s).append("<BLUE>" + ", ");
 		}
 		return sb.toString();
 	}
 
 	public void eraseAllSubOwners(Region r){
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		c.set("Region.Essentials.SubOwners", "");
 		r.setSubOwners(("").split(","));
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

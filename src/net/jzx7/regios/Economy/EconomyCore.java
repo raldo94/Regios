@@ -1,15 +1,11 @@
 package net.jzx7.regios.Economy;
 
-import java.util.logging.Logger;
-
 import net.jzx7.regios.Mutable.MutableAdministration;
 import net.jzx7.regios.Mutable.MutableEconomy;
 import net.jzx7.regiosapi.regions.Region;
 import net.milkbowl.vault.economy.Economy;
 
 public class EconomyCore {
-
-	public static Logger log = Logger.getLogger("Minecraft.Regios");
 
 	public static Economy economy = null;
 

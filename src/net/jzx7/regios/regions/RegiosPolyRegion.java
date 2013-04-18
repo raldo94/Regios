@@ -1,33 +1,27 @@
 package net.jzx7.regios.regions;
 
-import net.jzx7.regiosapi.regions.PolyRegion;
 import java.awt.Polygon;
 import java.awt.geom.Rectangle2D;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
+import net.jzx7.regiosapi.block.RegiosBiome;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
+import net.jzx7.regiosapi.location.RegiosPoint;
+import net.jzx7.regiosapi.regions.PolyRegion;
+import net.jzx7.regiosapi.worlds.RegiosWorld;
 
 public class RegiosPolyRegion extends RegiosRegion  implements PolyRegion {
 
 	protected Polygon polySet;
 	protected double minY, maxY;
 
-	public RegiosPolyRegion(String owner, String name, int[] xpoints, int[] zpoints, int npoints, double minY2, double maxY2, World world, Player p, boolean save) {
+	public RegiosPolyRegion(String owner, String name, int[] xpoints, int[] zpoints, int npoints, double minY2, double maxY2, RegiosWorld world, RegiosPlayer p, boolean save) {
 		super(owner, name, world, p, save);
 		this.polySet = new Polygon(xpoints, zpoints, npoints);
 		this.minY = minY2;
 		this.maxY = maxY2;
 
-		//		try {
-		//			chunkGrid = new RegiosChunkGrid(polySet, minY, maxY, world);
-		//		} catch (NullPointerException npe) {
-		//			System.out.print("[Regios] Uh-oh, there's been an error loading the ChunkGrid for region: " + this.getName() + ". Please check the config file for this region and verify that both point1 and point2 are accurate as well as the World.");
-		//		}
-
 		rm.addRegion(this);
-		if (p == null && save) {
+		if (save) {
 			saveable.saveRegion(this);
 		}
 	}
@@ -100,7 +94,7 @@ public class RegiosPolyRegion extends RegiosRegion  implements PolyRegion {
 	}
 
 	@Override
-	public void setBiome(Biome biome, Player p) {
+	public void setBiome(RegiosBiome biome, RegiosPlayer p) {
 		Rectangle2D rect = polySet.getBounds2D();
 
 		for (double x = rect.getMinX(); x <= rect.getMaxX(); x++) {
@@ -111,8 +105,8 @@ public class RegiosPolyRegion extends RegiosRegion  implements PolyRegion {
 			}
 		}
 
-		Location min = new Location(world, rect.getMinX(), minY, rect.getMinY());
-		Location max = new Location(world, rect.getMaxX(), maxY, rect.getMaxY());
+		RegiosPoint min = new RegiosPoint(world, rect.getMinX(), minY, rect.getMinY());
+		RegiosPoint max = new RegiosPoint(world, rect.getMaxX(), maxY, rect.getMaxY());
 
 		int minChunkX = min.getBlockX() >> 4;
 		int minChunkZ = min.getBlockZ() >> 4;

@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -143,7 +142,7 @@ public class CreationCore {
 			c.set("Region.UseEconomy", false);
 			c.set("Region.UseWorldEdit", false);
 			c.set("Region.LogsEnabled", true);
-			c.set("Region.Tools.Setting.ID", Material.WOOD_AXE.getId());
+			c.set("Region.Tools.Setting.ID", 271);
 			c.save(generalconfig);
 		}
 		if (!defaultregions.exists()) {
@@ -216,8 +215,8 @@ public class CreationCore {
 			c.set("DefaultSettings.Password.PasswordMessage", "<RED>Authentication required! Do /regios auth <password>");
 			c.set("DefaultSettings.Password.PasswordSuccessMessage", "Authentication successful!");
 
-			c.set("DefaultSettings.Spout.SpoutWelcomeIconID", Material.GRASS.getId());
-			c.set("DefaultSettings.Spout.SpoutLeaveIconID", Material.DIRT.getId());
+			c.set("DefaultSettings.Spout.SpoutWelcomeIconID", 2);
+			c.set("DefaultSettings.Spout.SpoutLeaveIconID", 3);
 			c.set("DefaultSettings.Spout.Sound.PlayCustomMusic", false);
 			c.set("DefaultSettings.Spout.Sound.CustomMusicURL", "");
 

@@ -7,7 +7,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import org.bukkit.inventory.ItemStack;
+import net.jzx7.regios.util.RegiosConversions;
+import net.jzx7.regiosapi.inventory.RegiosItemStack;
 
 /*
  * JNBT License
@@ -358,13 +359,13 @@ public final class NBTOutputStream implements Closeable {
 	 */
 	private void writeListItemStackArrayTagPayload(ListItemStackArrayTag tag) throws IOException { //Added to allow saving ItemStack[] to file -jzx7
 		StringBuilder string = new StringBuilder();
-		for(ItemStack[] isa : tag.getValue()) {
+		for(RegiosItemStack[] isa : tag.getValue()) {
 			string.append("[");
 			if(isa != null) {
-				for(ItemStack is : isa) {
+				for(RegiosItemStack is : isa) {
 					if(is != null) {
-						string.append(is.serialize() + "|");
-						System.out.print(is.serialize());
+						string.append(RegiosConversions.getItemStack(is).serialize() + "|");
+						System.out.print(RegiosConversions.getItemStack(is).serialize());
 					} else {
 						string.append("null|");
 					}

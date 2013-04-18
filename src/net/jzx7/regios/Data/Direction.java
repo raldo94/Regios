@@ -1,8 +1,7 @@
 package net.jzx7.regios.Data;
 
 import net.jzx7.regiosapi.exceptions.InvalidDirectionException;
-
-import org.bukkit.util.Vector;
+import net.jzx7.regiosapi.location.RegiosPoint;
 
 public enum Direction {
 	WEST(-1, 0, 0),
@@ -34,8 +33,8 @@ public enum Direction {
 		return modZ;
 	}
 	
-	public Vector getVector() {
-		return new Vector(this.getModX(), this.getModY(), this.getModZ());
+	public RegiosPoint getPoint() {
+		return new RegiosPoint(null, this.getModX(), this.getModY(), this.getModZ());
 	}
 
 	public static Direction getDirection(String dirStr) throws InvalidDirectionException {

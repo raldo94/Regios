@@ -11,11 +11,14 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import net.jzx7.regios.Data.ConfigurationData;
+import net.jzx7.regios.regions.RegionManager;
 import net.jzx7.regiosapi.regions.Region;
 
 
 public class LogRunner {
 
+	final static RegionManager rm = new RegionManager();
+	
 	public static HashMap<Region, ArrayList<String>> log = new HashMap<Region, ArrayList<String>>();
 
 	public static int timer = 0;
@@ -39,7 +42,7 @@ public class LogRunner {
 		if (ConfigurationData.logs) {
 			System.out.println("[Regios] Writing region logs to log files...");
 			for (Entry<Region, ArrayList<String>> entry : log.entrySet()) {
-				File logFile = entry.getKey().getLogFile();
+				File logFile = rm.getLogFile(entry.getKey());
 				if (!logFile.exists()) {
 					try {
 						logFile.createNewFile();

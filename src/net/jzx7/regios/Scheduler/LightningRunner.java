@@ -5,21 +5,20 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import net.jzx7.regios.util.RegionUtil;
+import net.jzx7.regios.util.RegiosConversions;
 import net.jzx7.regiosapi.events.RegionLightningStrikeEvent;
+import net.jzx7.regiosapi.location.RegiosPoint;
 import net.jzx7.regiosapi.regions.CuboidRegion;
 import net.jzx7.regiosapi.regions.PolyRegion;
 import net.jzx7.regiosapi.regions.Region;
+import net.jzx7.regiosapi.worlds.RegiosWorld;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.util.Vector;
-
-import couk.Adamki11s.Extras.Regions.ExtrasRegions;
 
 public class LightningRunner {
 
-	private static ExtrasRegions extReg = new ExtrasRegions();
+	private static RegionUtil regUtil = new RegionUtil();
 
 	public static HashMap<Region, Integer> strikes = new HashMap<Region, Integer>();
 	public static HashMap<Region, Integer> strikeCounter = new HashMap<Region, Integer>();
@@ -56,29 +55,29 @@ public class LightningRunner {
 
 	private static void fireStrike(Region r) {
 		resetCounter(r);
-		Vector rl1 = null, rl2 = null;
+		RegiosPoint rl1 = null, rl2 = null;
 		if (r instanceof PolyRegion) {
 			Rectangle2D rect =  ((PolyRegion) r).get2DPolygon().getBounds2D();
-			rl1 = new Vector(rect.getMinX(), ((PolyRegion) r).getMinY(), rect.getMinY());
-			rl2 = new Vector(rect.getMaxX(), ((PolyRegion) r).getMaxY(), rect.getMaxY());
+			rl1 = new RegiosPoint(rect.getMinX(), ((PolyRegion) r).getMinY(), rect.getMinY());
+			rl2 = new RegiosPoint(rect.getMaxX(), ((PolyRegion) r).getMaxY(), rect.getMaxY());
 		} else if (r instanceof CuboidRegion) {
-			rl1 = ((CuboidRegion) r).getL1().toVector();
-			rl2 = ((CuboidRegion) r).getL2().toVector();
+			rl1 = ((CuboidRegion) r).getL1();
+			rl2 = ((CuboidRegion) r).getL2();
 		}
 
-		Location STRIKE = getStrikeLocation(rl1.getX(), rl2.getX(), rl1.getZ(), rl2.getZ(), rl1.getY(), rl2.getY(), r.getWorld(), r);
+		RegiosPoint STRIKE = getStrikeLocation(rl1.getX(), rl2.getX(), rl1.getZ(), rl2.getZ(), rl1.getY(), rl2.getY(), r.getWorld(), r);
 
 		r.getWorld().strikeLightning(STRIKE);
 
 		RegionLightningStrikeEvent event = new RegionLightningStrikeEvent("RegionLightningStrikeEvent");
-		event.setProperties(new Location(r.getWorld(), STRIKE.getX(), STRIKE.getY(), STRIKE.getZ(), 0, 0), r);
+		event.setProperties(RegiosConversions.getLocation(new RegiosPoint(r.getWorld(), STRIKE.getX(), STRIKE.getY(), STRIKE.getZ(), 0, 0)), r);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	private static Location getStrikeLocation(double x1, double x2, double z1, double z2, double y1, double y2, World world, Region r) {
+	private static RegiosPoint getStrikeLocation(double x1, double x2, double z1, double z2, double y1, double y2, RegiosWorld world, Region r) {
 		double xdiff, zdiff, xStrike, yStrike, zStrike;
 		boolean x1bigger = false, z1bigger = false;
-		Location strike;
+		RegiosPoint strike;
 
 		if (x1 > x2) {
 			xdiff = x1 - x2;
@@ -116,13 +115,13 @@ public class LightningRunner {
 				zStrike = (z1 + randZStrike);
 			}
 
-			strike = new Location(world, xStrike, yStrike, zStrike, 0, 0);
+			strike = new RegiosPoint(world, xStrike, yStrike, zStrike, 0, 0);
 			if (r instanceof PolyRegion) {
-				if (extReg.isInsidePolygon(strike, ((PolyRegion) r).get2DPolygon(), ((PolyRegion) r).getMinY(), ((PolyRegion) r).getMaxY())  && (strike.getWorld().getName() == r.getWorld().getName())) {
+				if (regUtil.isInsidePolygon(strike, ((PolyRegion) r).get2DPolygon(), ((PolyRegion) r).getMinY(), ((PolyRegion) r).getMaxY())  && (strike.getRegiosWorld().getName() == r.getWorld().getName())) {
 					return strike;
 				}
 			} else if (r instanceof CuboidRegion) {
-				return new Location(world, xStrike, yStrike, zStrike, 0, 0);
+				return new RegiosPoint(world, xStrike, yStrike, zStrike, 0, 0);
 			}
 		}
 	}

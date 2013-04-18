@@ -3,11 +3,10 @@ package net.jzx7.regios.Commands;
 import net.jzx7.regios.Mutable.MutableExceptions;
 import net.jzx7.regios.Permissions.PermissionsCore;
 import net.jzx7.regios.regions.RegionManager;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.regions.Region;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 
 public class ExceptionCommands extends PermissionsCore {
@@ -15,7 +14,7 @@ public class ExceptionCommands extends PermissionsCore {
 	MutableExceptions mutable = new MutableExceptions();
 	RegionManager rm = new RegionManager();
 
-	public void playerex(Player p, String[] args) {
+	public void playerex(RegiosPlayer p, String[] args) {
 		if (doesHaveNode(p, "regios.exceptions.players")) {
 			if (args.length > 1) {
 				if (args[1].equalsIgnoreCase("add")) {
@@ -23,7 +22,7 @@ public class ExceptionCommands extends PermissionsCore {
 						addPlayerException(rm.getRegion(args[2]), args[2], args[3], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios playerex add <regios> <player>");
 						return;
 					}
@@ -32,7 +31,7 @@ public class ExceptionCommands extends PermissionsCore {
 						removePlayerException(rm.getRegion(args[2]), args[2], args[3], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios playerex rem <region> <player>");
 						return;
 					}
@@ -41,7 +40,7 @@ public class ExceptionCommands extends PermissionsCore {
 						listPlayerExceptions(rm.getRegion(args[2]), args[2], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios playerex list <region>");
 						return;
 					}
@@ -50,17 +49,17 @@ public class ExceptionCommands extends PermissionsCore {
 						erasePlayerExceptions(rm.getRegion(args[2]), args[2], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios playerex reset <region>");
 						return;
 					}
 				} else {
-					p.sendMessage(ChatColor.RED + "[Regios] Invalid argument specified.");
+					p.sendMessage("<RED>" + "[Regios] Invalid argument specified.");
 					p.sendMessage("Proper usage: /regios playerex add/rem/list/reset");
 					return;
 				}
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+				p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 				p.sendMessage("Proper usage: /regios playerex add/rem/list/reset");
 				return;
 			}
@@ -70,7 +69,7 @@ public class ExceptionCommands extends PermissionsCore {
 		}
 	}
 	
-	public void itemex(Player p, String[] args) {
+	public void itemex(RegiosPlayer p, String[] args) {
 		if (doesHaveNode(p, "regios.exceptions.items")) {
 			if (args.length > 1) {
 				if (args[1].equalsIgnoreCase("add")) {
@@ -78,7 +77,7 @@ public class ExceptionCommands extends PermissionsCore {
 						addItemException(rm.getRegion(args[2]), args[2], args[3], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios itemex add <regios> <item>");
 						return;
 					}
@@ -87,7 +86,7 @@ public class ExceptionCommands extends PermissionsCore {
 						removeItemException(rm.getRegion(args[2]), args[2], args[3], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios itemex rem <region> <item>");
 						return;
 					}
@@ -96,7 +95,7 @@ public class ExceptionCommands extends PermissionsCore {
 						listItemExceptions(rm.getRegion(args[2]), args[2], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios itemex list <region>");
 						return;
 					}
@@ -105,17 +104,17 @@ public class ExceptionCommands extends PermissionsCore {
 						eraseItemExceptions(rm.getRegion(args[2]), args[2], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios itemex reset <region>");
 						return;
 					}
 				} else {
-					p.sendMessage(ChatColor.RED + "[Regios] Invalid argument specified.");
+					p.sendMessage("<RED>" + "[Regios] Invalid argument specified.");
 					p.sendMessage("Proper usage: /regios itemex add/rem/list/reset");
 					return;
 				}
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+				p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 				p.sendMessage("Proper usage: /regios itemex add/rem/list/reset");
 				return;
 			}
@@ -125,7 +124,7 @@ public class ExceptionCommands extends PermissionsCore {
 		}
 	}
 	
-	public void nodeex(Player p, String[] args) {
+	public void nodeex(RegiosPlayer p, String[] args) {
 		if (doesHaveNode(p, "regios.exceptions.nodes")) {
 			if (args.length > 1) {
 				if (args[1].equalsIgnoreCase("add")) {
@@ -133,7 +132,7 @@ public class ExceptionCommands extends PermissionsCore {
 						addNodeException(rm.getRegion(args[2]), args[2], args[3], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios nodeex add <regios> <item>");
 						return;
 					}
@@ -142,7 +141,7 @@ public class ExceptionCommands extends PermissionsCore {
 						removeNodeException(rm.getRegion(args[2]), args[2], args[3], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios nodeex rem <region> <item>");
 						return;
 					}
@@ -151,7 +150,7 @@ public class ExceptionCommands extends PermissionsCore {
 						listNodeExceptions(rm.getRegion(args[2]), args[2], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios nodeex list <region>");
 						return;
 					}
@@ -160,17 +159,17 @@ public class ExceptionCommands extends PermissionsCore {
 						eraseNodeExceptions(rm.getRegion(args[2]), args[2], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios nodeex reset <region>");
 						return;
 					}
 				} else {
-					p.sendMessage(ChatColor.RED + "[Regios] Invalid argument specified.");
+					p.sendMessage("<RED>" + "[Regios] Invalid argument specified.");
 					p.sendMessage("Proper usage: /regios nodeex add/rem/list/reset");
 					return;
 				}
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+				p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 				p.sendMessage("Proper usage: /regios nodeex add/rem/list/reset");
 				return;
 			}
@@ -180,7 +179,7 @@ public class ExceptionCommands extends PermissionsCore {
 		}
 	}
 	
-	public void subowner(Player p, String[] args) {
+	public void subowner(RegiosPlayer p, String[] args) {
 		if (doesHaveNode(p, "regios.modify.players")) {
 			if (args.length > 1) {
 				if (args[1].equalsIgnoreCase("add")) {
@@ -188,7 +187,7 @@ public class ExceptionCommands extends PermissionsCore {
 						addSubOwner(rm.getRegion(args[2]), args[2], args[3], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios subowner add <regios> <item>");
 						return;
 					}
@@ -197,7 +196,7 @@ public class ExceptionCommands extends PermissionsCore {
 						removeSubowner(rm.getRegion(args[2]), args[2], args[3], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios subowner rem <region> <item>");
 						return;
 					}
@@ -206,7 +205,7 @@ public class ExceptionCommands extends PermissionsCore {
 						listSubOwnerExceptions(rm.getRegion(args[2]), args[2], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios subowner list <region>");
 						return;
 					}
@@ -215,17 +214,17 @@ public class ExceptionCommands extends PermissionsCore {
 						eraseSubOwnerExceptions(rm.getRegion(args[2]), args[2], p);
 						return;
 					} else {
-						p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+						p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 						p.sendMessage("Proper usage: /regios subowner reset <region>");
 						return;
 					}
 				} else {
-					p.sendMessage(ChatColor.RED + "[Regios] Invalid argument specified.");
+					p.sendMessage("<RED>" + "[Regios] Invalid argument specified.");
 					p.sendMessage("Proper usage: /regios subowner add/rem/list/reset");
 					return;
 				}
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
+				p.sendMessage("<RED>" + "[Regios] Invalid number of arguments specified.");
 				p.sendMessage("Proper usage: /regios subowner add/rem/list/reset");
 				return;
 			}
@@ -243,284 +242,284 @@ public class ExceptionCommands extends PermissionsCore {
 		}
 	}
 
-	private void addPlayerException(Region r, String region, String ex, Player p) {
+	private void addPlayerException(Region r, String region, String ex, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if (!mutable.checkPlayerException(r, ex)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Exception added : " + ChatColor.BLUE + ex);
+				p.sendMessage("<DGREEN>" + "[Regios] Exception added : " + "<BLUE>" + ex);
 				mutable.addPlayerException(r, ex);
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Player " + ChatColor.BLUE + ex + ChatColor.RED + " is already an exception!");
+				p.sendMessage("<RED>" + "[Regios] Player " + "<BLUE>" + ex + "<RED>" + " is already an exception!");
 			}
 		}
 	}
 
-	private void removePlayerException(Region r, String region, String ex, Player p) {
+	private void removePlayerException(Region r, String region, String ex, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if (mutable.checkPlayerException(r, ex)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Exception removed : " + ChatColor.BLUE + ex);
+				p.sendMessage("<DGREEN>" + "[Regios] Exception removed : " + "<BLUE>" + ex);
 				mutable.removePlayerException(r, ex);
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Player " + ChatColor.BLUE + ex + ChatColor.RED + " is not an exception!");
+				p.sendMessage("<RED>" + "[Regios] Player " + "<BLUE>" + ex + "<RED>" + " is not an exception!");
 			}
 		}
 	}
 
-	private void addItemException(Region r, String region, String ex, Player p) {
+	private void addItemException(Region r, String region, String ex, RegiosPlayer p) {
 		int val = 0;
 		try {
 			val = Integer.parseInt(ex);
 		} catch (NumberFormatException nfe) {
-			p.sendMessage(ChatColor.RED + "[Regios] The item must be an integer!");
+			p.sendMessage("<RED>" + "[Regios] The item must be an integer!");
 			return;
 		}
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if(!checkException(val)){
-				p.sendMessage(ChatColor.RED + "[Regios] The item id " + ChatColor.BLUE + val + ChatColor.RED + " is invalid!");
+				p.sendMessage("<RED>" + "[Regios] The item id " + "<BLUE>" + val + "<RED>" + " is invalid!");
 				return;
 			}
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if (!mutable.checkItemException(r, val)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Item Exception added : " + ChatColor.BLUE + ex);
+				p.sendMessage("<DGREEN>" + "[Regios] Item Exception added : " + "<BLUE>" + ex);
 				mutable.addItemException(r, val);
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Item " + ChatColor.BLUE + ex + ChatColor.RED + " is already an exception!");
+				p.sendMessage("<RED>" + "[Regios] Item " + "<BLUE>" + ex + "<RED>" + " is already an exception!");
 			}
 		}
 	}
 
-	private void removeItemException(Region r, String region, String ex, Player p) {
+	private void removeItemException(Region r, String region, String ex, RegiosPlayer p) {
 		int val = 0;
 		try {
 			val = Integer.parseInt(ex);
 		} catch (NumberFormatException nfe) {
-			p.sendMessage(ChatColor.RED + "[Regios] The item must be an integer!");
+			p.sendMessage("<RED>" + "[Regios] The item must be an integer!");
 			return;
 		}
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if(!checkException(val)){
-				p.sendMessage(ChatColor.RED + "[Regios] The item id " + ChatColor.BLUE + val + ChatColor.RED + " is invalid!");
+				p.sendMessage("<RED>" + "[Regios] The item id " + "<BLUE>" + val + "<RED>" + " is invalid!");
 				return;
 			}
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if (mutable.checkItemException(r, val)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Item Exception removed : " + ChatColor.BLUE + ex);
+				p.sendMessage("<DGREEN>" + "[Regios] Item Exception removed : " + "<BLUE>" + ex);
 				mutable.removeItemException(r, val);
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Item " + ChatColor.BLUE + ex + ChatColor.RED + " is not an exception!");
+				p.sendMessage("<RED>" + "[Regios] Item " + "<BLUE>" + ex + "<RED>" + " is not an exception!");
 			}
 		}
 	}
 
-	private void addNodeException(Region r, String region, String ex, Player p) {
+	private void addNodeException(Region r, String region, String ex, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if (!mutable.checkNodeException(r, ex)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Exception Node added : " + ChatColor.BLUE + ex);
+				p.sendMessage("<DGREEN>" + "[Regios] Exception Node added : " + "<BLUE>" + ex);
 				mutable.addNodeException(r, ex);
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Node " + ChatColor.BLUE + ex + ChatColor.RED + " is already an exception!");
+				p.sendMessage("<RED>" + "[Regios] Node " + "<BLUE>" + ex + "<RED>" + " is already an exception!");
 			}
 		}
 	}
 
-	private void removeNodeException(Region r, String region, String ex, Player p) {
+	private void removeNodeException(Region r, String region, String ex, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if (mutable.checkNodeException(r, ex)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Exception Node added : " + ChatColor.BLUE + ex);
+				p.sendMessage("<DGREEN>" + "[Regios] Exception Node added : " + "<BLUE>" + ex);
 				mutable.removeNodeException(r, ex);
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Node " + ChatColor.BLUE + ex + ChatColor.RED + " is already an exception!");
+				p.sendMessage("<RED>" + "[Regios] Node " + "<BLUE>" + ex + "<RED>" + " is already an exception!");
 			}
 		}
 	}
 
-	private void erasePlayerExceptions(Region r, String region, Player p) {
+	private void erasePlayerExceptions(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] All player exceptions removed for region : " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "[Regios] All player exceptions removed for region : " + "<BLUE>" + region);
 			mutable.eraseAllPlayerExceptions(r);
 			return;
 		}
 	}
 
-	private void eraseSubOwnerExceptions(Region r, String region, Player p) {
+	private void eraseSubOwnerExceptions(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] All Sub Owners removed for region : " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "[Regios] All Sub Owners removed for region : " + "<BLUE>" + region);
 			mutable.eraseAllSubOwners(r);
 			return;
 		}
 	}
 
-	private void eraseItemExceptions(Region r, String region, Player p) {
+	private void eraseItemExceptions(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] All item exceptions removed for region : " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "[Regios] All item exceptions removed for region : " + "<BLUE>" + region);
 			mutable.eraseAllItemExceptions(r);
 			return;
 		}
 	}
 
-	private void eraseNodeExceptions(Region r, String region, Player p) {
+	private void eraseNodeExceptions(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] All node exceptions removed for region : " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "[Regios] All node exceptions removed for region : " + "<BLUE>" + region);
 			mutable.eraseAllNodeExceptions(r);
 			return;
 		}
 	}
 
-	private void listItemExceptions(Region r, String region, Player p) {
+	private void listItemExceptions(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			String regionSet = mutable.listItemExceptions(r);
-			p.sendMessage(ChatColor.GREEN + "Regios Item Exception List : " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "Regios Item Exception List : " + "<BLUE>" + region);
 			p.sendMessage(regionSet);
 		}
 	}
 
-	private void listPlayerExceptions(Region r, String region, Player p) {
+	private void listPlayerExceptions(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			String regionSet = mutable.listPlayerExceptions(r);
-			p.sendMessage(ChatColor.GREEN + "Regios Player Exception List : " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "Regios Player Exception List : " + "<BLUE>" + region);
 			p.sendMessage(regionSet);
 		}
 	}
 
-	private void listSubOwnerExceptions(Region r, String region, Player p) {
+	private void listSubOwnerExceptions(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			String regionSet = mutable.listSubOwnersExceptions(r);
-			p.sendMessage(ChatColor.GREEN + "Regios Sub Owner Exception List : " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "Regios Sub Owner Exception List : " + "<BLUE>" + region);
 			p.sendMessage(regionSet);
 		}
 	}
 
-	private void listNodeExceptions(Region r, String region, Player p) {
+	private void listNodeExceptions(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			String regionSet = mutable.listNodeExceptions(r);
-			p.sendMessage(ChatColor.GREEN + "Regios Node Exception List : " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "Regios Node Exception List : " + "<BLUE>" + region);
 			p.sendMessage(regionSet);
 		}
 	}
 
-	private void addSubOwner(Region r, String region, String message, Player p) {
+	private void addSubOwner(Region r, String region, String message, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			
 			if (mutable.checkSubOwnerException(r, message)) {
-				p.sendMessage(ChatColor.RED + "[Regios] The Sub Owner " + ChatColor.BLUE + message + ChatColor.RED + " already exists!");
+				p.sendMessage("<RED>" + "[Regios] The Sub Owner " + "<BLUE>" + message + "<RED>" + " already exists!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] Sub Owner " + ChatColor.BLUE + message + ChatColor.GREEN + " added to region " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "[Regios] Sub Owner " + "<BLUE>" + message + "<DGREEN>" + " added to region " + "<BLUE>" + region);
 		}
 		mutable.addSubOwner(r, message);
 	}
 
-	private void removeSubowner(Region r, String region, String ex, Player p) {
+	private void removeSubowner(Region r, String region, String ex, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if (mutable.checkSubOwnerException(r, ex)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Sub Owner removed : " + ChatColor.BLUE + ex);
+				p.sendMessage("<DGREEN>" + "[Regios] Sub Owner removed : " + "<BLUE>" + ex);
 				mutable.removeSubOwner(r, ex);
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Sub Owner " + ChatColor.BLUE + ex + ChatColor.RED + " does not exist!");
+				p.sendMessage("<RED>" + "[Regios] Sub Owner " + "<BLUE>" + ex + "<RED>" + " does not exist!");
 			}
 		}
 	}
 
-	public void removeFromPermRemCache(Region r, String region, String message, Player p) {
+	public void removeFromPermRemCache(Region r, String region, String message, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			boolean nodeMatch = false;
@@ -530,24 +529,24 @@ public class ExceptionCommands extends PermissionsCore {
 				}
 			}
 			if (!nodeMatch) {
-				p.sendMessage(ChatColor.RED + "[Regios] The Sub Owner " + ChatColor.BLUE + message + ChatColor.RED + " did not match any in the cache!");
+				p.sendMessage("<RED>" + "[Regios] The Sub Owner " + "<BLUE>" + message + "<RED>" + " did not match any in the cache!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] Sub Owner " + ChatColor.BLUE + message + ChatColor.GREEN + " removed from region cache " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "[Regios] Sub Owner " + "<BLUE>" + message + "<DGREEN>" + " removed from region cache " + "<BLUE>" + region);
 		}
 		mutable.removeSubOwner(r, message);
 	}
 
-	public void resetPermRemCache(Region r, String region, Player p) {
+	public void resetPermRemCache(Region r, String region, RegiosPlayer p) {
 		if (r == null) {
-			p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!");
+			p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!");
 			return;
 		} else {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
-			p.sendMessage(ChatColor.GREEN + "[Regios] Sub Owners reset for region " + ChatColor.BLUE + region);
+			p.sendMessage("<DGREEN>" + "[Regios] Sub Owners reset for region " + "<BLUE>" + region);
 		}
 		mutable.eraseAllSubOwners(r);
 	}

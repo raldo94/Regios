@@ -3,27 +3,27 @@ package net.jzx7.regios.Data;
 import java.io.File;
 import java.io.IOException;
 
+import net.jzx7.regios.util.EncryptUtil;
+import net.jzx7.regios.worlds.WorldManager;
+import net.jzx7.regiosapi.location.RegiosPoint;
 import net.jzx7.regiosapi.regions.CuboidRegion;
 import net.jzx7.regiosapi.regions.PolyRegion;
 import net.jzx7.regiosapi.regions.Region;
+import net.jzx7.regiosapi.worlds.RegiosWorld;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import couk.Adamki11s.Extras.Cryptography.ExtrasCryptography;
-
 public class Saveable  {
 	
-	ExtrasCryptography extCrypt = new ExtrasCryptography();
+	EncryptUtil encUtil = new EncryptUtil();
+	WorldManager wm = new WorldManager();
 	
 	private final File root = new File("plugins" + File.separator + "Regios"),
 			 db_root = new File(root + File.separator + "Database");
 	
 	public void saveWorlds(){
-		for(World w : Bukkit.getServer().getWorlds()){
+		for(RegiosWorld w : wm.getRegiosWorlds()){
 			String world = w.getName();
 			File root = new File("plugins" + File.separator + "Regios" + File.separator + "Configuration" + File.separator + "WorldConfigurations");
 			if(!root.exists()){ root.mkdir(); }
@@ -150,7 +150,7 @@ public class Saveable  {
 		c.set("Region.General.Password.Enabled", Boolean.valueOf(r.isPasswordEnabled()));
 		
 		if(r.getPassword().length() > 3){
-			c.set("Region.General.Password.Password", extCrypt.computeSHA2_384BitHash(r.getPassword().toString()));
+			c.set("Region.General.Password.Password", encUtil.computeSHA2_384BitHash(r.getPassword().toString()));
 		} else {
 			c.set("Region.General.Password.Password", "");
 		}
@@ -175,16 +175,16 @@ public class Saveable  {
 			c.set("Region.Essentials.Points.MaxY", ((PolyRegion) r).getMaxY());
 			c.set("Region.Essentials.Points.MinY", ((PolyRegion) r).getMinY());
 		} else if (r instanceof CuboidRegion) {
-			c.set("Region.Essentials.Points.Point1", convertLocation(((CuboidRegion) r).getL1()));
-			c.set("Region.Essentials.Points.Point2", convertLocation(((CuboidRegion) r).getL2()));
+			c.set("Region.Essentials.Points.Point1", convertPoint(((CuboidRegion) r).getL1()));
+			c.set("Region.Essentials.Points.Point2", convertPoint(((CuboidRegion) r).getL2()));
 		}
 		
 		c.set("Region.Spout.Welcome.Enabled", r.isSpoutWelcomeEnabled());
 		c.set("Region.Spout.Leave.Enabled", r.isSpoutWelcomeEnabled());
 		c.set("Region.Spout.Welcome.Message", r.getSpoutWelcomeMessage());
-		c.set("Region.Spout.Welcome.IconID", r.getSpoutWelcomeMaterial().getId());	
+		c.set("Region.Spout.Welcome.IconID", r.getSpoutWelcomeMaterial());	
 		c.set("Region.Spout.Leave.Message", r.getSpoutLeaveMessage());
-		c.set("Region.Spout.Leave.IconID", r.getSpoutLeaveMaterial().getId());
+		c.set("Region.Spout.Leave.IconID", r.getSpoutLeaveMaterial());
 		c.set("Region.Spout.Sound.PlayCustomMusic", r.isPlayCustomSoundUrl());
 		c.set("Region.Spout.Sound.CustomMusicURL", r.getCustomSoundUrl());
 		c.set("Region.Spout.Texture.UseTexture", r.isUseSpoutTexturePack());
@@ -193,12 +193,12 @@ public class Saveable  {
 		c.set("Region.Economy.ForSale", r.isForSale());
 		c.set("Region.Economy.Price", r.getSalePrice());
 		
-		c.set("Region.Teleportation.Warp.Location", r.getWorld().getName() + ",0,0,0");
+		c.set("Region.Teleportation.Warp.Point", r.getWorld().getName() + ",0,0,0");
 		
 		c.set("Region.Block.BlockForm.Enabled", r.isBlockForm());
 		c.set("Region.General.PlayerCap.Cap", r.getPlayerCap());
 		
-		c.set("Region.GameMode.Type", r.getGameMode().toString());
+		c.set("Region.GameMode.Type", r.getGameMode());
 		c.set("Region.GameMode.Change", r.isChangeGameMode());
 		
 		try {
@@ -353,7 +353,7 @@ public class Saveable  {
 		c.set("Region.General.Password.Enabled", Boolean.valueOf(r.isPasswordEnabled()));
 		
 		if(r.getPassword().length() > 3){
-			c.set("Region.General.Password.Password", extCrypt.computeSHA2_384BitHash(r.getPassword().toString()));
+			c.set("Region.General.Password.Password", encUtil.computeSHA2_384BitHash(r.getPassword().toString()));
 		} else {
 			c.set("Region.General.Password.Password", "");
 		}
@@ -385,14 +385,14 @@ public class Saveable  {
 			c.set("Region.Essentials.Points.MaxY", ((PolyRegion) r).getMaxY());
 			c.set("Region.Essentials.Points.MinY", ((PolyRegion) r).getMinY());
 		} else if (r instanceof CuboidRegion) {
-			c.set("Region.Essentials.Points.Point1", convertLocation(((CuboidRegion) r).getL1()));
-			c.set("Region.Essentials.Points.Point2", convertLocation(((CuboidRegion) r).getL2()));
+			c.set("Region.Essentials.Points.Point1", convertPoint(((CuboidRegion) r).getL1()));
+			c.set("Region.Essentials.Points.Point2", convertPoint(((CuboidRegion) r).getL2()));
 		}
 		
 		c.set("Region.Spout.Welcome.Message", r.getSpoutWelcomeMessage());
-		c.set("Region.Spout.Welcome.IconID", r.getSpoutWelcomeMaterial().getId());	
+		c.set("Region.Spout.Welcome.IconID", r.getSpoutWelcomeMaterial());	
 		c.set("Region.Spout.Leave.Message", r.getSpoutLeaveMessage());
-		c.set("Region.Spout.Leave.IconID", r.getSpoutLeaveMaterial().getId());
+		c.set("Region.Spout.Leave.IconID", r.getSpoutLeaveMaterial());
 		c.set("Region.Spout.Sound.PlayCustomMusic", r.isPlayCustomSoundUrl());
 		c.set("Region.Spout.Sound.CustomMusicURL", r.getCustomSoundUrl());
 		c.set("Region.Spout.Texture.UseTexture", r.isUseSpoutTexturePack());
@@ -404,12 +404,12 @@ public class Saveable  {
 		c.set("Region.Spout.Welcome.Enabled", r.isSpoutWelcomeEnabled());
 		c.set("Region.Spout.Leave.Enabled", r.isSpoutWelcomeEnabled());
 		
-		c.set("Region.Teleportation.Warp.Location", r.getWarp().getWorld() + "," + r.getWarp().getBlockX() + "," + r.getWarp().getBlockY() + "," + r.getWarp().getBlockZ());
+		c.set("Region.Teleportation.Warp.Point", r.getWarp().getRegiosWorld() + "," + r.getWarp().getBlockX() + "," + r.getWarp().getBlockY() + "," + r.getWarp().getBlockZ());
 		
 		c.set("Region.Block.BlockForm.Enabled", r.isBlockForm());
 		c.set("Region.General.PlayerCap.Cap", r.getPlayerCap());
 		
-		c.set("Region.GameMode.Type", r.getGameMode().toString());
+		c.set("Region.GameMode.Type", r.getGameMode());
 		c.set("Region.GameMode.Change", r.isChangeGameMode());
 		
 		c.save(region_core);
@@ -448,8 +448,8 @@ public class Saveable  {
 		System.out.println("Region '" + r.getName() + "' saved successfully!");
 	}
 	
-	public String convertLocation(Location l){
-		return l.getWorld().getName() + "," + l.getX() + "," + l.getY() + "," + l.getZ();
+	public String convertPoint(RegiosPoint l){
+		return l.getRegiosWorld().getName() + "," + l.getX() + "," + l.getY() + "," + l.getZ();
 	}
 	
 	public String pointsToString(int[] points) {

@@ -23,9 +23,10 @@ public class VersionPatcher {
 	static final File patch5051F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.0.51.rv");
 	static final File patch590F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.9.0.rv");
 	static final File patch595F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.9.5.rv");
+	static final File patch598F = new File(root + File.separator + "Versions" + File.separator + "Version Tracker" + File.separator + "5.9.8.rv");
 
 	public static void runPatch(String version) throws IOException {
-		if (version.equalsIgnoreCase("5.9.5")) {
+		if (version.equalsIgnoreCase("5.9.6")) {
 			if (!patch4057F.exists()) {
 				patch4057(version);
 				patch4057F.createNewFile();
@@ -53,6 +54,10 @@ public class VersionPatcher {
 			if (!patch595F.exists()) {
 				patch595(version);
 				patch595F.createNewFile();
+			}
+			if (!patch598F.exists()) {
+				patch598(version);
+				patch598F.createNewFile();
 			}
 		}
 	}
@@ -313,6 +318,57 @@ public class VersionPatcher {
 				c.set("Region.General.ExplosionsEnabled",tnt1);
 				c.set("Region.General.TNTEnabled", null);
 				c.set("Region.General.TNT", null);
+				try {
+					c.save(f);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		ConfigurationData.logs = true;
+		outstream.println("[Regios][Patch] Corrected incorrect patch from 5.9.0");
+		outstream.println("[Regios][Patch] Patch completed!");
+	}
+	
+	private static void patch598(String v) {
+		outstream.println("[Regios][Patch] Patching files for version : " + v);
+
+		outstream.println("[Regios][Patch] Modifying DefaultRegion file...");
+		File dr = new File(config_root + File.separator + "DefaultRegion.config");
+		FileConfiguration drc = YamlConfiguration.loadConfiguration(dr);
+		String gm = drc.getString("DefaultSettings.GameMode.Type", "SURVIVAL");
+		int gmint = 0;
+		if (gm.equalsIgnoreCase("SURVIVAL")) {
+			gmint = 0;
+		} else if (gm.equalsIgnoreCase("CREATIVE")) {
+			gmint = 1;
+		} else if (gm.equalsIgnoreCase("ADVENTURE")) {
+			gmint = 2;
+		}
+		drc.set("DefaultSettings.GameMode.Type", gmint);
+		try {
+			drc.save(dr);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		outstream.println("[Regios][Patch] Modifying Region files...");
+		File fff = new File("plugins" + File.separator + "Regios" + File.separator + "Database");
+		for (File tmp : fff.listFiles()) {
+			if (tmp.isDirectory()) {
+				File f = new File(tmp + File.separator + tmp.getName() + ".rz");
+				FileConfiguration c = YamlConfiguration.loadConfiguration(f);
+				String gmr = c.getString("Region.GameMode.Type", "SURVIVAL");
+				int gmrint = 0;
+				if (gmr.equalsIgnoreCase("SURVIVAL")) {
+					gmrint = 0;
+				} else if (gmr.equalsIgnoreCase("CREATIVE")) {
+					gmrint = 1;
+				} else if (gmr.equalsIgnoreCase("ADVENTURE")) {
+					gmrint = 2;
+				}
+				c.set("Region.GameMode.Type", gmrint);
 				try {
 					c.save(f);
 				} catch (IOException e) {

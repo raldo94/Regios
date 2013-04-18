@@ -28,12 +28,6 @@
 
 package net.jzx7.Metrics;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +45,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  * <p>
@@ -129,9 +130,9 @@ public class Metrics {
     private final Object optOutLock = new Object();
 
     /**
-     * Id of the scheduled task
+     * Scheduled task object
      */
-    private volatile int taskId = -1;
+    private volatile BukkitTask bTask = null;
 
     public Metrics(final Plugin plugin) throws IOException {
         if (plugin == null) {
@@ -225,23 +226,24 @@ public class Metrics {
             }
 
             // Is metrics already running?
-            if (taskId >= 0) {
+            if (bTask != null) {
                 return true;
             }
 
             // Begin hitting the server with glorious data
-            taskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+            bTask = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
 
                 private boolean firstPost = true;
 
-                public void run() {
+                @Override
+				public void run() {
                     try {
                         // This has to be synchronized or it can collide with the disable method.
                         synchronized (optOutLock) {
                             // Disable Task, if it is running and the server owner decided to opt-out
-                            if (isOptOut() && taskId > 0) {
-                                plugin.getServer().getScheduler().cancelTask(taskId);
-                                taskId = -1;
+                            if (isOptOut() && bTask != null) {
+                                bTask.cancel();
+                                bTask = null;
                                 // Tell all plotters to stop gathering information.
                                 for (Graph graph : graphs){
                                     graph.onOptOut();
@@ -303,7 +305,7 @@ public class Metrics {
         	}
 
         	// Enable Task, if it is not running
-        	if (taskId < 0) {
+        	if (bTask == null) {
         		start();
         	}
         }
@@ -324,9 +326,9 @@ public class Metrics {
             }
 
             // Disable Task, if it is running
-            if (taskId > 0) {
-                this.plugin.getServer().getScheduler().cancelTask(taskId);
-                taskId = -1;
+            if (bTask != null) {
+                bTask.cancel();
+                bTask = null;
             }
         }
     }

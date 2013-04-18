@@ -7,11 +7,8 @@ import net.jzx7.regios.Data.Saveable;
 import net.jzx7.regios.regions.RegionManager;
 import net.jzx7.regiosapi.regions.Region;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-
 
 public class MutableAdministration extends Saveable {
 
@@ -20,11 +17,11 @@ public class MutableAdministration extends Saveable {
 	private final static RegionManager rm = new RegionManager();
 
 	public void setOwner(Region r, String owner) {
-		FileConfiguration c = YamlConfiguration.loadConfiguration(r.getConfigFile());
+		FileConfiguration c = YamlConfiguration.loadConfiguration(rm.getConfigFile(r));
 		c.set("Region.Essentials.Owner", owner);
 		r.setOwner(owner);
 		try {
-			c.save(r.getConfigFile());
+			c.save(rm.getConfigFile(r));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,26 +36,26 @@ public class MutableAdministration extends Saveable {
 		int build = 0;
 		for (Region r : rm.getRegions()) {
 			build++;
-			sb.append(ChatColor.WHITE).append(r.getName().trim()).append(ChatColor.BLUE).append(", ");
+			sb.append("<WHITE>").append(r.getName().trim()).append("<BLUE>").append(", ");
 		}
 		if (build == 0) {
-			return ChatColor.RED + "[Regios] No Regions Found!";
+			return "<RED>" + "[Regios] No Regions Found!";
 		} else {
 			return sb.toString();
 		}
 	}
 	
-	public String listOwnedRegions(Player p) {
+	public String listOwnedRegions(String name) {
 		StringBuilder sb = new StringBuilder();
 		int count = 0;
 		for(Region r : rm.getRegions()){
-			if(r.getOwner().equalsIgnoreCase(p.getName())){
+			if(r.getOwner().equalsIgnoreCase(name)){
 				count++;
-				sb.append(ChatColor.WHITE).append(r.getName().trim()).append(ChatColor.BLUE).append(", ");
+				sb.append("<WHITE>").append(r.getName().trim()).append("<BLUE>").append(", ");
 			}
 		}
 		if (count == 0) {
-			return ChatColor.RED + "[Regios] No Regions Found!";
+			return "<RED>" + "[Regios] No Regions Found!";
 		} else {
 			return sb.toString();
 		}

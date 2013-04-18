@@ -2,99 +2,96 @@ package net.jzx7.regios.Commands;
 
 import net.jzx7.regios.Mutable.MutableInventory;
 import net.jzx7.regios.Permissions.PermissionsCore;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.regions.Region;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 
 public class InventoryCommands extends PermissionsCore{
 	
 	MutableInventory mutable = new MutableInventory();
 	
-	public void setPermWipeOnExit(Region r, String region, String input, Player p){
+	public void setPermWipeOnExit(Region r, String region, String input, RegiosPlayer p){
 		boolean val;
 		try{
 			val = Boolean.parseBoolean(input);
 		} catch (Exception bfe){
-			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be boolean!");
+			p.sendMessage("<RED>" + "[Regios] The value for the 2nd paramteter must be boolean!");
 			return;
 		}
-		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
+		if(r == null){ p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!"); return; } else {
 			if(!r.canModify(p)){
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if(val){
-				p.sendMessage(ChatColor.GREEN + "[Regios] Perm wipe on exit enabled for region " + ChatColor.BLUE + region);
+				p.sendMessage("<DGREEN>" + "[Regios] Perm wipe on exit enabled for region " + "<BLUE>" + region);
 			} else {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Perm wipe on exit disabled for region " + ChatColor.BLUE + region);
+				p.sendMessage("<DGREEN>" + "[Regios] Perm wipe on exit disabled for region " + "<BLUE>" + region);
 			}
 		}
 		mutable.editPermWipeOnExit(r, val);
 	}
 	
-	public void setPermWipeOnEntry(Region r, String region, String input, Player p){
+	public void setPermWipeOnEntry(Region r, String region, String input, RegiosPlayer p){
 		boolean val;
 		try{
 			val = Boolean.parseBoolean(input);
 		} catch (Exception bfe){
-			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be boolean!");
+			p.sendMessage("<RED>" + "[Regios] The value for the 2nd paramteter must be boolean!");
 			return;
 		}
-		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
+		if(r == null){ p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!"); return; } else {
 			if(!r.canModify(p)){
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if(val){
-				p.sendMessage(ChatColor.GREEN + "[Regios] Perm wipe on entry enabled for region " + ChatColor.BLUE + region);
+				p.sendMessage("<DGREEN>" + "[Regios] Perm wipe on entry enabled for region " + "<BLUE>" + region);
 			} else {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Perm wipe on entry disabled for region " + ChatColor.BLUE + region);
+				p.sendMessage("<DGREEN>" + "[Regios] Perm wipe on entry disabled for region " + "<BLUE>" + region);
 			}
 		}
 		mutable.editPermWipeOnEnter(r, val);
 	}
 	
-	public void setWipeAndCacheOnExit(Region r, String region, String input, Player p){
+	public void setWipeAndCacheOnExit(Region r, String region, String input, RegiosPlayer p){
 		boolean val;
 		try{
 			val = Boolean.parseBoolean(input);
 		} catch (Exception bfe){
-			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be boolean!");
+			p.sendMessage("<RED>" + "[Regios] The value for the 2nd paramteter must be boolean!");
 			return;
 		}
-		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
+		if(r == null){ p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!"); return; } else {
 			if(!r.canModify(p)){
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if(val){
-				p.sendMessage(ChatColor.GREEN + "[Regios] Wipe and cache on exit enabled for region " + ChatColor.BLUE + region);
+				p.sendMessage("<DGREEN>" + "[Regios] Wipe and cache on exit enabled for region " + "<BLUE>" + region);
 			} else {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Wipe and cache on exit disabled for region " + ChatColor.BLUE + region);
+				p.sendMessage("<DGREEN>" + "[Regios] Wipe and cache on exit disabled for region " + "<BLUE>" + region);
 			}
 		}
 		mutable.editWipeAndCacheOnExit(r, val);
 	}
 	
-	public void setWipeAndCacheOnEntry(Region r, String region, String input, Player p){
+	public void setWipeAndCacheOnEntry(Region r, String region, String input, RegiosPlayer p){
 		boolean val;
 		try{
 			val = Boolean.parseBoolean(input);
 		} catch (Exception bfe){
-			p.sendMessage(ChatColor.RED + "[Regios] The value for the 2nd paramteter must be boolean!");
+			p.sendMessage("<RED>" + "[Regios] The value for the 2nd paramteter must be boolean!");
 			return;
 		}
-		if(r == null){ p.sendMessage(ChatColor.RED + "[Regios] The region " + ChatColor.BLUE + region + ChatColor.RED + " doesn't exist!"); return; } else {
+		if(r == null){ p.sendMessage("<RED>" + "[Regios] The region " + "<BLUE>" + region + "<RED>" + " doesn't exist!"); return; } else {
 			if(!r.canModify(p)){
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 			if(val){
-				p.sendMessage(ChatColor.GREEN + "[Regios] Wipe and cache on entry enabled for region " + ChatColor.BLUE + region);
+				p.sendMessage("<DGREEN>" + "[Regios] Wipe and cache on entry enabled for region " + "<BLUE>" + region);
 			} else {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Wipe and cache on entry disabled for region " + ChatColor.BLUE + region);
+				p.sendMessage("<DGREEN>" + "[Regios] Wipe and cache on entry disabled for region " + "<BLUE>" + region);
 			}
 		}
 		mutable.editWipeAndCacheOnEnter(r, val);

@@ -1,17 +1,10 @@
 package net.jzx7.regios.worlds;
 
-import java.util.ArrayList;
-
 import net.jzx7.regios.Permissions.PermissionsCore;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.worlds.RegiosWorld;
 
-import org.bukkit.World;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
-
-public class RegWorld implements RegiosWorld {
-	World world;
+public abstract class RegWorld implements RegiosWorld {
 	
 	private boolean invert_protection = false,
 			invert_pvp = false,
@@ -25,17 +18,6 @@ public class RegWorld implements RegiosWorld {
 			dragonProtect = true,
 			blockEndermanMod = false,
 			dragonPortal = true;
-	
-	private ArrayList<EntityType> creaturesWhoSpawn = new ArrayList<EntityType>();
-	
-	public RegWorld (World world) {
-		this.world = world;
-	}
-	
-	@Override
-	public World getWorld() {
-		return world;
-	}
 
 	@Override
 	public boolean getProtection() {
@@ -148,18 +130,8 @@ public class RegWorld implements RegiosWorld {
 	}
 	
 	@Override
-	public boolean canCreatureSpawn(EntityType entityType){
-		return creaturesWhoSpawn.contains(entityType);
-	}
-	
-	@Override
-	public void addCreatureSpawn(EntityType ct){
-		creaturesWhoSpawn.add(ct);
-	}
-	
-	@Override
-	public boolean canBypassWorldChecks(Player p){
-		return (PermissionsCore.doesHaveNode(p, "regios.worldprotection.bypass") || PermissionsCore.doesHaveNode(p, "regios." + world.getName() + ".bypass") || p.isOp());
+	public boolean canBypassWorldChecks(RegiosPlayer p){
+		return (PermissionsCore.doesHaveNode(p, "regios.worldprotection.bypass") || PermissionsCore.doesHaveNode(p, "regios." + getName() + ".bypass"));
 	}
 
 	@Override

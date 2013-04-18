@@ -3,12 +3,13 @@ package net.jzx7.regios.WorldEdit.Commands;
 import net.jzx7.regios.Permissions.PermissionsCore;
 import net.jzx7.regios.RBF.RBF_Core;
 import net.jzx7.regios.WorldEdit.WorldEditInterface;
+import net.jzx7.regios.messages.Message;
+import net.jzx7.regios.messages.MsgFormat;
 import net.jzx7.regios.regions.RegionManager;
+import net.jzx7.regios.util.RegiosConversions;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.exceptions.RegionNameExistsException;
 import net.jzx7.regiosapi.exceptions.RegionPointsNotSetException;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.BlockVector2D;
@@ -17,16 +18,15 @@ import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
-
 public class WorldEditCommands extends PermissionsCore {
 
 	private static char[] invalidModifiers = { '!', '\'', '£', '$', '%', '^', '&', '*', '¬', '`', '/', '?', '<', '>', '|', '\\' };
 	
 	private RegionManager rm = new RegionManager();
 
-	public void createRegionWE(Player p, String name) throws RegionNameExistsException, RegionPointsNotSetException {
+	public void createRegionWE(RegiosPlayer p, String name) throws RegionNameExistsException, RegionPointsNotSetException {
 		if (rm.doesRegionExist(name)) {
-			p.sendMessage(ChatColor.RED + "[Regios] A region with name : " + ChatColor.BLUE + name + ChatColor.RED + " already exists!");
+			p.sendMessage(Message.REGIONALREADYEXISTS.getMessage() + MsgFormat.colourFormat("<BLUE>" + name));
 			throw new RegionNameExistsException(name);
 		}
 		StringBuilder invalidName = new StringBuilder();
@@ -40,14 +40,14 @@ public class WorldEditCommands extends PermissionsCore {
 				}
 			}
 			if (!valid) {
-				invalidName.append(ChatColor.RED).append(ch);
+				invalidName.append("<RED>").append(ch);
 			} else {
-				invalidName.append(ChatColor.GREEN).append(ch);
+				invalidName.append("<DGREEN>").append(ch);
 			}
 		}
 
 		if (!integrity) {
-			p.sendMessage(ChatColor.RED + "[Regios] Name contained invalid characters : " + invalidName.toString());
+			p.sendMessage(Message.INVALIDCHARACTERS.getMessage() + MsgFormat.colourFormat(invalidName.toString()));
 			return;
 		}
 
@@ -59,12 +59,12 @@ public class WorldEditCommands extends PermissionsCore {
 		}
 
 		// Attempt to get the player's selection from WorldEdit
-		Selection sel = worldEdit.getSelection(p);
+		Selection sel = worldEdit.getSelection(RegiosConversions.getPlayer(p));
 
 		if(sel == null)
 		{
 			try {
-				throw new CommandException("Select a region with WorldEdit first.");
+				throw new CommandException(Message.WORLDEDITSELECTREGIONFIRST.getMessage());
 			} catch (CommandException e) {
 				p.sendMessage(e.getMessage());
 			}
@@ -86,17 +86,17 @@ public class WorldEditCommands extends PermissionsCore {
 			rm.createRegion(p, name, xPoints, zPoints, nPoints, sel.getNativeMinimumPoint().getBlockY(), sel.getNativeMaximumPoint().getBlockY());
 			
 		} else if (sel instanceof CuboidSelection) {
-			rm.createRegion(p, name, sel.getMinimumPoint(), sel.getMaximumPoint());
+			rm.createRegion(p, name, RegiosConversions.getPoint(sel.getMinimumPoint()), RegiosConversions.getPoint(sel.getMaximumPoint()));
 		} else {
 			try {
-				throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+				throw new CommandException(Message.WORLDEDITREGIONUNSUPPORTED.getUnformattedMessage());
 			} catch (CommandException e) {
 				p.sendMessage(e.getMessage());
 			}
 		}
 	}
 
-	public void createBlueprintWE(Player p, String name) {
+	public void createBlueprintWE(RegiosPlayer p, String name) {
 		StringBuilder invalidName = new StringBuilder();
 		boolean integrity = true;
 		for (char ch : name.toCharArray()) {
@@ -108,14 +108,14 @@ public class WorldEditCommands extends PermissionsCore {
 				}
 			}
 			if (!valid) {
-				invalidName.append(ChatColor.RED).append(ch);
+				invalidName.append("<RED>").append(ch);
 			} else {
-				invalidName.append(ChatColor.GREEN).append(ch);
+				invalidName.append("<DGREEN>").append(ch);
 			}
 		}
 
 		if (!integrity) {
-			p.sendMessage(ChatColor.RED + "[Regios] Name contained  invalid characters : " + invalidName.toString());
+			p.sendMessage(Message.INVALIDCHARACTERS.getMessage() + MsgFormat.colourFormat(invalidName.toString()));
 			return;
 		}
 
@@ -128,12 +128,12 @@ public class WorldEditCommands extends PermissionsCore {
 		}
 
 		// Attempt to get the player's selection from WorldEdit
-		Selection sel = worldEdit.getSelection(p);
+		Selection sel = worldEdit.getSelection(RegiosConversions.getPlayer(p));
 
 		if(sel == null)
 		{
 			try {
-				throw new CommandException("Select a region with WorldEdit first.");
+				throw new CommandException(Message.WORLDEDITSELECTREGIONFIRST.getMessage());
 			} catch (CommandException e) {
 				p.sendMessage(e.getMessage());
 				return;
@@ -153,10 +153,10 @@ public class WorldEditCommands extends PermissionsCore {
 			}
 			RBF_Core.blueprint.startSave(xPoints, zPoints, nPoints, sel.getNativeMinimumPoint().getBlockY(), sel.getNativeMaximumPoint().getBlockY(), name, p, true);
 		} else if (sel instanceof CuboidSelection) {
-			RBF_Core.blueprint.startSave(sel.getMinimumPoint(), sel.getMaximumPoint(), name, p);
+			RBF_Core.blueprint.startSave(RegiosConversions.getPoint(sel.getMinimumPoint()), RegiosConversions.getPoint(sel.getMaximumPoint()), name, p);
 		} else {
 			try {
-				throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+				throw new CommandException(Message.WORLDEDITREGIONUNSUPPORTED.getUnformattedMessage());
 			} catch (CommandException e) {
 				p.sendMessage(e.getMessage());
 				return;
@@ -164,7 +164,7 @@ public class WorldEditCommands extends PermissionsCore {
 		}
 	}
 
-	public void createSchematicWE(Player p, String name) {
+	public void createSchematicWE(RegiosPlayer p, String name) {
 		StringBuilder invalidName = new StringBuilder();
 		boolean integrity = true;
 		for (char ch : name.toCharArray()) {
@@ -176,14 +176,14 @@ public class WorldEditCommands extends PermissionsCore {
 				}
 			}
 			if (!valid) {
-				invalidName.append(ChatColor.RED).append(ch);
+				invalidName.append("<RED>").append(ch);
 			} else {
-				invalidName.append(ChatColor.GREEN).append(ch);
+				invalidName.append("<DGREEN>").append(ch);
 			}
 		}
 
 		if (!integrity) {
-			p.sendMessage(ChatColor.RED + "[Regios] Name contained  invalid characters : " + invalidName.toString());
+			p.sendMessage(Message.INVALIDCHARACTERS.getMessage() + MsgFormat.colourFormat(invalidName.toString()));
 			return;
 		}
 
@@ -196,12 +196,12 @@ public class WorldEditCommands extends PermissionsCore {
 		}
 
 		// Attempt to get the player's selection from WorldEdit
-		Selection sel = worldEdit.getSelection(p);
+		Selection sel = worldEdit.getSelection(RegiosConversions.getPlayer(p));
 
 		if(sel == null)
 		{
 			try {
-				throw new CommandException("Select a region with WorldEdit first.");
+				throw new CommandException(Message.WORLDEDITSELECTREGIONFIRST.getMessage());
 			} catch (CommandException e) {
 				p.sendMessage(e.getMessage());
 				return;
@@ -211,10 +211,10 @@ public class WorldEditCommands extends PermissionsCore {
 		if (sel instanceof Polygonal2DSelection) {
 			p.sendMessage("Sorry, schematics don't support non-cuboid regions!");
 		} else if (sel instanceof CuboidSelection) {
-			RBF_Core.schematic.startSave(sel.getMinimumPoint(), sel.getMaximumPoint(), name, p);
+			RBF_Core.schematic.startSave(RegiosConversions.getPoint(sel.getMinimumPoint()), RegiosConversions.getPoint(sel.getMaximumPoint()), name, p);
 		} else {
 			try {
-				throw new CommandException("The type of region selected in WorldEdit is unsupported in Regios");
+				throw new CommandException(Message.WORLDEDITREGIONUNSUPPORTED.getMessage());
 			} catch (CommandException e) {
 				p.sendMessage(e.getMessage());
 				return;

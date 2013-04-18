@@ -5,56 +5,57 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import net.jzx7.regios.Data.ConfigurationData;
-import net.jzx7.regios.Listeners.RegiosPlayerListener;
 import net.jzx7.regios.Permissions.PermissionsCore;
 import net.jzx7.regios.RBF.RBF_Core;
-import net.jzx7.regios.regions.RegionManager;
 import net.jzx7.regios.WorldEdit.Commands.WorldEditCommands;
+import net.jzx7.regios.entity.PlayerManager;
+import net.jzx7.regios.messages.CMDText;
+import net.jzx7.regios.messages.Message;
+import net.jzx7.regios.messages.MsgFormat;
+import net.jzx7.regios.regions.RegionManager;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.exceptions.RegionNameExistsException;
 import net.jzx7.regiosapi.exceptions.RegionPointsNotSetException;
+import net.jzx7.regiosapi.inventory.RegiosItemStack;
+import net.jzx7.regiosapi.location.RegiosPoint;
 import net.jzx7.regiosapi.regions.Region;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class CreationCommands extends PermissionsCore {
 
-	public static HashMap<String, Location> point1 = new HashMap<String, Location>();
-	public static HashMap<String, Location> point2 = new HashMap<String, Location>();
-	public static HashMap<String, ArrayList<Location>> points = new HashMap<String, ArrayList<Location>>();
-	public static HashMap<String, ArrayList<Location>> mpoints = new HashMap<String, ArrayList<Location>>();
+	public static HashMap<String, RegiosPoint> point1 = new HashMap<String, RegiosPoint>();
+	public static HashMap<String, RegiosPoint> point2 = new HashMap<String, RegiosPoint>();
+	public static HashMap<String, ArrayList<RegiosPoint>> regiosPoints = new HashMap<String, ArrayList<RegiosPoint>>();
+	public static HashMap<String, ArrayList<RegiosPoint>> mpoints = new HashMap<String, ArrayList<RegiosPoint>>();
 
 	public static HashMap<String, String> setting = new HashMap<String, String>();
 	public static HashMap<String, String> modding = new HashMap<String, String>();
 
-	public static HashMap<String, Location> mod1 = new HashMap<String, Location>();
-	public static HashMap<String, Location> mod2 = new HashMap<String, Location>();
+	public static HashMap<String, RegiosPoint> mod1 = new HashMap<String, RegiosPoint>();
+	public static HashMap<String, RegiosPoint> mod2 = new HashMap<String, RegiosPoint>();
 
 	public static HashMap<String, Region> modRegion = new HashMap<String, Region>();
 
 	private static char[] invalidModifiers = { '!', '\'', '£', '$', '%', '^', '&', '*', '¬', '`', '/', '?', '<', '>', '|', '\\' };
 
 	private static final RegionManager rm = new RegionManager();
+	private static final PlayerManager pm = new PlayerManager();
 
-	public boolean isSetting(Player p) {
+	public boolean isSetting(RegiosPlayer p) {
 		return (setting.containsKey(p.getName()) ? true : false);
 	}
 
-	public String getSettingType(Player p) {
+	public String getSettingType(RegiosPlayer p) {
 		return setting.get(p.getName());
 	}
 
-	public boolean isModding(Player p) {
+	public boolean isModding(RegiosPlayer p) {
 		return (modding.containsKey(p.getName()) ? true : false);
 	}
 
-	public boolean set(Player p, String[] args) {
+	public boolean set(RegiosPlayer p, String[] args) {
 		if(ConfigurationData.useWorldEdit)
 		{
-			p.sendMessage("[Regios] Command unavailable while WorldEdit mode is true");
+			p.sendMessage(Message.WORLDEDITMODETRUE.getMessage());
 			return true;
 		}
 		if (doesHaveNode(p, "regios.data.create")) {
@@ -70,8 +71,8 @@ public class CreationCommands extends PermissionsCore {
 					return true;
 				}
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
-				p.sendMessage("Proper usage: /regios set cube/cuboid/poly/polygon");
+				p.sendMessage(Message.INVALIDARGUMENTCOUNT.getMessage());
+				p.sendMessage(Message.PROPERUSAGE.getMessage() + CMDText.CREATE.getText());
 				return true;
 			}
 		} else {
@@ -81,11 +82,11 @@ public class CreationCommands extends PermissionsCore {
 		return false;
 	}
 
-	public boolean create(Player p, String[] args) {
+	public boolean create(RegiosPlayer p, String[] args) {
 		if (doesHaveNode(p, "regios.data.create")) {
 			if (args.length == 2) {
 				if (args[1].equalsIgnoreCase("all") || args[1].equalsIgnoreCase("placeholder") || args[1].equalsIgnoreCase("confirm")) {
-					p.sendMessage(ChatColor.RED + "[Regios] " + ChatColor.BLUE + args[1] + ChatColor.RED + " is a reserved word!");
+					p.sendMessage(Message.RESERVEDWORD.getMessage() + MsgFormat.colourFormat("<BLUE>" + args[1]));
 					return true;
 				}
 				if (ConfigurationData.useWorldEdit) {
@@ -102,8 +103,8 @@ public class CreationCommands extends PermissionsCore {
 					return true;
 				}
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
-				p.sendMessage("Proper usage: /regios create <regionname>");
+				p.sendMessage(Message.INVALIDARGUMENTCOUNT.getMessage());
+				p.sendMessage(Message.PROPERUSAGE.getMessage() + CMDText.CREATE.getText());
 				return true;
 			}
 		} else {
@@ -112,14 +113,14 @@ public class CreationCommands extends PermissionsCore {
 		}
 	}
 
-	public void cancel(Player p, String[] args) {
+	public void cancel(RegiosPlayer p, String[] args) {
 		if (doesHaveNode(p, "regios.data.create")) {
 			if (args.length == 1) {
 				clearAll(p);
 				return;
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] Invalid number of arguments specified.");
-				p.sendMessage("Proper usage: /regios cancel");
+				p.sendMessage(Message.INVALIDARGUMENTCOUNT.getMessage());
+				p.sendMessage(Message.PROPERUSAGE.getMessage() + CMDText.CANCEL.getText());
 				return;
 			}
 		} else {
@@ -128,53 +129,57 @@ public class CreationCommands extends PermissionsCore {
 		}
 	}
 
-	private void giveTool(Player p, String type) {
+	private void giveTool(RegiosPlayer p, String type) {
 		if (isSetting(p)) {
-			if (!p.getInventory().contains(new ItemStack(ConfigurationData.defaultSelectionTool, 1))) {
-				ItemStack is = new ItemStack(ConfigurationData.defaultSelectionTool, 1);
-				p.getInventory().addItem(is);
+			if (!p.inventoryContains(new RegiosItemStack(ConfigurationData.defaultSelectionTool, 1))) {
+				RegiosItemStack is = new RegiosItemStack(ConfigurationData.defaultSelectionTool, 1);
+				p.addItem(is);
 
-				if (p.getItemInHand() == new ItemStack(Material.AIR, 0)) {
+				if (p.getItemInHand() == new RegiosItemStack(0,0)) {
 					p.setItemInHand(is);
 				}
 
 			}
-			p.sendMessage(ChatColor.RED + "[Regios] You are already setting a region!");
+			p.sendMessage(Message.PLAYERALREADYSETTINGPOINTS.getMessage());
 			return;
 		} else {
 			setting.put(p.getName(), type);
 			modding.put(p.getName(), type);
 		}
-		if (!p.getInventory().contains(new ItemStack(ConfigurationData.defaultSelectionTool, 1))) {
-			ItemStack is = new ItemStack(ConfigurationData.defaultSelectionTool, 1);
+		if (!p.inventoryContains(new RegiosItemStack(ConfigurationData.defaultSelectionTool, 1))) {
+			RegiosItemStack is = new RegiosItemStack(ConfigurationData.defaultSelectionTool, 1);
 
-			p.getInventory().addItem(is);
+			p.addItem(is);
 
-			if (p.getItemInHand() == new ItemStack(Material.AIR, 0)) {
+			if (p.getItemInHand() == new RegiosItemStack(0,0)) {
 				p.setItemInHand(is);
 			}
 
 		}
 		if (type.equalsIgnoreCase("cuboid")) {
-			p.sendMessage(ChatColor.GREEN + "[Regios] Left and right click to select points.");
+			p.sendMessage(Message.PLAYERSETCUBOIDINSTRUCT.getMessage());
 		} else if (type.equalsIgnoreCase("polygon")) {
-			p.sendMessage(ChatColor.GREEN + "[Regios] Left click to add point and right click to remove last point.");
+			p.sendMessage(Message.PLAYERSETPOLYGONINSTRUCT.getMessage());
 		}
 	}
 
-	public void createRegion(Player p, String name) throws RegionNameExistsException, RegionPointsNotSetException {
+	public void createRegion(RegiosPlayer p, String name) throws RegionNameExistsException, RegionPointsNotSetException {
 
 		if (!arePointsSet(p)) {
-			if (setting.get(p.getName()).equalsIgnoreCase("cuboid")) {
-				p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points!");
-			} else if (setting.get(p.getName()).equalsIgnoreCase("polygon")) {
-				p.sendMessage(ChatColor.RED + "[Regios] You must set at least 3 points!");
+			if (setting.containsKey(p.getName())) {
+				if (setting.get(p.getName()).equalsIgnoreCase("cuboid")) {
+					p.sendMessage(Message.REGIONCUBEPOINTSNOTSET.getMessage());
+				} else if (setting.get(p.getName()).equalsIgnoreCase("polygon")) {
+					p.sendMessage(Message.REGIONPOLYPOINTSNOTSET.getMessage());
+				}
+			} else {
+				p.sendMessage(Message.REGIONPOINTSNOTSET.getMessage());
 			}
 			throw new RegionPointsNotSetException(name);
 		}
 		if (setting.get(p.getName()).equalsIgnoreCase("cuboid")) {
 			if (rm.createRegion(p, name, point1.get(p.getName()), point2.get(p.getName()))) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + name + ChatColor.GREEN + " created successfully!");
+				p.sendMessage(MsgFormat.colourFormat(Message.REGIONCREATEDSUCCESS.getMessage() + "<BLUE>" + name));
 				clearPoints(p);
 				modding.remove(p.getName());
 				setting.remove(p.getName());
@@ -184,7 +189,7 @@ public class CreationCommands extends PermissionsCore {
 			ArrayList<Integer> xPointsA = new ArrayList<Integer>(), zPointsA = new ArrayList<Integer>();
 
 
-			for (Location l : points.get(p.getName())) {
+			for (RegiosPoint l : regiosPoints.get(p.getName())) {
 				if (l.getY() <= minY) {
 					minY = l.getY();
 				}
@@ -212,7 +217,7 @@ public class CreationCommands extends PermissionsCore {
 
 
 			if (rm.createRegion(p, name, xPoints, zPoints, xPoints.length, minY, maxY)) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + name + ChatColor.GREEN + " created successfully!");
+				p.sendMessage(MsgFormat.colourFormat(Message.REGIONCREATEDSUCCESS.getMessage() + "<BLUE>" + name));
 				clearPoints(p);
 				modding.remove(p.getName());
 				setting.remove(p.getName());
@@ -220,9 +225,9 @@ public class CreationCommands extends PermissionsCore {
 		}
 	}
 
-	public void createBlueprint(Player p, String name) {
+	public void createBlueprint(RegiosPlayer p, String name) {
 		if (!arePointsSet(p)) {
-			p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points!");
+			p.sendMessage(Message.REGIONCUBEPOINTSNOTSET.getMessage());
 			return;
 		}
 		StringBuilder invalidName = new StringBuilder();
@@ -236,14 +241,14 @@ public class CreationCommands extends PermissionsCore {
 				}
 			}
 			if (!valid) {
-				invalidName.append(ChatColor.RED).append(ch);
+				invalidName.append(MsgFormat.colourFormat("<RED>"+ch));
 			} else {
-				invalidName.append(ChatColor.GREEN).append(ch);
+				invalidName.append(MsgFormat.colourFormat("<BGREEN>"+ch));
 			}
 		}
 
 		if (!integrity) {
-			p.sendMessage(ChatColor.RED + "[Regios] Name contained  invalid characters : " + invalidName.toString());
+			p.sendMessage(Message.INVALIDCHARACTERS.getMessage() + invalidName.toString());
 			return;
 		}
 
@@ -253,7 +258,7 @@ public class CreationCommands extends PermissionsCore {
 		setting.remove(p.getName());
 	}
 
-	public static void createBlueprint(String name, Location l1, Location l2, Player p) {
+	public static void createBlueprint(String name, RegiosPoint l1, RegiosPoint l2, RegiosPlayer p) {
 		if (l1 == null || l2 == null) {
 			return;
 		}
@@ -268,22 +273,23 @@ public class CreationCommands extends PermissionsCore {
 				}
 			}
 			if (!valid) {
-				invalidName.append(ChatColor.RED).append(ch);
+				invalidName.append(MsgFormat.colourFormat("<RED>"+ch));
 			} else {
-				invalidName.append(ChatColor.GREEN).append(ch);
+				invalidName.append(MsgFormat.colourFormat("<BGREEN>"+ch));
 			}
 		}
 
 		if (!integrity) {
+			p.sendMessage(Message.INVALIDCHARACTERS.getMessage() + invalidName.toString());
 			return;
 		}
 
 		RBF_Core.blueprint.startSave(l1, l2, name, p);
 	}
 
-	public void createSchematic(Player p, String name) {
+	public void createSchematic(RegiosPlayer p, String name) {
 		if (!arePointsSet(p)) {
-			p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points!");
+			p.sendMessage(Message.REGIONCUBEPOINTSNOTSET.getMessage());
 			return;
 		}
 		StringBuilder invalidName = new StringBuilder();
@@ -297,14 +303,14 @@ public class CreationCommands extends PermissionsCore {
 				}
 			}
 			if (!valid) {
-				invalidName.append(ChatColor.RED).append(ch);
+				invalidName.append(MsgFormat.colourFormat("<RED>"+ch));
 			} else {
-				invalidName.append(ChatColor.GREEN).append(ch);
+				invalidName.append(MsgFormat.colourFormat("<BGREEN>"+ch));
 			}
 		}
 
 		if (!integrity) {
-			p.sendMessage(ChatColor.RED + "[Regios] Name contained  invalid characters : " + invalidName.toString());
+			p.sendMessage(Message.INVALIDCHARACTERS.getMessage() + invalidName.toString());
 			return;
 		}
 
@@ -313,53 +319,53 @@ public class CreationCommands extends PermissionsCore {
 		modding.remove(p.getName());
 		setting.remove(p.getName());
 	}
-	
-	public boolean arePointsSet(Player p) {
+
+	public boolean arePointsSet(RegiosPlayer p) {
 		if (setting.containsKey(p.getName())) {
 			if (setting.get(p.getName()).equalsIgnoreCase("cuboid")) {
 				return point1.containsKey(p.getName()) && point2.containsKey(p.getName());
 			} else if (setting.get(p.getName()).equalsIgnoreCase("polygon")) {
-				return points.get(p.getName()).size() >= 3;
+				return regiosPoints.get(p.getName()).size() >= 3;
 			}
 		}
 		return false;
 	}
 
-	public boolean areModPointsSet(Player p) {
+	public boolean areModPointsSet(RegiosPlayer p) {
 		return mod1.containsKey(p.getName()) && mod2.containsKey(p.getName());
 	}
 
-	public void expandMaxSelection(Player p) {
+	public void expandMaxSelection(RegiosPlayer p) {
 		if(doesHaveNode(p, "regios.modify.expand")) {
 			if (ConfigurationData.useWorldEdit)
 			{
-				p.sendMessage("Command unavailable while WorldEdit mode is true.");
+				p.sendMessage(Message.WORLDEDITMODETRUE.getMessage());
 				return;
 			}
 			else if (arePointsSet(p)) {
 				if (setting.get(p.getName()).equalsIgnoreCase("cuboid")) {
-					point1.put(p.getName(), (new Location(p.getWorld(), point1.get(p.getName()).getX(), 0, point1.get(p.getName()).getZ())));
-					point2.put(p.getName(), (new Location(p.getWorld(), point2.get(p.getName()).getX(), p.getWorld().getMaxHeight(), point2.get(p.getName()).getZ())));
-					p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
+					point1.put(p.getName(), (new RegiosPoint(p.getRegiosWorld(), point1.get(p.getName()).getX(), 0, point1.get(p.getName()).getZ())));
+					point2.put(p.getName(), (new RegiosPoint(p.getRegiosWorld(), point2.get(p.getName()).getX(), p.getRegiosWorld().getMaxHeight(), point2.get(p.getName()).getZ())));
+					p.sendMessage(Message.REGIONEXPANDMAX.getMessage());
 					return;
 				} else if (setting.get(p.getName()).equalsIgnoreCase("polygon")) {
-					points.get(p.getName()).get(points.get(p.getName()).size() - 1).setY(p.getWorld().getMaxHeight());
-					points.get(p.getName()).get(points.get(p.getName()).size() - 2).setY(0);
-					p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
+					regiosPoints.get(p.getName()).get(regiosPoints.get(p.getName()).size() - 1).setY(p.getRegiosWorld().getMaxHeight());
+					regiosPoints.get(p.getName()).get(regiosPoints.get(p.getName()).size() - 2).setY(0);
+					p.sendMessage(Message.REGIONEXPANDMAX.getMessage());
 					return;
 				}
 			} else if (areModPointsSet(p)) {
 				if (modding.get(p.getName()).equalsIgnoreCase("cuboid")) {
-					mod1.put(p.getName(), (new Location(p.getWorld(), mod1.get(p.getName()).getX(), 0, mod1.get(p.getName()).getZ())));
-					mod2.put(p.getName(), (new Location(p.getWorld(), mod2.get(p.getName()).getX(), p.getWorld().getMaxHeight(), mod2.get(p.getName()).getZ())));
-					p.sendMessage(ChatColor.GREEN + "[Regios] Selection expanded from bedrock to sky.");
+					mod1.put(p.getName(), (new RegiosPoint(p.getRegiosWorld(), mod1.get(p.getName()).getX(), 0, mod1.get(p.getName()).getZ())));
+					mod2.put(p.getName(), (new RegiosPoint(p.getRegiosWorld(), mod2.get(p.getName()).getX(), p.getRegiosWorld().getMaxHeight(), mod2.get(p.getName()).getZ())));
+					p.sendMessage(Message.REGIONEXPANDMAX.getMessage());
 					return;
-				} else if (modding.get(p.getName()).equalsIgnoreCase("cuboid")) {
+				} else if (modding.get(p.getName()).equalsIgnoreCase("polygon")) {
 					//TODO: Implement polygon modification
-					p.sendMessage("[Regios] Not implemented yet. Sorry! :(");
+					p.sendMessage(Message.NOTIMPLEMENTED.getMessage());
 				}
 			} else {
-				p.sendMessage(ChatColor.RED + "[Regios] You must set 2 points for cuboid selections or 3 for polygonal!");
+				p.sendMessage(Message.REGIONPOINTSNOTSET.getMessage());
 				return;
 			}
 		} else {
@@ -367,97 +373,79 @@ public class CreationCommands extends PermissionsCore {
 		}
 	}
 
-	public void addPoint(Player p, Location l) {
-		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
+	public void addPoint(RegiosPlayer p, RegiosPoint l) {
+		if (p.getItemInHand().getId() == ConfigurationData.defaultSelectionTool) {
 			try {
-				if (!points.get(p.getName()).contains(l)) {
-					points.get(p.getName()).add(l);
-					p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.LIGHT_PURPLE
-							+ String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + ChatColor.BLUE + "added.");
+				if (!regiosPoints.get(p.getName()).contains(l)) {
+					regiosPoints.get(p.getName()).add(l);
+					p.sendMessage(MsgFormat.colourFormat("[Regios] <PINK>" + String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "<BLUE>added."));
 				}
 			} catch (NullPointerException npe) {
-				points.put(p.getName(), new ArrayList<Location>());
-
-				if (!points.get(p.getName()).contains(l)) {
-					points.get(p.getName()).add(l);
-					p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.LIGHT_PURPLE
-							+ String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + ChatColor.BLUE + "added.");
-				}
+				regiosPoints.put(p.getName(), new ArrayList<RegiosPoint>());
+				addPoint(p, l);
 			}
 		}
 	}
 
-	public void removeLastPoint(Player p) {
-		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
-			Location l = points.get(p.getName()).get(points.get(p.getName()).size() - 1);
-			points.get(p.getName()).remove(l);
-			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.LIGHT_PURPLE
-					+ String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + ChatColor.BLUE + "removed.");
+	public void removeLastPoint(RegiosPlayer p) {
+		if (p.getItemInHand().getId() == ConfigurationData.defaultSelectionTool) {
+			RegiosPoint l = regiosPoints.get(p.getName()).get(regiosPoints.get(p.getName()).size() - 1);
+			regiosPoints.get(p.getName()).remove(l);
+			p.sendMessage(MsgFormat.colourFormat("[Regios] <PINK>" + String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "<BLUE>removed."));
 		}
 	}
 
-	public void addMPoint(Player p, Location l) {
-		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
+	public void addMPoint(RegiosPlayer p, RegiosPoint l) {
+		if (p.getItemInHand().getId() == ConfigurationData.defaultSelectionTool) {
 			try {
 				if (!mpoints.get(p.getName()).contains(l)) {
 					mpoints.get(p.getName()).add(l);
-					p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.LIGHT_PURPLE
-							+ String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + ChatColor.BLUE + "added.");
+					p.sendMessage(MsgFormat.colourFormat("[Regios] <PINK>" + String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "<BLUE>added."));
 				}
 			} catch (NullPointerException npe) {
-				points.put(p.getName(), new ArrayList<Location>());
-
-				if (!mpoints.get(p.getName()).contains(l)) {
-					mpoints.get(p.getName()).add(l);
-					p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.LIGHT_PURPLE
-							+ String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + ChatColor.BLUE + "added.");
-				}
+				regiosPoints.put(p.getName(), new ArrayList<RegiosPoint>());
+				addMPoint(p, l);
 			}
 		}
 	}
 
-	public void removeLastMPoint(Player p) {
-		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
-			Location l = mpoints.get(p.getName()).get(points.get(p.getName()).size() - 1);
+	public void removeLastMPoint(RegiosPlayer p) {
+		if (p.getItemInHand().getId() == ConfigurationData.defaultSelectionTool) {
+			RegiosPoint l = mpoints.get(p.getName()).get(regiosPoints.get(p.getName()).size() - 1);
 			mpoints.get(p.getName()).remove(l);
-			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.LIGHT_PURPLE
-					+ String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + ChatColor.BLUE + "removed.");
+			p.sendMessage(MsgFormat.colourFormat("[Regios] <PINK>" + String.format("X : %d, Y : %d, Z : %d ", l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "<BLUE>removed."));
 		}
 	}
 
-	public void setFirst(Player p, Location l) {
-		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
+	public void setFirst(RegiosPlayer p, RegiosPoint l) {
+		if (p.getItemInHand().getId() == ConfigurationData.defaultSelectionTool) {
 			point1.put(p.getName(), l);
-			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.BLUE + "[1] " + ChatColor.LIGHT_PURPLE
-					+ String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+			p.sendMessage(MsgFormat.colourFormat("[Regios] <BLUE>[1] <PINK>" + String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ())));
 		}
 	}
 
-	public void setSecond(Player p, Location l) {
-		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
+	public void setSecond(RegiosPlayer p, RegiosPoint l) {
+		if (p.getItemInHand().getId() == ConfigurationData.defaultSelectionTool) {
 			point2.put(p.getName(), l);
-			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.BLUE + "[2] " + ChatColor.LIGHT_PURPLE
-					+ String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+			p.sendMessage(MsgFormat.colourFormat("[Regios] <BLUE>[2] <PINK>" + String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ())));
 		}
 	}
 
-	public void setFirstMod(Player p, Location l) {
-		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
+	public void setFirstMod(RegiosPlayer p, RegiosPoint l) {
+		if (p.getItemInHand().getId() == ConfigurationData.defaultSelectionTool) {
 			mod1.put(p.getName(), l);
-			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.BLUE + "[1] " + ChatColor.LIGHT_PURPLE
-					+ String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+			p.sendMessage(MsgFormat.colourFormat("[Regios] <BLUE>[1] <PINK>" + String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ())));
 		}
 	}
 
-	public void setSecondMod(Player p, Location l) {
-		if (p.getItemInHand().getType() == ConfigurationData.defaultSelectionTool) {
+	public void setSecondMod(RegiosPlayer p, RegiosPoint l) {
+		if (p.getItemInHand().getId() == ConfigurationData.defaultSelectionTool) {
 			mod2.put(p.getName(), l);
-			p.sendMessage(ChatColor.GREEN + "[Regios]" + ChatColor.BLUE + "[2] " + ChatColor.LIGHT_PURPLE
-					+ String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+			p.sendMessage(MsgFormat.colourFormat("[Regios] <BLUE>[2] <PINK>" + String.format("X : %d, Y : %d, Z : %d", l.getBlockX(), l.getBlockY(), l.getBlockZ())));
 		}
 	}
 
-	public void clearAll(Player p) {
+	public void clearAll(RegiosPlayer p) {
 		clearPoints(p);
 		if (mod1.containsKey(p.getName())) {
 			mod1.remove(p.getName());
@@ -471,21 +459,21 @@ public class CreationCommands extends PermissionsCore {
 		if (modding.containsKey(p.getName())) {
 			modding.remove(p.getName());
 		}
-		if (RegiosPlayerListener.loadingTerrain.containsKey(p.getName())) {
-			RegiosPlayerListener.loadingTerrain.remove(p.getName());
+		if (pm.getLoadingTerrain().containsKey(p.getName())) {
+			pm.getLoadingTerrain().remove(p.getName());
 		}
-		p.sendMessage(ChatColor.RED + "[Regios] Region setting cancelled.");
+		p.sendMessage(Message.REGIONSETTINGCANCELLED.getMessage());
 	}
 
-	public static void clearPoints(Player p) {
+	public static void clearPoints(RegiosPlayer p) {
 		if (point1.containsKey(p.getName())) {
 			point1.remove(p.getName());
 		}
 		if (point2.containsKey(p.getName())) {
 			point2.remove(p.getName());
 		}
-		if (points.containsKey(p.getName())) {
-			points.remove(p.getName());
+		if (regiosPoints.containsKey(p.getName())) {
+			regiosPoints.remove(p.getName());
 		}
 		if (mpoints.containsKey(p.getName())) {
 			mpoints.remove(p.getName());

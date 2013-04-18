@@ -7,37 +7,40 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
-import java.util.zip.DataFormatException;
 
 import net.jzx7.Metrics.Metrics;
 import net.jzx7.Metrics.Metrics.Graph;
-import net.jzx7.regios.Commands.CommandCore;
 import net.jzx7.regios.Data.ConfigurationData;
 import net.jzx7.regios.Data.CreationCore;
 import net.jzx7.regios.Economy.EconomyCore;
-import net.jzx7.regios.Listeners.RegiosBlockListener;
-import net.jzx7.regios.Listeners.RegiosEntityListener;
-import net.jzx7.regios.Listeners.RegiosPlayerListener;
-import net.jzx7.regios.Listeners.RegiosWeatherListener;
 import net.jzx7.regios.Permissions.PermissionsCore;
 import net.jzx7.regios.RBF.RBF_Core;
 import net.jzx7.regios.Scheduler.MainRunner;
-import net.jzx7.regios.Spout.SpoutCraftListener;
-import net.jzx7.regios.Spout.SpoutInterface;
-import net.jzx7.regios.Spout.GUI.CacheHandler;
-import net.jzx7.regios.Spout.GUI.Screen_Listener;
 import net.jzx7.regios.Versions.VersionTracker;
+import net.jzx7.regios.bukkit.SpoutPlugin.SpoutCraftListener;
+import net.jzx7.regios.bukkit.SpoutPlugin.SpoutInterface;
+import net.jzx7.regios.bukkit.SpoutPlugin.GUI.CacheHandler;
+import net.jzx7.regios.bukkit.SpoutPlugin.GUI.Screen_Listener;
+import net.jzx7.regios.bukkit.commands.CommandCore;
+import net.jzx7.regios.bukkit.listeners.RegiosBlockListener;
+import net.jzx7.regios.bukkit.listeners.RegiosEntityListener;
+import net.jzx7.regios.bukkit.listeners.RegiosPlayerListener;
+import net.jzx7.regios.bukkit.listeners.RegiosServerListener;
+import net.jzx7.regios.bukkit.listeners.RegiosWeatherListener;
+import net.jzx7.regios.messages.Message;
 import net.jzx7.regios.regions.RegionManager;
+import net.jzx7.regios.util.RegiosConversions;
 import net.jzx7.regios.worlds.WorldManager;
 import net.jzx7.regiosapi.RegiosAPI;
 import net.jzx7.regiosapi.exceptions.FileExistanceException;
+import net.jzx7.regiosapi.exceptions.InvalidNBTData;
 import net.jzx7.regiosapi.exceptions.InvalidNBTFormat;
 import net.jzx7.regiosapi.exceptions.RegionExistanceException;
+import net.jzx7.regiosapi.location.RegiosPoint;
 import net.jzx7.regiosapi.regions.CuboidRegion;
 import net.jzx7.regiosapi.regions.PolyRegion;
 import net.jzx7.regiosapi.regions.Region;
 import net.jzx7.regiosapi.worlds.RegiosWorld;
-
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
@@ -51,56 +54,57 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-
 public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 
 	private final RegionManager rm = new RegionManager();
 	private final WorldManager wm = new WorldManager();
 	
 	Logger log = Logger.getLogger("Minecraft.Regios");
-	private static String prefix = "[Regios]", version;
+	private static String version;
 	private static List<String> authors;
 
 	private final RegiosBlockListener blockListener = new RegiosBlockListener();
 	private final RegiosPlayerListener playerListener = new RegiosPlayerListener();
+	private final RegiosServerListener serverListener = new RegiosServerListener();
 	private final RegiosEntityListener entityListener = new RegiosEntityListener();
 	private final RegiosWeatherListener weatherListener = new RegiosWeatherListener();
 
-	public static Plugin regios;
+	public static RegiosPlugin regios;
 	
 	@Override
 	public void onDisable() {
 		for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-			if (SpoutInterface.doesPlayerHaveSpout(p)) {
+			if (SpoutInterface.doesPlayerHaveSpout(RegiosConversions.getRegiosPlayer(p))) {
 				((SpoutPlayer) p).getMainScreen().closePopup();
 			}
 		}
-		log.info(prefix + " Shutting down scheduler task...");
+		log.info(Message.SCHEDULERSTOPPING.getUnformattedMessage());
 		MainRunner.stopMainRunner();
-		log.info(prefix + " Scheduler task stopped successfully!");
-		log.info(prefix + " Regios version " + version + " disabled successfully!");
+		log.info(Message.SCHEDULERSTOPPED.getUnformattedMessage());
+		log.info(Message.REGIOSDISABLED.getUnformattedMessage());
 	}
 
 	@Override
 	public void onEnable() {
 		version = this.getDescription().getVersion();
 		authors = this.getDescription().getAuthors();
+		regios = this;
 		PluginManager pm = this.getServer().getPluginManager();
 		
 		Plugin p = pm.getPlugin("Spout");
 		if(p == null){
-			log.info("[Regios] Spout not detected. No Spout support.");
+			log.info(Message.SPOUTNOTDETECTED.getUnformattedMessage());
 		} else {
-			SpoutInterface.global_spoutEnabled = true;
-			log.info("[Regios] Spout detected! Spout support enabled!");
+			SpoutInterface.setGlobal_spoutEnabled(true);
+			log.info(Message.SPOUTDETECTED.getUnformattedMessage());
 		}
 		
 		p = pm.getPlugin("WorldEdit");
 		if(p == null){
-			log.info("[Regios] WorldEdit not detected. No WorldEdit support.");
+			log.info(Message.WORLDEDITNOTDETECTED.getUnformattedMessage());
 		} else {
 			ConfigurationData.global_worldEditEnabled = true;
-			log.info("[Regios] WorldEdit detected! WorldEdit support enabled!");
+			log.info(Message.WORLDEDITDETECTED.getUnformattedMessage());
 		}
 		try {
 			new CreationCore().setup();
@@ -108,53 +112,52 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 			e.printStackTrace();
 		}
 
-		regios = this;
-
 		pm.registerEvents(playerListener, this);
 		pm.registerEvents(blockListener, this);
 		pm.registerEvents(entityListener, this);
 		pm.registerEvents(weatherListener, this);
+		pm.registerEvents(serverListener, this);
 
 		p = pm.getPlugin("Vault");
 		if(p==null) {
 			EconomyCore.economySupport = false;
-			log.info("[Regios] Vault not detected. No economy or permissions support. OP or superperms only.");
+			log.info(Message.VALUTNOTDETECTED.getUnformattedMessage());
 		} else {
-			log.info("[Regios] Vault detected, Vault support enabled!");
+			log.info(Message.VAULTDETECTED.getUnformattedMessage());
 			if(setupEconomy()) {
-				log.info("[Regios] Economy support enabled for " + EconomyCore.economy.getName());
+				log.info(Message.ECONOMYSUPPORT.getUnformattedMessage() + EconomyCore.economy.getName());
 			}
 
 			if(setupPermissions()) {
 				PermissionsCore.hasPermissions = true;
-				log.info("[Regios] Permissions support enabled for " + PermissionsCore.permission.getName());
+				log.info(Message.PERMISSONSSUPPORT.getUnformattedMessage() + PermissionsCore.permission.getName());
 			}
 		}
 
 		getCommand("regios").setExecutor(new CommandCore());
 
 		for(World world : Bukkit.getServer().getWorlds()){
-			RegiosWorld w = wm.getRegiosWorld(world);
+			RegiosWorld w = RegiosConversions.getRegiosWorld(world);
 			if(w.getOverridePVP() && !w.getPVP()){
 				world.setPVP(true);
 				log.info("[Regios] PvP Setting for world : " + world.getName() + ", overridden!");
 			}
 		}
 
-		if (SpoutInterface.global_spoutEnabled) {
+		if (SpoutInterface.isGlobal_spoutEnabled()) {
 			CacheHandler.cacheObjects();
 			pm.registerEvents(new SpoutCraftListener(), this);
 			pm.registerEvents(new Screen_Listener(), this);
 		}
 
-		log.info(prefix + " Starting scheduler task...");
+		log.info(Message.SCHEDULERSTART.getUnformattedMessage());
 		MainRunner.startMainRunner();
-		log.info(prefix + " Scheduler task initiated!");
+		log.info(Message.SCHEDULERRUNNING.getUnformattedMessage());
 
 		VersionTracker.createCurrentTracker();
 
-		log.info(prefix + " Regios version " + version + " enabled successfully!");
-		log.info(prefix + " Regios Developed by "+ authors.toString() + ".");
+		log.info(Message.REGIOSENABLED.getUnformattedMessage());
+		log.info("[Regios] Regios developed by "+ authors.toString() + ".");
 		
 		try {
 		    Metrics metrics = new Metrics(this);
@@ -192,6 +195,7 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 			});
 		    
 		    metrics.start();
+		    log.info("[Regios] Metrics Started");
 		} catch (IOException e) {
 		    // Failed to submit the stats :-(
 		}
@@ -214,7 +218,7 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 			if (economyProvider != null) {
 				EconomyCore.economy = economyProvider.getProvider();
 			} else {
-				log.info("[Regios] UseEconomy set to true, but no economy provider was found. Disabling economy support.");
+				log.info(Message.ECONOMYDISABLED.getUnformattedMessage());
 				EconomyCore.economySupport = false;
 				return false;
 			}
@@ -236,22 +240,22 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 
 	@Override
 	public ArrayList<Region> getRegions(World w) {
-		return rm.getRegions(w);
+		return rm.getRegions(RegiosConversions.getRegiosWorld(w));
 	}
 
 	@Override
 	public ArrayList<Region> getRegions(Location l) {
-		return rm.getRegions(l);
+		return rm.getRegions(new RegiosPoint(getRegiosWorld(l.getWorld()), l.getX(), l.getY(), l.getZ()));
 	}
 
 	@Override
 	public Region getRegion(Player p) {
-		return rm.getRegion(p);
+		return rm.getRegion(RegiosConversions.getRegiosPlayer(p));
 	}
 
 	@Override
 	public Region getRegion(Location l) {
-		return rm.getRegion(l);
+		return rm.getRegion(new RegiosPoint(getRegiosWorld(l.getWorld()), l.getX(), l.getY(), l.getZ()));
 	}
 
 	@Override
@@ -266,33 +270,33 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 
 	@Override
 	public boolean isInRegion(Player p) {
-		return rm.isInRegion(p);
+		return rm.isInRegion(RegiosConversions.getRegiosPlayer(p));
 	}
 
 	@Override
 	public boolean isInRegion(Location l) {
-		return rm.isInRegion(l);
+		return rm.isInRegion(new RegiosPoint(getRegiosWorld(l.getWorld()), l.getX(), l.getY(), l.getZ()));
 	}
 	
 	@Override
 	public boolean isSpoutEnabled(Player p) {
-		return SpoutInterface.doesPlayerHaveSpout(p);
+		return SpoutInterface.doesPlayerHaveSpout(RegiosConversions.getRegiosPlayer(p));
 	}
 
 	@Override
 	public boolean isSpoutEnabled() {
-		return SpoutInterface.global_spoutEnabled;
+		return SpoutInterface.isGlobal_spoutEnabled();
 	}
 
 	@Override
 	public void backupRegion(Region r, String backupName, Player p) {
-		RBF_Core.backup.startSave(r, backupName, p);
+		RBF_Core.backup.startSave(r, backupName, RegiosConversions.getRegiosPlayer(p));
 	}
 
 	@Override
 	public boolean loadBackup(Region r, String backupName, Player p) throws RegionExistanceException, FileExistanceException, InvalidNBTFormat {
 		try {
-			RBF_Core.backup.loadBackup(r, backupName, p);
+			RBF_Core.backup.loadBackup(r, backupName, RegiosConversions.getRegiosPlayer(p));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -302,18 +306,18 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 
 	@Override
 	public void saveBlueprint(String name, Location l1, Location l2, Player p) {
-		RBF_Core.blueprint.startSave(l1, l2, name, p);
+		RBF_Core.blueprint.startSave(RegiosConversions.getPoint(l1), RegiosConversions.getPoint(l2), name, RegiosConversions.getRegiosPlayer(p));
 	}
 
 	@Override
 	public boolean loadBlueprint(String name, Player p, Location pasteLocation) {
 		File f = new File("plugins" + File.separator + "Regios" + File.separator + "Blueprints" + File.separator + name + ".blp");
 		if (!f.exists()) {
-			System.out.println("[Regios] A Blueprint file with the name " + name + " does not exist!");
+			System.out.println(Message.BLUEPRINTDOESNTEXIST.getUnformattedMessage());
 			return false;
 		}
 		try {
-			RBF_Core.blueprint.loadBlueprint(name, p, pasteLocation);
+			RBF_Core.blueprint.loadBlueprint(name, RegiosConversions.getRegiosPlayer(p), RegiosConversions.getPoint(pasteLocation));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -323,24 +327,25 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 	
 	@Override
 	public void saveSchematic(String name, Location l1, Location l2, Player p) {
-		RBF_Core.schematic.startSave(l1, l2, name, p);
+		RBF_Core.schematic.startSave(RegiosConversions.getPoint(l1), RegiosConversions.getPoint(l2), name, RegiosConversions.getRegiosPlayer(p));
 	}
 
 	@Override
 	public boolean loadSchematic(String name, Player p, Location pasteLocation) {
 		File f = new File("plugins" + File.separator + "Regios" + File.separator + "Schematics" + File.separator + name + ".schematic");
 		if (!f.exists()) {
-			System.out.println("[Regios] A Schematic file with the name " + name + " does not exist!");
+			System.out.println(Message.SCHEMATICDOESNTEXIST.getUnformattedMessage());
 			return false;
 		}
 		try {
-			RBF_Core.schematic.loadSchematic(name, p, pasteLocation);
+			try {
+				RBF_Core.schematic.loadSchematic(name, RegiosConversions.getRegiosPlayer(p), RegiosConversions.getPoint(pasteLocation));
+			} catch (InvalidNBTData e) {
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
-		} catch (DataFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return true;
 	}
@@ -352,11 +357,11 @@ public class RegiosPlugin extends JavaPlugin implements RegiosAPI {
 
 	@Override
 	public RegiosWorld getRegiosWorld(World world) {
-		return wm.getRegiosWorld(world);
+		return RegiosConversions.getRegiosWorld(world);
 	}
 
 	@Override
 	public RegiosWorld getRegiosWorld(UUID id) {
-		return wm.getRegiosWorld(id);
+		return RegiosConversions.getRegiosWorld(id);
 	}
 }

@@ -1,14 +1,12 @@
 package net.jzx7.regios.Permissions;
 
 import net.jzx7.regiosapi.data.MODE;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.regions.Region;
-
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 public class PermChecks {
 	
-	protected boolean canModify(Player p, Region r) {
+	protected boolean canModify(RegiosPlayer p, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.override." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.override.all")) {
 			return true;
 		}
@@ -26,7 +24,7 @@ public class PermChecks {
 		}
 	}
 
-	protected boolean canItemBePlaced(Player p, Material m, Region r) {
+	protected boolean canItemBePlaced(RegiosPlayer p, int m, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
@@ -60,15 +58,15 @@ public class PermChecks {
 				}
 			}
 			if (r.getItemMode() == MODE.Whitelist) {
-				return r.getItems().contains(m.getId());
+				return r.getItems().contains(m);
 			} else if (r.getItemMode() == MODE.Blacklist) {
-				return !r.getItems().contains(m.getId());
+				return !r.getItems().contains(m);
 			}
 			return false;
 		}
 	}
 
-	protected boolean canBypassProtection(Player p, Region r) {
+	protected boolean canBypassProtection(RegiosPlayer p, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
@@ -106,7 +104,7 @@ public class PermChecks {
 		}
 	}
 
-	protected boolean canEnter(Player p, Region r) {
+	protected boolean canEnter(RegiosPlayer p, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}
@@ -148,7 +146,7 @@ public class PermChecks {
 		}
 	}
 
-	protected boolean canExit(Player p, Region r) {
+	protected boolean canExit(RegiosPlayer p, Region r) {
 		if (PermissionsCore.doesHaveNode(p, ("regios.bypass." + r.getName())) || PermissionsCore.doesHaveNode(p, "regios.bypass.all")) {
 			return true;
 		}

@@ -1,7 +1,7 @@
 name: Regios
 main: net.jzx7.regios.RegiosPlugin
-version: 5.9.5
-authors: [Adamki11s, johnnyzerox7]
+version: 5.9.8
+authors: [johnnyzerox7, Adamki11s]
 commands:
   regios:
     aliases: [reg, r]

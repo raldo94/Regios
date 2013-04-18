@@ -3,9 +3,7 @@ package net.jzx7.regios.Restrictions;
 import java.util.ArrayList;
 
 import net.jzx7.regios.Permissions.PermissionsCore;
-
-import org.bukkit.entity.Player;
-
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 
 public class RestrictionParameters {
 
@@ -36,7 +34,7 @@ public class RestrictionParameters {
 		return regionLengthLimit;
 	}
 	
-	public static RestrictionParameters getRestrictions(Player p)
+	public static RestrictionParameters getRestrictions(RegiosPlayer p)
 	{
 		int c = 0, w = 0, h = 0, l = 0;
 		
@@ -45,10 +43,10 @@ public class RestrictionParameters {
 			if(PermissionsCore.doesHaveNode(p, node))
 			{
 				int i = Integer.parseInt(node.substring(24));
-				if (i > p.getWorld().getMaxHeight())
+				if (i > p.getRegiosWorld().getMaxHeight())
 				{
 					w = l = i;
-					h = p.getWorld().getMaxHeight();
+					h = p.getRegiosWorld().getMaxHeight();
 				} else {
 					w = h = l = i;
 				}
@@ -66,12 +64,7 @@ public class RestrictionParameters {
 		
 		if (PermissionsCore.doesHaveNode(p, "regios.restrictions.none")) {
 			c = w = l = 999999999;
-			h = p.getWorld().getMaxHeight();
-		}
-		
-		if (p.isOp()) {
-			c = w = l = 999999999;
-			h = p.getWorld().getMaxHeight();
+			h = p.getRegiosWorld().getMaxHeight();
 		}
 
 		return new RestrictionParameters(c, w, h, l);

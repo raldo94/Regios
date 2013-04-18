@@ -3,24 +3,24 @@ package net.jzx7.regios.Scheduler;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import net.jzx7.regios.util.RegiosConversions;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 
 public class HealthRegeneration {
 
 	public static HashMap<String, Integer> regenerators = new HashMap<String, Integer>();
 
-	public static void addRegenerator(Player p, int rate) {
+	public static void addRegenerator(RegiosPlayer p, int rate) {
 		regenerators.put(p.getName(), rate);
 	}
 
-	public static void removeRegenerator(Player p) {
+	public static void removeRegenerator(RegiosPlayer p) {
 		if (regenerators.containsKey(p.getName())) {
 			regenerators.remove(p.getName());
 		}
 	}
 
-	public static boolean isRegenerator(Player p) {
+	public static boolean isRegenerator(RegiosPlayer p) {
 		if (regenerators.containsKey(p.getName())) {
 			return regenerators.containsKey(p.getName());
 		} else {
@@ -32,14 +32,14 @@ public class HealthRegeneration {
 		for (Entry<String, Integer> entry : regenerators.entrySet()) {
 			int damage = entry.getValue();
 			if (damage < 0) {
-				Player p = Bukkit.getPlayer(entry.getKey());
+				RegiosPlayer p = RegiosConversions.getRegiosPlayer(entry.getKey());
 				if (((p.getHealth() - damage) > 0)) {
 					p.damage(-damage);
 				} else {
 					p.damage(p.getHealth());
 				}
 			} else {
-				Player p = Bukkit.getPlayer(entry.getKey());
+				RegiosPlayer p = RegiosConversions.getRegiosPlayer(entry.getKey());
 				if (p.getHealth() < 20) {
 					if (p.getHealth() + damage <= 20) {
 						p.setHealth(p.getHealth() + damage);

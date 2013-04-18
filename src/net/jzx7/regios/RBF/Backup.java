@@ -22,75 +22,69 @@ import net.jzx7.jnbt.NBTUtils;
 import net.jzx7.jnbt.Tag;
 import net.jzx7.regios.RegiosPlugin;
 import net.jzx7.regios.Permissions.PermissionsCore;
+import net.jzx7.regios.util.RegiosConversions;
+import net.jzx7.regiosapi.block.RegiosBlock;
+import net.jzx7.regiosapi.block.RegiosContainer;
+import net.jzx7.regiosapi.block.RegiosSign;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.events.RegionBackupEvent;
 import net.jzx7.regiosapi.events.RegionRestoreEvent;
 import net.jzx7.regiosapi.exceptions.FileExistanceException;
 import net.jzx7.regiosapi.exceptions.InvalidNBTFormat;
 import net.jzx7.regiosapi.exceptions.RegionExistanceException;
+import net.jzx7.regiosapi.inventory.RegiosItemStack;
+import net.jzx7.regiosapi.location.RegiosPoint;
 import net.jzx7.regiosapi.regions.CuboidRegion;
 import net.jzx7.regiosapi.regions.PolyRegion;
 import net.jzx7.regiosapi.regions.Region;
+import net.jzx7.regiosapi.worlds.RegiosWorld;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Chest;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 public class Backup extends PermissionsCore {
-	
-	private static final char[] ILLEGAL_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
-	
-	public synchronized void startSave(final Region r, final String bckn, final Player p) {
 
-		Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(RegiosPlugin.regios, new Runnable() {
+	private static final char[] ILLEGAL_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
+
+	public synchronized void startSave(final Region r, final String bckn, final RegiosPlayer p) {
+
+		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(RegiosPlugin.regios, new Runnable() {
 
 			@Override
 			public void run() {
 				for(char c : bckn.toCharArray()){
 					for(char il : ILLEGAL_CHARACTERS){
 						if(c == il){
-							p.sendMessage(ChatColor.RED + "[Regios] Invalid token " + ChatColor.YELLOW + c + ChatColor.RED + " in file name!");
+							p.sendMessage("<RED>" + "[Regios] Invalid token " + "<YELLOW>" + c + "<RED>" + " in file name!");
 							return;
 						}
 					}
 				}
-					try {
-						saveBackup(r, bckn, p);
-					} catch (RegionExistanceException e) {
-						e.printStackTrace();
-					} catch (FileExistanceException e) {
-						e.printStackTrace();
-					}
+				try {
+					saveBackup(r, bckn, p);
+				} catch (RegionExistanceException e) {
+					e.printStackTrace();
+				} catch (FileExistanceException e) {
+					e.printStackTrace();
+				}
 			}
 
 		}, 1L);
 	}
 
-	protected synchronized void saveBackup(Region r, String backupname, Player p) throws RegionExistanceException, FileExistanceException {
+	protected synchronized void saveBackup(Region r, String backupname, RegiosPlayer p) throws RegionExistanceException, FileExistanceException {
 		if (p != null) {
-			p.sendMessage(ChatColor.GREEN + "[Regios] Creating .rbf backup file...");
+			p.sendMessage("<DGREEN>" + "[Regios] Creating .rbf backup file...");
 		}
 		if (p != null) {
 			if (!r.canModify(p)) {
-				p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+				p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				return;
 			}
 		}
 
 		if (r == null) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] That Region does not exist!");
+				p.sendMessage("<RED>" + "[Regios] That Region does not exist!");
 			}
 			throw new RegionExistanceException("UNKNOWN");
 		}
@@ -106,25 +100,25 @@ public class Backup extends PermissionsCore {
 			}
 		} else {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] A backup with the name " + ChatColor.BLUE + backupname + ChatColor.RED + " already exists!");
+				p.sendMessage("<RED>" + "[Regios] A backup with the name " + "<BLUE>" + backupname + "<RED>" + " already exists!");
 			}
 			throw new FileExistanceException("UNKNOWN", true);
 		}
 
-		Vector v1 = null, v2 = null;
+		RegiosPoint v1 = null, v2 = null;
 
 		if (r instanceof PolyRegion) {
 			Rectangle2D rect = ((PolyRegion) r).get2DPolygon().getBounds2D();
-			v1 = new Vector(rect.getMinX(), ((PolyRegion) r).getMinY(), rect.getMinY());
-			v2 = new Vector(rect.getMaxX(), ((PolyRegion) r).getMaxY(), rect.getMaxY());
+			v1 = new RegiosPoint(null, rect.getMinX(), ((PolyRegion) r).getMinY(), rect.getMinY());
+			v2 = new RegiosPoint(null, rect.getMaxX(), ((PolyRegion) r).getMaxY(), rect.getMaxY());
 		} else if (r instanceof CuboidRegion) {
-			v1 = ((CuboidRegion) r).getL1().toVector();
-			v2 = ((CuboidRegion) r).getL2().toVector();
+			v1 = ((CuboidRegion) r).getL1();
+			v2 = ((CuboidRegion) r).getL2();
 		}
 
-		World w = p.getWorld();
-		Location max = new Location(w, Math.max(v1.getX(), v2.getX()), Math.max(v1.getY(), v2.getY()),
-				Math.max(v1.getZ(), v2.getZ())), min = new Location(w, Math.min(v1.getX(), v2.getX()),
+		RegiosWorld w = p.getRegiosWorld();
+		RegiosPoint max = new RegiosPoint(w, Math.max(v1.getX(), v2.getX()), Math.max(v1.getY(), v2.getY()),
+				Math.max(v1.getZ(), v2.getZ())), min = new RegiosPoint(w, Math.min(v1.getX(), v2.getX()),
 						Math.min(v1.getY(), v2.getY()), Math.min(v1.getZ(), v2.getZ()));
 
 		int width = max.getBlockX() - min.getBlockX();
@@ -137,25 +131,25 @@ public class Backup extends PermissionsCore {
 
 		if (width > 65535) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] The width is too large for a .rbf file!");
+				p.sendMessage("<RED>" + "[Regios] The width is too large for a .rbf file!");
 
-				p.sendMessage(ChatColor.RED + "[Regios] Max width : 65535. Your size : " + ChatColor.BLUE + width);
+				p.sendMessage("<RED>" + "[Regios] Max width : 65535. Your size : " + "<BLUE>" + width);
 			}
 			return;
 		}
 		if (height > 65535) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] The height is too large for a .rbf file!");
+				p.sendMessage("<RED>" + "[Regios] The height is too large for a .rbf file!");
 
-				p.sendMessage(ChatColor.RED + "[Regios] Max height : 65535. Your size : " + ChatColor.BLUE + width);
+				p.sendMessage("<RED>" + "[Regios] Max height : 65535. Your size : " + "<BLUE>" + width);
 			}
 			return;
 		}
 		if (length > 65535) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] The length is too large for a .rbf file!");
+				p.sendMessage("<RED>" + "[Regios] The length is too large for a .rbf file!");
 
-				p.sendMessage(ChatColor.RED + "[Regios] Max length : 65535. Your size : " + ChatColor.BLUE + width);
+				p.sendMessage("<RED>" + "[Regios] Max length : 65535. Your size : " + "<BLUE>" + width);
 			}
 			return;
 		}
@@ -165,7 +159,7 @@ public class Backup extends PermissionsCore {
 		// Copy
 		byte[] blockID = new byte[width * height * length];
 		byte[] blockData = new byte[width * height * length];
-		List<ItemStack[]> containerData = new ArrayList<ItemStack[]>();
+		List<RegiosItemStack[]> containerData = new ArrayList<RegiosItemStack[]>();
 		List<String[]> signData = new ArrayList<String[]>();
 
 		int index = 0;
@@ -173,22 +167,17 @@ public class Backup extends PermissionsCore {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Block b = w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z);
-					blockID[index] = (byte) b.getTypeId();
+					RegiosBlock b = w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z);
+					blockID[index] = (byte) b.getId();
 					blockData[index] = b.getData();
-					try {
-						if(b.getState() instanceof InventoryHolder) {
-							containerData.add(((InventoryHolder) b.getState()).getInventory().getContents());
-						} else {
-							containerData.add(null);
-						}
-					}
-					catch (ClassCastException cce) {
-						//The block isn't a container
+					if(b instanceof RegiosContainer) {
+						containerData.add(((RegiosContainer) b).getContents());
+					} else {
+						containerData.add(null);
 					}
 
-					if(b.getState() instanceof Sign) {
-						signData.add(((Sign)b).getLines());
+					if(b instanceof RegiosSign) {
+						signData.add(((RegiosSign)b).getText());
 					} else {
 						signData.add(null);
 					}
@@ -217,19 +206,19 @@ public class Backup extends PermissionsCore {
 			ex.printStackTrace();
 		}
 		if (p != null) {
-			p.sendMessage(ChatColor.GREEN + "[Regios] Region " + ChatColor.BLUE + backupname + ChatColor.GREEN + " saved to .rbf file successfully!");
+			p.sendMessage("<DGREEN>" + "[Regios] Region " + "<BLUE>" + backupname + "<DGREEN>" + " saved to .rbf file successfully!");
 		}
 
 		RegionBackupEvent event = new RegionBackupEvent("RegionBackupEvent");
-		event.setProperties(r, backupname, p);
+		event.setProperties(r, backupname, RegiosConversions.getPlayer(p));
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
-	
-	public void loadBackup(Region r, String backupname, Player p) throws IOException, RegionExistanceException, FileExistanceException, InvalidNBTFormat {
+
+	public void loadBackup(Region r, String backupname, RegiosPlayer p) throws IOException, RegionExistanceException, FileExistanceException, InvalidNBTFormat {
 		if(p != null){
 			if (!r.canModify(p)) {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] You are not permitted to modify this region!");
+					p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 				}
 				return;
 			}
@@ -237,7 +226,7 @@ public class Backup extends PermissionsCore {
 
 		if (r == null) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] That Region does not exist!");
+				p.sendMessage("<RED>" + "[Regios] That Region does not exist!");
 			}
 			throw new RegionExistanceException("UNKNOWN");
 		}
@@ -247,15 +236,15 @@ public class Backup extends PermissionsCore {
 
 		if (!f.exists()) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] A backup with the name " + ChatColor.BLUE + backupname + ChatColor.RED + " does not exist!");
+				p.sendMessage("<RED>" + "[Regios] A backup with the name " + "<BLUE>" + backupname + "<RED>" + " does not exist!");
 			}
 			throw new FileExistanceException("UNKNOWN", false);		
 		}
 
 		if (p != null) {
-			p.sendMessage(ChatColor.GREEN + "[Regios] Restoring region from .rbf file...");
+			p.sendMessage("<DGREEN>" + "[Regios] Restoring region from .rbf file...");
 		}
-		World w = p.getWorld();
+		RegiosWorld w = p.getRegiosWorld();
 
 		FileInputStream fis = new FileInputStream(f);
 		NBTInputStream nbt = new NBTInputStream(new GZIPInputStream(fis));
@@ -265,62 +254,53 @@ public class Backup extends PermissionsCore {
 
 		if (!backuptag.getName().equals("RBF")) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] Backup file in unexpected format! Tag does not match 'RBF'.");
+				p.sendMessage("<RED>" + "[Regios] Backup file in unexpected format! Tag does not match 'RBF'.");
 			}
 			nbt.close();
 			throw new InvalidNBTFormat("UNKNOWN", "RBF", backuptag.getName());
 		}
 
-		int StartX = (Integer) NBTUtils.getChildTag(tagCollection, "StartX", IntTag.class).getValue();
-		int StartY = (Integer) NBTUtils.getChildTag(tagCollection, "StartY", IntTag.class).getValue();
-		int StartZ = (Integer) NBTUtils.getChildTag(tagCollection, "StartZ", IntTag.class).getValue();
+		int StartX = NBTUtils.getChildTag(tagCollection, "StartX", IntTag.class).getValue();
+		int StartY = NBTUtils.getChildTag(tagCollection, "StartY", IntTag.class).getValue();
+		int StartZ = NBTUtils.getChildTag(tagCollection, "StartZ", IntTag.class).getValue();
 
-		int width = (Integer) NBTUtils.getChildTag(tagCollection, "XSize", IntTag.class).getValue();
-		int height = (Integer) NBTUtils.getChildTag(tagCollection, "YSize", IntTag.class).getValue();
-		int length = (Integer) NBTUtils.getChildTag(tagCollection, "ZSize", IntTag.class).getValue();
+		int width = NBTUtils.getChildTag(tagCollection, "XSize", IntTag.class).getValue();
+		int height = NBTUtils.getChildTag(tagCollection, "YSize", IntTag.class).getValue();
+		int length = NBTUtils.getChildTag(tagCollection, "ZSize", IntTag.class).getValue();
 
-		byte[] blocks = (byte[]) NBTUtils.getChildTag(tagCollection, "BlockID", ByteArrayTag.class).getValue();
-		byte[] blockData = (byte[]) NBTUtils.getChildTag(tagCollection, "Data", ByteArrayTag.class).getValue();
-		List<ItemStack[]> containerData = (List<ItemStack[]>) NBTUtils.getChildTag(tagCollection, "ContainerData", ListItemStackArrayTag.class).getValue();
-		List<String[]> signData = (List<String[]>) NBTUtils.getChildTag(tagCollection, "SignData", ListStringArrayTag.class).getValue();
+		byte[] blocks = NBTUtils.getChildTag(tagCollection, "BlockID", ByteArrayTag.class).getValue();
+		byte[] blockData = NBTUtils.getChildTag(tagCollection, "Data", ByteArrayTag.class).getValue();
+		List<RegiosItemStack[]> containerData = NBTUtils.getChildTag(tagCollection, "ContainerData", ListItemStackArrayTag.class).getValue();
+		List<String[]> signData = NBTUtils.getChildTag(tagCollection, "SignData", ListStringArrayTag.class).getValue();
 
 		int index = 0;
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Block b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
-					if(b.getType().equals(Material.CHEST)) { //Added to prevent chests/furnaces/etc from dropping everything in them when regenerating regions -jzx7
-						Chest ih = (Chest) b.getState();
-						ih.getBlockInventory().clear();
-					} else if(b.getType().equals(Material.FURNACE)) {
-						Furnace ih = (Furnace) b.getState();
-						ih.getInventory().clear();
-					} else if(b.getType().equals(Material.DISPENSER)) {
-						Dispenser ih = (Dispenser) b.getState();
-						ih.getInventory().clear();
-					} else if(b.getType().equals(Material.BREWING_STAND)) {
-						BrewingStand ih = (BrewingStand) b.getState();
-						ih.getInventory().clear();
+					RegiosBlock b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
+					if(b instanceof RegiosContainer) {
+						((RegiosContainer)b).clearInventory();
 					}
 
-					b.setTypeId(blocks[index]);
+					b.setId(blocks[index] & 0xFF);
 					b.setData(blockData[index]);
 
-					if(b.getType().equals(Material.CHEST)) { //Added to load chest/furnace/etc inventory from backup
-						Chest chest = (Chest) b.getState();
-						chest.getBlockInventory().setContents(containerData.get(index));
-					} else if(b.getType().equals(Material.FURNACE)) {
-						Furnace furnace = (Furnace) b.getState();
-						furnace.getInventory().setContents(containerData.get(index));
-					}else if(b.getType().equals(Material.DISPENSER)) {
-						Dispenser dispenser = (Dispenser) b.getState();
-						dispenser.getInventory().setContents(containerData.get(index));
-					} else if(b.getType().equals(Material.BREWING_STAND)) {
-						BrewingStand brew = (BrewingStand) b.getState();
-						brew.getInventory().setContents(containerData.get(index));
-					} else if(b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
-						Sign sign = (Sign) b.getState();
+					index++;
+				}
+			}
+		}
+		
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				for (int z = 0; z < length; z++) {
+					RegiosBlock b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
+					if(b instanceof RegiosContainer) {
+						((RegiosContainer)b).setContents(containerData.get(index));
+					}
+
+					if(b instanceof RegiosSign) {
+						RegiosSign sign = (RegiosSign) b;
 						int line = 0;
 						for(String s : signData.get(index)) {
 							if(line > 3) {
@@ -329,9 +309,8 @@ public class Backup extends PermissionsCore {
 							sign.setLine(line, s);
 							line++;
 						}
-						sign.update();
+						//sign.update();
 					}
-
 					index++;
 				}
 			}
@@ -341,11 +320,11 @@ public class Backup extends PermissionsCore {
 		nbt.close();
 
 		RegionRestoreEvent event = new RegionRestoreEvent("RegionRestoreEvent");
-		event.setProperties(r, backupname, p);
+		event.setProperties(r, backupname, RegiosConversions.getPlayer(p));
 		Bukkit.getServer().getPluginManager().callEvent(event);
 
 		if (p != null) {
-			p.sendMessage(ChatColor.GREEN + "[Regios] Region" + ChatColor.BLUE + backupname + ChatColor.GREEN + " restored successfully from .rbf file!");
+			p.sendMessage("<DGREEN>" + "[Regios] Region" + "<BLUE>" + backupname + "<DGREEN>" + " restored successfully from .rbf file!");
 		}
 	}
 

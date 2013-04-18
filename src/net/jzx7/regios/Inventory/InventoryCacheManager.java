@@ -2,37 +2,33 @@ package net.jzx7.regios.Inventory;
 
 import java.util.HashMap;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import couk.Adamki11s.Extras.Inventory.ExtrasInventory;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
+import net.jzx7.regiosapi.inventory.RegiosItemStack;
 
 public class InventoryCacheManager {
 	
-	private HashMap<String, ItemStack[]> inventMain = new HashMap<String, ItemStack[]>();
-	private HashMap<String, ItemStack[]> inventArmour = new HashMap<String, ItemStack[]>();
+	private HashMap<String, RegiosItemStack[]> inventMain = new HashMap<String, RegiosItemStack[]>();
+	private HashMap<String, RegiosItemStack[]> inventArmour = new HashMap<String, RegiosItemStack[]>();
 	
-	static ExtrasInventory exi = new ExtrasInventory();
-	
-	public boolean doesCacheContain(Player p){
+	public boolean doesCacheContain(RegiosPlayer p){
 		return inventMain.containsKey(p.getName()) && inventArmour.containsKey(p.getName());
 	}
 	
-	public void cacheInventory(Player p){
-		inventMain.put(p.getName(), p.getInventory().getContents());
-		inventArmour.put(p.getName(), p.getInventory().getArmorContents());
+	public void cacheInventory(RegiosPlayer p){
+		inventMain.put(p.getName(), p.getInventoryContents());
+		inventArmour.put(p.getName(), p.getArmorContents());
 	}
 	
-	public void restoreInventory(Player p){
-		exi.wipeInventory(p);
-		p.getInventory().setContents(inventMain.get(p.getName()));
-		p.getInventory().setArmorContents(inventArmour.get(p.getName()));
+	public void restoreInventory(RegiosPlayer p){
+		p.clearInventory();
+		p.setInventoryContents(inventMain.get(p.getName()));
+		p.setArmorContents(inventArmour.get(p.getName()));
 		inventMain.remove(p.getName());
 		inventArmour.remove(p.getName());
 	}
 	
-	public void wipeInventory(Player p){
-		exi.wipeInventory(p);
+	public void wipeInventory(RegiosPlayer p){
+		p.clearInventory();
 	}
 
 }

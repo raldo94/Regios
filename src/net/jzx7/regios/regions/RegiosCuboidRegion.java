@@ -1,61 +1,61 @@
 package net.jzx7.regios.regions;
 
+import net.jzx7.regiosapi.block.RegiosBiome;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
+import net.jzx7.regiosapi.location.RegiosPoint;
 import net.jzx7.regiosapi.regions.CuboidRegion;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
+import net.jzx7.regiosapi.worlds.RegiosWorld;
 
 public class RegiosCuboidRegion extends RegiosRegion implements CuboidRegion {
 	
-	protected Location l1;
-	protected Location l2;
+	protected RegiosPoint l1;
+	protected RegiosPoint l2;
 	
-	public RegiosCuboidRegion(String owner, String name, Location l1, Location l2, World world, Player p, boolean save) {
+	public RegiosCuboidRegion(String owner, String name, RegiosPoint l1, RegiosPoint l2, RegiosWorld world, RegiosPlayer p, boolean save) {
 		super(owner, name, world, p, save);
-		this.l1 = new Location(l1.getWorld(), l1.getX(), l1.getY(), l1.getZ());
-		this.l2 = new Location(l2.getWorld(), l2.getX(), l2.getY(), l2.getZ());
+		this.l1 = new RegiosPoint(l1.getRegiosWorld(), l1.getX(), l1.getY(), l1.getZ());
+		this.l2 = new RegiosPoint(l2.getRegiosWorld(), l2.getX(), l2.getY(), l2.getZ());
 
 		rm.addRegion(this);
-		if (p == null && save) {
+		if (save) {
 			saveable.saveRegion(this);
 		}
 	}
 	
 	@Override
-	public Location getL1() {
-		return new Location(world, l1.getX(), l1.getY(), l1.getZ());
+	public RegiosPoint getL1() {
+		return new RegiosPoint(world, l1.getX(), l1.getY(), l1.getZ());
 	}
 
 	@Override
-	public Location getL2() {
-		return new Location(world, l2.getX(), l2.getY(), l2.getZ());
+	public RegiosPoint getL2() {
+		return new RegiosPoint(world, l2.getX(), l2.getY(), l2.getZ());
 	}
 	
 	@Override
-	public void setL1(Location l1) {
+	public void setL1(RegiosPoint l1) {
 		this.l1 = l1;
 	}
 
 	@Override
-	public void setL1(World w, double x, double y, double z) {
-		l1 = new Location(w, x, y, z);
+	public void setL1(RegiosWorld w, float x, float y, float z) {
+		l1 = new RegiosPoint(w, x, y, z);
 	}
 
 	@Override
-	public void setL2(Location l2) {
+	public void setL2(RegiosPoint l2) {
 		this.l2 = l2;
 	}
 
 	@Override
-	public void setL2(World w, double x, double y, double z) {
-		l2 = new Location(w, x, y, z);
+	public void setL2(RegiosWorld w, float x, float y, float z) {
+		l2 = new RegiosPoint(w, x, y, z);
 	}
 	
 	@Override 
-	public void setBiome(Biome biome, Player p) {
-		Location min = new Location(world, Math.min(l1.getX(), l2.getX()), Math.min(l1.getY(), l2.getY()), Math.min(l1.getZ(), l2.getZ()));
-		Location max = new Location(world, Math.max(l1.getX(), l2.getX()), Math.max(l1.getY(), l2.getY()), Math.max(l1.getZ(), l2.getZ()));
+	public void setBiome(RegiosBiome biome, RegiosPlayer p) {
+		RegiosPoint min = new RegiosPoint(world, Math.min(l1.getX(), l2.getX()), Math.min(l1.getY(), l2.getY()), Math.min(l1.getZ(), l2.getZ()));
+		RegiosPoint max = new RegiosPoint(world, Math.max(l1.getX(), l2.getX()), Math.max(l1.getY(), l2.getY()), Math.max(l1.getZ(), l2.getZ()));
 		
 		for (double x = min.getX(); x <= max.getX(); x++) {
 			for (double z = min.getZ(); z <= max.getZ(); z++) {

@@ -3,23 +3,23 @@ package net.jzx7.regios.Economy;
 import java.io.File;
 import java.io.IOException;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.jzx7.regios.messages.MsgFormat;
+import net.jzx7.regios.util.RegiosConversions;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 public class EconomyPending {
 
 	static final File root = new File("plugins" + File.separator + "Regios" + File.separator + "Other" + File.separator + "Pending");
 
 	public static void sendAppropriatePending(String seller, String buyer, String region_name, int price){
-		Player p = Bukkit.getServer().getPlayer(seller);
+		RegiosPlayer p = RegiosConversions.getRegiosPlayer(seller);
 		if(p == null){
 			createPending(seller, buyer, region_name, price);
 		} else {
-			p.sendMessage(ChatColor.GREEN + "[Regios] Player " + ChatColor.BLUE + buyer + ChatColor.GREEN + " bought your region " + ChatColor.BLUE
-					+ region_name + ChatColor.GREEN + " for " + ChatColor.BLUE + price);
+			p.sendMessage(MsgFormat.colourFormat("<DGREEN>[Regios] Player <BLUE>" + buyer + " <DGREEN>bought your region <BLUE>" + region_name + " <DGREEN>for <BLUE>" + price));
 		}
 	}
 	
@@ -51,16 +51,15 @@ public class EconomyPending {
 		}
 	}
 
-	public static boolean isPending(Player p) {
+	public static boolean isPending(RegiosPlayer p) {
 		File pending = new File(root + File.separator + p.getName() + ".pending");
 		return pending.exists();
 	}
 
-	public static void loadAndSendPending(Player p) {
+	public static void loadAndSendPending(RegiosPlayer p) {
 		File pending = new File(root + File.separator + p.getName() + ".pending");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(pending);
-		p.sendMessage(ChatColor.GREEN + "[Regios] Player " + ChatColor.BLUE + c.getString("Buyer", "NULL") + ChatColor.GREEN + " bought your region " + ChatColor.BLUE
-				+ c.getString("Region", "NULL") + ChatColor.GREEN + " for " + ChatColor.BLUE + c.getInt("Price", 0));
+		p.sendMessage(MsgFormat.colourFormat("<DGREEN>[Regios] Player <BLUE>" + c.getString("Buyer", "NULL") + " <DGREEN>bought your region <BLUE>" + c.getString("Region", "NULL") + " <DGREEN>for <BLUE>" + c.getInt("Price", 0)));
 		pending.delete();
 	}
 

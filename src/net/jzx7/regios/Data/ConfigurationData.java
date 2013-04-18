@@ -2,9 +2,6 @@ package net.jzx7.regios.Data;
 
 import net.jzx7.regiosapi.data.MODE;
 
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-
 public class ConfigurationData {
 
 	public static String defaultWelcomeMessage
@@ -29,7 +26,7 @@ public class ConfigurationData {
 		, permanentGroupsAdd
 		, permanentGroupsRemove;
 
-	public static Material defaultSpoutWelcomeMaterial
+	public static int defaultSpoutWelcomeMaterial
 		, defaultSpoutLeaveMaterial
 		, defaultSelectionTool;
 
@@ -78,15 +75,15 @@ public class ConfigurationData {
 
 	public static MODE protectionMode, preventEntryMode, preventExitMode, itemMode;
 
-	public static GameMode gameMode;
+	public static int gameMode;
 
 	public ConfigurationData(String a, String b, String c, String d, String e, String pass, boolean f, boolean g, boolean h, boolean i, boolean j, boolean k, boolean m, boolean n,
 			boolean nn, boolean o, boolean v, boolean passEnabled, int p, int q, int r, MODE s, MODE t, MODE u, MODE item, boolean w, boolean x, boolean y, boolean z, boolean exit,
-			String dam, String dasm, Material welcome, Material leave, boolean welcomeMsg, boolean leaveMsg, boolean protectMsg, boolean preventEntryMsg, boolean preventExitMsg,
+			String dam, String dasm, int welcome, int leave, boolean welcomeMsg, boolean leaveMsg, boolean protectMsg, boolean preventEntryMsg, boolean preventExitMsg,
 			boolean fireProt, boolean fireSpr, String[] music, boolean playmusic, boolean permWipeOnEnter1, boolean permWipeOnExit1,
 			boolean wipeAndCacheOnEnter1, boolean wipeAndCacheOnExit1, boolean changeGM, boolean forceCommand1, String[] commandSet1, String[] tempAddCache, String[] permAddCache,
 			String[] tempRemCache, String[] permRemoveCache, String[] tempAddGroups, String[] permAddGroups, String[] tempRemGroups, String[] permRemoveGroups, boolean form
-			, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean explode, GameMode gamemode
+			, int cap, boolean placeprotect, boolean breakProtect, boolean fs, int sp, boolean explode, int gamemode
 			, boolean blockEnderman) {
 		defaultWelcomeMessage = a;
 		defaultLeaveMessage = b;

@@ -45,6 +45,9 @@ import java.util.Map;
 
 import org.bukkit.inventory.ItemStack;
 
+import net.jzx7.regios.util.RegiosConversions;
+import net.jzx7.regiosapi.inventory.RegiosItemStack;
+
 /**
  * <p>
  * This class reads <strong>NBT</strong>, or <strong>Named Binary Tag</strong>
@@ -218,7 +221,7 @@ public final class NBTInputStream implements Closeable {
 			String isrebuilt = new String(bytes, NBTConstants.CHARSET);
 			isrebuilt = isrebuilt.substring(1, (isrebuilt.length() - 2));
 			List<String> itemstackstrlist = Arrays.asList(isrebuilt.split("\\],\\["));
-			List<ItemStack[]> itemstacklist = new ArrayList<ItemStack[]>();
+			List<RegiosItemStack[]> itemstacklist = new ArrayList<RegiosItemStack[]>();
 
 			for (String s : itemstackstrlist) {
 				int index = 0;
@@ -226,7 +229,7 @@ public final class NBTInputStream implements Closeable {
 					s = s.substring(0, (s.length() - 1));
 				}
 				String[] contents = s.split("\\|");
-				ItemStack[] isa = new ItemStack[contents.length];
+				RegiosItemStack[] isa = new RegiosItemStack[contents.length];
 				for(String s1 : contents) {
 					if(s1.startsWith("{")) {
 						String[] sa = s1.split(",(?![^{}]*})");
@@ -253,7 +256,7 @@ public final class NBTInputStream implements Closeable {
 									}
 									map.put(strobj[0].trim(), encmap);
 									if(strobj[1].endsWith("}}")){
-										isa[index] = ItemStack.deserialize(map);
+										isa[index] = RegiosConversions.getRegiosItemStack(ItemStack.deserialize(map));
 										index++;
 										map.clear();
 										encmap.clear();
@@ -269,7 +272,7 @@ public final class NBTInputStream implements Closeable {
 										} catch (Exception ex) {
 											map.put(strobj[0].trim(), strobj[1].trim());
 										}
-										isa[index] = ItemStack.deserialize(map);
+										isa[index] = RegiosConversions.getRegiosItemStack(ItemStack.deserialize(map));
 										index++;
 										map.clear();
 									} else {
@@ -295,7 +298,7 @@ public final class NBTInputStream implements Closeable {
 											} catch (Exception ex) {
 												map.put(singlestrobj[0].trim(), singlestrobj[1].trim());
 											}
-											isa[index] = ItemStack.deserialize(map);
+											isa[index] = RegiosConversions.getRegiosItemStack(ItemStack.deserialize(map));
 											index++;
 											map.clear();
 										} else {

@@ -8,33 +8,30 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import net.jzx7.regios.Permissions.PermissionsCore;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 
 public class Zippable extends PermissionsCore {
 	
 	private static final char[] ILLEGAL_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
 
-	public static void zipDir(File dirObj, File zipFileName, String name, Player p) throws Exception {
-		p.sendMessage(ChatColor.GREEN + "[Regios] Creating .zip backup file...");
+	public static void zipDir(File dirObj, File zipFileName, String name, RegiosPlayer p) throws Exception {
+		p.sendMessage("<DGREEN>" + "[Regios] Creating .zip backup file...");
 		for(char c : name.toCharArray()){
 			for(char il : ILLEGAL_CHARACTERS){
 				if(c == il){
-					p.sendMessage(ChatColor.RED + "[Regios] Invalid token " + ChatColor.YELLOW + c + ChatColor.RED + " in file name!");
+					p.sendMessage("<RED>" + "[Regios] Invalid token " + "<YELLOW>" + c + "<RED>" + " in file name!");
 					return;
 				}
 			}
 		}
 		if (zipFileName.exists()) {
-			p.sendMessage(ChatColor.RED + "[Regios] A Backup already exists with the name " + ChatColor.BLUE + name);
+			p.sendMessage("<RED>" + "[Regios] A Backup already exists with the name " + "<BLUE>" + name);
 			return;
 		}
 		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
 		addDir(dirObj, out);
 		out.close();
-		p.sendMessage(ChatColor.GREEN + "[Regios] .zip backup file created successfully!");
+		p.sendMessage("<DGREEN>" + "[Regios] .zip backup file created successfully!");
 	}
 
 	static void addDir(File dirObj, ZipOutputStream out) throws IOException {

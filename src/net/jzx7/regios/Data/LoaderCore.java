@@ -7,22 +7,18 @@ import java.util.logging.Logger;
 import net.jzx7.regios.Economy.EconomyCore;
 import net.jzx7.regios.Restrictions.RestrictionParameters;
 import net.jzx7.regios.Scheduler.LightningRunner;
-import net.jzx7.regios.regions.RegiosCuboidRegion;
 import net.jzx7.regios.regions.RegionManager;
+import net.jzx7.regios.regions.RegiosCuboidRegion;
 import net.jzx7.regios.regions.RegiosPolyRegion;
+import net.jzx7.regios.util.RegiosConversions;
 import net.jzx7.regios.worlds.WorldManager;
 import net.jzx7.regiosapi.data.MODE;
+import net.jzx7.regiosapi.location.RegiosPoint;
 import net.jzx7.regiosapi.regions.Region;
 import net.jzx7.regiosapi.worlds.RegiosWorld;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 
 
 public class LoaderCore {
@@ -50,7 +46,7 @@ public class LoaderCore {
 
 	public void silentReload() {
 		rm.purgeRegions();
-		wm.purgeWorlds();
+		wm.purgeRegiosWorlds();
 		loadConfiguration();
 		loadRegions(true);
 	}
@@ -113,10 +109,10 @@ public class LoaderCore {
 				, PrevExitMode = MODE.toMode(c.getString("DefaultSettings.Modes.PreventExitMode"))
 				, item = MODE.toMode(c.getString("DefaultSettings.Modes.ItemControlMode"));
 
-		GameMode gameMode = GameMode.valueOf(c.getString("DefaultSettings.GameMode.Type", "SURVIVAL").toUpperCase());
+		int gameMode = c.getInt("DefaultSettings.GameMode.Type", 0);
 
-		Material welcomeIcon = Material.getMaterial(c.getInt("DefaultSettings.Spout.SpoutWelcomeIconID", Material.GRASS.getId()))
-				, leaveIcon = Material.getMaterial(c.getInt("DefaultSettings.Spout.SpoutLeaveIconID", Material.DIRT.getId()));
+		int welcomeIcon = c.getInt("DefaultSettings.Spout.SpoutWelcomeIconID", 2)
+				, leaveIcon = c.getInt("DefaultSettings.Spout.SpoutLeaveIconID", 3);
 
 		String[] musicUrl = c.getString("DefaultSettings.Spout.Sound.CustomMusicURL", "").trim().split(",")
 				, commandSet = c.getString("DefaultSettings.Command.CommandSet", "").trim().split(",")
@@ -206,12 +202,12 @@ public class LoaderCore {
 				, gameMode
 				, blockEnderman);
 
-		System.out.println("[Regios] Loaded default region configuation file.");
+		log.info("[Regios] Loaded default region configuation file.");
 		// Initialises variables in configuration data.
 
 		c = YamlConfiguration.loadConfiguration(generalconfig);
 
-		ConfigurationData.defaultSelectionTool = Material.getMaterial(c.getInt("Region.Tools.Setting.ID", Material.WOOD_AXE.getId()));
+		ConfigurationData.defaultSelectionTool = c.getInt("Region.Tools.Setting.ID", 271);
 		if (ConfigurationData.global_worldEditEnabled)
 		{
 			ConfigurationData.useWorldEdit = c.getBoolean("Region.UseWorldEdit", false);
@@ -247,53 +243,54 @@ public class LoaderCore {
 	}
 
 	public void loadWorlds(){
-		for(World w : Bukkit.getServer().getWorlds()){
-			System.out.println("[Regios] Loading world configuration for world: " + w.getName());
+		RegiosConversions.loadServerWorlds();
+		
+		for(RegiosWorld w : wm.getRegiosWorlds()){
+			log.info("[Regios] Loading world configuration for world: " + w.getName());
 			File root = new File("plugins" + File.separator + "Regios" + File.separator + "Configuration" + File.separator + "WorldConfigurations");
 			if(!root.exists()){ root.mkdir(); }
 			File f = new File("plugins" + File.separator + "Regios" + File.separator + "Configuration" + File.separator + "WorldConfigurations" + File.separator + w.getName() + ".rwc");
 			FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-			RegiosWorld rw = wm.getRegiosWorld(w);
-			rw.setProtection(c.getBoolean(w.getName() + ".Protection.ProtectionEnabledOutsideRegions", false));
-			rw.setFireEnabled(c.getBoolean(w.getName() + ".Protection.FireEnabled", true));
-			rw.setFireSpreadEnabled(c.getBoolean(w.getName() + ".Protection.FireSpreadEnabled", true));
-			rw.setExplosionsEnabled(c.getBoolean(w.getName() + ".Protection.ExplosionsEnabled", true));
-			rw.setDragonProtectionEnabled(c.getBoolean(w.getName() + ".Protection.DragonProtect", true));
-			rw.setEndermanProtectionEnabled(c.getBoolean(w.getName() + ".Protection.EndermanBlock", false));
-			rw.setEnderDragonCreatesPortal(c.getBoolean(w.getName() + ".Protection.DragonCreatesPortal", false));
-			rw.setPVP(c.getBoolean(w.getName() + ".PvP.EnabledOutsideRegions", true));
-			rw.setLightningEnabled(c.getBoolean(w.getName() + ".Weather.LightningEnabled", true));
-			rw.setOverridePVP(c.getBoolean(w.getName() + ".PvP.OverrideServerPvP", true));
-			rw.setBlockFormEnabled(c.getBoolean(w.getName() + ".Block.BlockForm.Enabled", true));
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Chicken", true)){ rw.addCreatureSpawn(EntityType.CHICKEN); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Cow", true)){ rw.addCreatureSpawn(EntityType.COW); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Creeper", true)){ rw.addCreatureSpawn(EntityType.CREEPER); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Ghast", true)){ rw.addCreatureSpawn(EntityType.GHAST); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Giant", true)){ rw.addCreatureSpawn(EntityType.GIANT); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Pig", true)){ rw.addCreatureSpawn(EntityType.PIG); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.PigZombie", true)){ rw.addCreatureSpawn(EntityType.PIG_ZOMBIE); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Sheep", true)){ rw.addCreatureSpawn(EntityType.SHEEP); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Skeleton", true)){ rw.addCreatureSpawn(EntityType.SKELETON); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Slime", true)){ rw.addCreatureSpawn(EntityType.SLIME); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Spider", true)){ rw.addCreatureSpawn(EntityType.SPIDER); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Squid", true)){ rw.addCreatureSpawn(EntityType.SQUID); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Zombie", true)){ rw.addCreatureSpawn(EntityType.ZOMBIE); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Wolf", true)){ rw.addCreatureSpawn(EntityType.WOLF); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.CaveSpider", true)){ rw.addCreatureSpawn(EntityType.CAVE_SPIDER); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Enderman", true)){ rw.addCreatureSpawn(EntityType.ENDERMAN); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Silverfish", true)){ rw.addCreatureSpawn(EntityType.SILVERFISH); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.EnderDragon", true)){ rw.addCreatureSpawn(EntityType.ENDER_DRAGON); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Villager", true)){ rw.addCreatureSpawn(EntityType.VILLAGER); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Blaze", true)){ rw.addCreatureSpawn(EntityType.BLAZE); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.MushroomCow", true)){ rw.addCreatureSpawn(EntityType.MUSHROOM_COW); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.MagmaCube", true)){ rw.addCreatureSpawn(EntityType.MAGMA_CUBE); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Snowman", true)){ rw.addCreatureSpawn(EntityType.SNOWMAN); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.IronGolem", true)){ rw.addCreatureSpawn(EntityType.IRON_GOLEM); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Ocelot", true)){ rw.addCreatureSpawn(EntityType.OCELOT); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Bat", true)){ rw.addCreatureSpawn(EntityType.BAT); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Wither", true)){ rw.addCreatureSpawn(EntityType.WITHER); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.WitherSkull", true)){ rw.addCreatureSpawn(EntityType.WITHER_SKULL); }
-			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Witch", true)){ rw.addCreatureSpawn(EntityType.WITCH); }
+			w.setProtection(c.getBoolean(w.getName() + ".Protection.ProtectionEnabledOutsideRegions", false));
+			w.setFireEnabled(c.getBoolean(w.getName() + ".Protection.FireEnabled", true));
+			w.setFireSpreadEnabled(c.getBoolean(w.getName() + ".Protection.FireSpreadEnabled", true));
+			w.setExplosionsEnabled(c.getBoolean(w.getName() + ".Protection.ExplosionsEnabled", true));
+			w.setDragonProtectionEnabled(c.getBoolean(w.getName() + ".Protection.DragonProtect", true));
+			w.setEndermanProtectionEnabled(c.getBoolean(w.getName() + ".Protection.EndermanBlock", false));
+			w.setEnderDragonCreatesPortal(c.getBoolean(w.getName() + ".Protection.DragonCreatesPortal", false));
+			w.setPVP(c.getBoolean(w.getName() + ".PvP.EnabledOutsideRegions", true));
+			w.setLightningEnabled(c.getBoolean(w.getName() + ".Weather.LightningEnabled", true));
+			w.setOverridePVP(c.getBoolean(w.getName() + ".PvP.OverrideServerPvP", true));
+			w.setBlockFormEnabled(c.getBoolean(w.getName() + ".Block.BlockForm.Enabled", true));
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Chicken", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("CHICKEN")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Cow", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("COW")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Creeper", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("CREEPER")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Ghast", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("GHAST")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Giant", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("GIANT")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Pig", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("PIG")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.PigZombie", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("PIG_ZOMBIE")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Sheep", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("SHEEP")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Skeleton", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("SKELETON")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Slime", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("SLIME")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Spider", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("SPIDER")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Squid", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("SQUID")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Zombie", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("ZOMBIE")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Wolf", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WOLF")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.CaveSpider", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("CAVE_SPIDER")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Enderman", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("ENDERMAN")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Silverfish", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("SILVERFISH")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.EnderDragon", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("ENDER_DRAGON")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Villager", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("VILLAGER")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Blaze", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("BLAZE")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.MushroomCow", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("MUSHROOM_COW")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.MagmaCube", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("MAGMA_CUBE")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Snowman", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("SNOWMAN")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.IronGolem", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("IRON_GOLEM")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Ocelot", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("OCELOT")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Bat", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("BAT")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Wither", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WITHER")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.WitherSkull", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WITHER_SKULL")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Witch", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WITCH")); }
 		}
 	}
 
@@ -413,7 +410,7 @@ public class LoaderCore {
 						, preventEntryMode = MODE.toMode(c.getString("Region.Modes.PreventEntryMode", "Whitelist"))
 						, preventExitMode = MODE.toMode(c.getString("Region.Modes.PreventExitMode", "Whitelist"));
 
-				GameMode gm = GameMode.valueOf(c.getString("Region.GameMode.Type", "SURVIVAL").toUpperCase());
+				int gm = c.getInt("Region.GameMode.Type", 0);
 
 				int healthRegen = c.getInt("Region.Other.HealthRegen", 0)
 						, lsps = c.getInt("Region.Other.LSPS", 0)
@@ -422,12 +419,11 @@ public class LoaderCore {
 
 				double velocityWarp = c.getDouble("Region.Other.VelocityWarp", 0);
 
-				World world = Bukkit.getServer().getWorld(ww);
+				RegiosWorld world = RegiosConversions.getRegiosWorld(ww);
 
-				Location warp = toLocation(c.getString("Region.Teleportation.Warp.Location", ww + ",0,0,0"));
+				RegiosPoint warp = toPoint(c.getString("Region.Teleportation.Warp.Location", ww + ",0,0,0"));
 
-				Material spoutWelcomeMaterial = Material.getMaterial(c.getInt("Region.Spout.Welcome.IconID", Material.GRASS.getId())), spoutLeaveMaterial = Material
-						.getMaterial(c.getInt("Region.Spout.Leave.IconID", Material.DIRT.getId()));
+				int spoutWelcomeMaterial = c.getInt("Region.Spout.Welcome.IconID", 2), spoutLeaveMaterial =  c.getInt("Region.Spout.Leave.IconID", 3);
 
 				String[] musicUrl = c.getString("Region.Spout.Sound.CustomMusicURL", "").trim().split(",")
 						, commandSet = c.getString("Region.Command.CommandSet", "").trim().split(",")
@@ -463,10 +459,10 @@ public class LoaderCore {
 						r = new RegiosPolyRegion(owner, name, xPoints, zPoints, Integer.parseInt(np), Double.parseDouble(miY), Double.parseDouble(maY), world, null, false);
 					} catch (Exception ex) {
 						//TODO: figure out what to do here.
-						r = new RegiosCuboidRegion(owner, name, toLocation(l11), toLocation(l22), world, null, false);
+						r = new RegiosCuboidRegion(owner, name, toPoint(l11), toPoint(l22), world, null, false);
 					}
 				} else {
-					r = new RegiosCuboidRegion(owner, name, toLocation(l11), toLocation(l22), world, null, false);
+					r = new RegiosCuboidRegion(owner, name, toPoint(l11), toPoint(l22), world, null, false);
 				}
 
 				for (String s : exceptionsPlayers) {
@@ -579,11 +575,11 @@ public class LoaderCore {
 		}
 	}
 
-	public Location toLocation(String loc) {
-		Location l = null;
+	public RegiosPoint toPoint(String loc) {
+		RegiosPoint l = null;
 		try {
 			String[] locations = loc.split(",");
-			l = new Location(Bukkit.getServer().getWorld(locations[0].trim()), Double.parseDouble(locations[1].trim()), Double.parseDouble(locations[2].trim()), Double.parseDouble(locations[3].trim()));
+			l = new RegiosPoint(RegiosConversions.getRegiosWorld(locations[0].trim()), Double.parseDouble(locations[1].trim()), Double.parseDouble(locations[2].trim()), Double.parseDouble(locations[3].trim()));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

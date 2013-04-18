@@ -23,32 +23,31 @@ import net.jzx7.jnbt.NBTUtils;
 import net.jzx7.jnbt.Tag;
 import net.jzx7.regios.RegiosPlugin;
 import net.jzx7.regios.Permissions.PermissionsCore;
+import net.jzx7.regiosapi.block.RegiosBlock;
+import net.jzx7.regiosapi.block.RegiosContainer;
+import net.jzx7.regiosapi.block.RegiosSign;
+import net.jzx7.regiosapi.entity.RegiosPlayer;
 import net.jzx7.regiosapi.exceptions.FileExistanceException;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
+import net.jzx7.regiosapi.inventory.RegiosItemStack;
+import net.jzx7.regiosapi.location.RegiosPoint;
+import net.jzx7.regiosapi.worlds.RegiosWorld;
 
+import org.bukkit.Bukkit;
 
 public class Blueprint extends PermissionsCore {
 
 	private static final char[] ILLEGAL_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
 
-	public synchronized void startSave(final Location l1, final Location l2, final String bckn, final Player p) {
+	public synchronized void startSave(final RegiosPoint l1, final RegiosPoint l2, final String bckn, final RegiosPlayer p) {
 
-		Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(RegiosPlugin.regios, new Runnable() {
+		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(RegiosPlugin.regios, new Runnable() {
 
 			@Override
 			public void run() {
 				for(char c : bckn.toCharArray()){
 					for(char il : ILLEGAL_CHARACTERS){
 						if(c == il){
-							p.sendMessage(ChatColor.RED + "[Regios] Invalid token " + ChatColor.YELLOW + c + ChatColor.RED + " in file name!");
+							p.sendMessage("<RED>" + "[Regios] Invalid token " + "<YELLOW>" + c + "<RED>" + " in file name!");
 							return;
 						}
 					}
@@ -63,22 +62,22 @@ public class Blueprint extends PermissionsCore {
 		}, 1L);
 	}
 
-	public synchronized void startSave(final int[] xPoints, final int[] zPoints, final int nPoints, final int minY, final int maxY, final String backupname, final Player p, final boolean b) {
+	public synchronized void startSave(final int[] xs, final int[] zs, final int ns, final int minY, final int maxY, final String backupname, final RegiosPlayer p, final boolean b) {
 
-		Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(RegiosPlugin.regios, new Runnable() {
+		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(RegiosPlugin.regios, new Runnable() {
 
 			@Override
 			public void run() {
 				for(char c : backupname.toCharArray()){
 					for(char il : ILLEGAL_CHARACTERS){
 						if(c == il){
-							p.sendMessage(ChatColor.RED + "[Regios] Invalid token " + ChatColor.YELLOW + c + ChatColor.RED + " in file name!");
+							p.sendMessage("<RED>" + "[Regios] Invalid token " + "<YELLOW>" + c + "<RED>" + " in file name!");
 							return;
 						}
 					}
 				}
 				try {
-					saveBlueprint(new Polygon(xPoints, zPoints, nPoints), minY, maxY, backupname, p);
+					saveBlueprint(new Polygon(xs, zs, ns), minY, maxY, backupname, p);
 				} catch (FileExistanceException e) {
 					e.printStackTrace();
 				}
@@ -88,10 +87,10 @@ public class Blueprint extends PermissionsCore {
 
 	}
 
-	protected synchronized void saveBlueprint(Location l1, Location l2, String backupname, Player p) throws FileExistanceException {
+	protected synchronized void saveBlueprint(RegiosPoint l1, RegiosPoint l2, String backupname, RegiosPlayer p) throws FileExistanceException {
 		try {
 			if (p != null) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Creating .blp Blueprint file...");
+				p.sendMessage("<DGREEN>" + "[Regios] Creating .blp Blueprint file...");
 			}
 			File f = new File("plugins" + File.separator + "Regios" + File.separator + "Blueprints" + File.separator + backupname + ".blp");
 
@@ -99,14 +98,14 @@ public class Blueprint extends PermissionsCore {
 				f.createNewFile();
 			} else {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] A Blueprint file with the name " + ChatColor.BLUE + backupname + ChatColor.RED + " already exists!");
+					p.sendMessage("<RED>" + "[Regios] A Blueprint file with the name " + "<BLUE>" + backupname + "<RED>" + " already exists!");
 				}
 				throw new FileExistanceException("UNKNOWN", true);
 			}
 
-			World w = l1.getWorld();
-			Location max = new Location(w, Math.max(l1.getX(), l2.getX()), Math.max(l1.getY(), l2.getY()), Math.max(l1.getZ(), l2.getZ()))
-			, min = new Location(w, Math.min(l1.getX(), l2.getX()), Math.min(l1.getY(), l2.getY()), Math.min(l1.getZ(), l2.getZ()));
+			RegiosWorld w = l1.getRegiosWorld();
+			RegiosPoint max = new RegiosPoint(w, Math.max(l1.getX(), l2.getX()), Math.max(l1.getY(), l2.getY()), Math.max(l1.getZ(), l2.getZ()))
+			, min = new RegiosPoint(w, Math.min(l1.getX(), l2.getX()), Math.min(l1.getY(), l2.getY()), Math.min(l1.getZ(), l2.getZ()));
 
 			int width = max.getBlockX() - min.getBlockX();
 			int height = max.getBlockY() - min.getBlockY();
@@ -118,22 +117,22 @@ public class Blueprint extends PermissionsCore {
 
 			if (width > 65535) {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] The width is too large for a .blp file!");
-					p.sendMessage(ChatColor.RED + "[Regios] Max width : 65535. Your size : " + ChatColor.BLUE + width);
+					p.sendMessage("<RED>" + "[Regios] The width is too large for a .blp file!");
+					p.sendMessage("<RED>" + "[Regios] Max width : 65535. Your size : " + "<BLUE>" + width);
 				}
 				return;
 			}
 			if (height > 65535) {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] The height is too large for a .blp file!");
-					p.sendMessage(ChatColor.RED + "[Regios] Max height : 65535. Your size : " + ChatColor.BLUE + width);
+					p.sendMessage("<RED>" + "[Regios] The height is too large for a .blp file!");
+					p.sendMessage("<RED>" + "[Regios] Max height : 65535. Your size : " + "<BLUE>" + width);
 				}
 				return;
 			}
 			if (length > 65535) {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] The length is too large for a .blp file!");
-					p.sendMessage(ChatColor.RED + "[Regios] Max length : 65535. Your size : " + ChatColor.BLUE + width);
+					p.sendMessage("<RED>" + "[Regios] The length is too large for a .blp file!");
+					p.sendMessage("<RED>" + "[Regios] Max length : 65535. Your size : " + "<BLUE>" + width);
 				}
 				return;
 			}
@@ -142,7 +141,7 @@ public class Blueprint extends PermissionsCore {
 
 			byte[] blockID = new byte[width * height * length];
 			byte[] blockData = new byte[width * height * length];
-			List<ItemStack[]> containerData = new ArrayList<ItemStack[]>();
+			List<RegiosItemStack[]> containerData = new ArrayList<RegiosItemStack[]>();
 			List<String[]> signData = new ArrayList<String[]>();
 
 			int index = 0;
@@ -150,18 +149,18 @@ public class Blueprint extends PermissionsCore {
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
 					for (int z = 0; z < length; z++) {
-						Block b = w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z);
-						blockID[index] = (byte) b.getTypeId();
+						RegiosBlock b = w.getBlockAt(min.getBlockX() + x, min.getBlockY() + y, min.getBlockZ() + z);
+						blockID[index] = (byte) b.getId();
 						blockData[index] = b.getData();
 
-						if(b.getState() instanceof InventoryHolder) {
-							containerData.add(((InventoryHolder) b.getState()).getInventory().getContents());
+						if(b instanceof RegiosContainer) {
+							containerData.add(((RegiosContainer) b).getContents());
 						} else {
 							containerData.add(null);
 						}
 
-						if(b.getState() instanceof Sign) {
-							signData.add(((Sign)b.getState()).getLines());
+						if(b instanceof RegiosSign) {
+							signData.add(((RegiosSign)b).getText());
 						} else {
 							signData.add(null);
 						}
@@ -187,20 +186,20 @@ public class Blueprint extends PermissionsCore {
 			nbt.writeTag(compoundTag);
 			nbt.close();
 			if (p != null) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Blueprint " + ChatColor.BLUE + backupname + ChatColor.GREEN + " saved to .blp file successfully!");
+				p.sendMessage("<DGREEN>" + "[Regios] Blueprint " + "<BLUE>" + backupname + "<DGREEN>" + " saved to .blp file successfully!");
 			}
 		} catch (Exception ex) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] Error saving blueprint! Stack trace printed in console.");
+				p.sendMessage("<RED>" + "[Regios] Error saving blueprint! Stack trace printed in console.");
 			}
 			ex.printStackTrace();
 		}
 	}
 
-	protected synchronized void saveBlueprint(Polygon polygon, int minY, int maxY, String backupname, Player p) throws FileExistanceException {
+	protected synchronized void saveBlueprint(Polygon polygon, int minY, int maxY, String backupname, RegiosPlayer p) throws FileExistanceException {
 		try {
 			if (p != null) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Creating .blp Blueprint file...");
+				p.sendMessage("<DGREEN>" + "[Regios] Creating .blp Blueprint file...");
 			}
 			File f = new File("plugins" + File.separator + "Regios" + File.separator + "Blueprints" + File.separator + backupname + ".blp");
 
@@ -208,12 +207,12 @@ public class Blueprint extends PermissionsCore {
 				f.createNewFile();
 			} else {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] A Blueprint file with the name " + ChatColor.BLUE + backupname + ChatColor.RED + " already exists!");
+					p.sendMessage("<RED>" + "[Regios] A Blueprint file with the name " + "<BLUE>" + backupname + "<RED>" + " already exists!");
 				}
 				throw new FileExistanceException("UNKNOWN", true);
 			}
 
-			World w = p.getWorld();
+			RegiosWorld w = p.getRegiosWorld();
 			Rectangle2D rect = polygon.getBounds2D();
 
 			int width = (int) (rect.getMaxX() - rect.getMinX());
@@ -226,26 +225,26 @@ public class Blueprint extends PermissionsCore {
 
 			if (width > 65535) {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] The width is too large for a .blp file!");
+					p.sendMessage("<RED>" + "[Regios] The width is too large for a .blp file!");
 
-					p.sendMessage(ChatColor.RED + "[Regios] Max width : 65535. Your size : " + ChatColor.BLUE + width);
+					p.sendMessage("<RED>" + "[Regios] Max width : 65535. Your size : " + "<BLUE>" + width);
 				}
 				return;
 			}
 			if (height > 65535) {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] The height is too large for a .blp file!");
+					p.sendMessage("<RED>" + "[Regios] The height is too large for a .blp file!");
 
-					p.sendMessage(ChatColor.RED + "[Regios] Max height : 65535. Your size : " + ChatColor.BLUE + width);
+					p.sendMessage("<RED>" + "[Regios] Max height : 65535. Your size : " + "<BLUE>" + width);
 				}
 				return;
 			}
 			if (length > 65535) {
 				if (p != null) {
-					p.sendMessage(ChatColor.RED + "[Regios] The length is too large for a .blp file!");
+					p.sendMessage("<RED>" + "[Regios] The length is too large for a .blp file!");
 
 				}
-				p.sendMessage(ChatColor.RED + "[Regios] Max length : 65535. Your size : " + ChatColor.BLUE + width);
+				p.sendMessage("<RED>" + "[Regios] Max length : 65535. Your size : " + "<BLUE>" + width);
 				return;
 			}
 
@@ -253,7 +252,7 @@ public class Blueprint extends PermissionsCore {
 
 			byte[] blockID = new byte[width * height * length];
 			byte[] blockData = new byte[width * height * length];
-			List<ItemStack[]> containerData = new ArrayList<ItemStack[]>();
+			List<RegiosItemStack[]> containerData = new ArrayList<RegiosItemStack[]>();
 			List<String[]> signData = new ArrayList<String[]>();
 
 			int index = 0;
@@ -262,17 +261,17 @@ public class Blueprint extends PermissionsCore {
 				for (int y = 0; y < height; y++) {
 					for (int z = 0; z < length; z++) {
 						if (polygon.contains(x, z)) {
-							Block b = w.getBlockAt((int) rect.getMinX() + x, minY + y, (int) rect.getMinY() + z);
-							blockID[index] = (byte) b.getTypeId();
+							RegiosBlock b = w.getBlockAt((int) rect.getMinX() + x, minY + y, (int) rect.getMinY() + z);
+							blockID[index] = (byte) b.getId();
 							blockData[index] = b.getData();
-							if(b.getState() instanceof InventoryHolder) {
-								containerData.add(((InventoryHolder) b.getState()).getInventory().getContents());
+							if(b instanceof RegiosContainer) {
+								containerData.add(((RegiosContainer) b).getContents());
 							} else {
 								containerData.add(null);
 							}
 
-							if(b instanceof Sign) {
-								signData.add(((Sign)b).getLines());
+							if(b instanceof RegiosSign) {
+								signData.add(((RegiosSign)b).getText());
 							} else {
 								signData.add(null);
 							}
@@ -302,35 +301,35 @@ public class Blueprint extends PermissionsCore {
 			nbt.writeTag(compoundTag);
 			nbt.close();
 			if (p != null) {
-				p.sendMessage(ChatColor.GREEN + "[Regios] Blueprint " + ChatColor.BLUE + backupname + ChatColor.GREEN + " saved to .blp file successfully!");
+				p.sendMessage("<DGREEN>" + "[Regios] Blueprint " + "<BLUE>" + backupname + "<DGREEN>" + " saved to .blp file successfully!");
 			}
 		} catch (Exception ex) {
 			if (p != null) {
-				p.sendMessage(ChatColor.RED + "[Regios] Error saving blueprint! Stack trace printed in console.");
+				p.sendMessage("<RED>" + "[Regios] Error saving blueprint! Stack trace printed in console.");
 			}
 			ex.printStackTrace();
 		}
 	}
 	
-	public void loadBlueprint(String sharename, Player p, Location l) throws IOException {
+	public void loadBlueprint(String sharename, RegiosPlayer p, RegiosPoint l) throws IOException {
 
-		if (RBF_Core.undoCache.containsKey(p.getName())) {
-			RBF_Core.undoCache.remove(p.getName());
+		if (RBF_Core.getUndoCache().containsKey(p.getName())) {
+			RBF_Core.getUndoCache().remove(p.getName());
 		}
 
 		ArrayList<PBD> blockss = new ArrayList<PBD>();
-		RBF_Core.undoCache.put(p.getName(), blockss);
+		RBF_Core.getUndoCache().put(p.getName(), blockss);
 
 		File f = new File("plugins" + File.separator + "Regios" + File.separator + "Blueprints" + File.separator + sharename + ".blp");
 
 		if (!f.exists()) {
-			p.sendMessage(ChatColor.RED + "[Regios] A blueprint file with the name " + ChatColor.BLUE + sharename + ChatColor.RED + " does not exist!");
+			p.sendMessage("<RED>" + "[Regios] A blueprint file with the name " + "<BLUE>" + sharename + "<RED>" + " does not exist!");
 			return;
 		}
 
-		p.sendMessage(ChatColor.GREEN + "[Regios] Restoring blueprint from " + sharename + ".blp file...");
+		p.sendMessage("<DGREEN>" + "[Regios] Restoring blueprint from " + sharename + ".blp file...");
 
-		World w = p.getWorld();
+		RegiosWorld w = p.getRegiosWorld();
 
 		FileInputStream fis = new FileInputStream(f);
 		NBTInputStream nbt = new NBTInputStream(new GZIPInputStream(fis));
@@ -339,29 +338,29 @@ public class Blueprint extends PermissionsCore {
 		Map<String, Tag> tagCollection = backupTag.getValue();
 
 		if (!backupTag.getName().equals("BLP")) {
-			p.sendMessage(ChatColor.RED + "[Regios] Blueprint file in unexpected format! Tag does not match 'BLP'.");
+			p.sendMessage("<RED>" + "[Regios] Blueprint file in unexpected format! Tag does not match 'BLP'.");
 		}
 
 		int StartX = l.getBlockX();
 		int StartY = l.getBlockY();
 		int StartZ = l.getBlockZ();
 
-		int width = (Integer) NBTUtils.getChildTag(tagCollection, "XSize", IntTag.class).getValue();
-		int height = (Integer) NBTUtils.getChildTag(tagCollection, "YSize", IntTag.class).getValue();
-		int length = (Integer) NBTUtils.getChildTag(tagCollection, "ZSize", IntTag.class).getValue();
+		int width = NBTUtils.getChildTag(tagCollection, "XSize", IntTag.class).getValue();
+		int height = NBTUtils.getChildTag(tagCollection, "YSize", IntTag.class).getValue();
+		int length = NBTUtils.getChildTag(tagCollection, "ZSize", IntTag.class).getValue();
 
-		byte[] blocks = (byte[]) NBTUtils.getChildTag(tagCollection, "BlockID", ByteArrayTag.class).getValue();
-		byte[] blockData = (byte[]) NBTUtils.getChildTag(tagCollection, "Data", ByteArrayTag.class).getValue();
-		List<ItemStack[]> containerData = (List<ItemStack[]>) NBTUtils.getChildTag(tagCollection, "ContainerData", ListItemStackArrayTag.class).getValue();
-		List<String[]> signData = (List<String[]>) NBTUtils.getChildTag(tagCollection, "SignData", ListStringArrayTag.class).getValue();
+		byte[] blocks = NBTUtils.getChildTag(tagCollection, "BlockID", ByteArrayTag.class).getValue();
+		byte[] blockData = NBTUtils.getChildTag(tagCollection, "Data", ByteArrayTag.class).getValue();
+		List<RegiosItemStack[]> containerData = NBTUtils.getChildTag(tagCollection, "ContainerData", ListItemStackArrayTag.class).getValue();
+		List<String[]> signData = NBTUtils.getChildTag(tagCollection, "SignData", ListStringArrayTag.class).getValue();
 		
 		int index = 0;
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Block b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
-					blockss.add(new PBD(b));
+					RegiosBlock b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
+					blockss.add(new PBD(b, StartX + x, StartY + y, StartZ + z));
 				}
 			}
 		}
@@ -369,13 +368,13 @@ public class Blueprint extends PermissionsCore {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Block b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
+					RegiosBlock b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
 
-					if(b.getState() instanceof InventoryHolder) {
-						((InventoryHolder)b.getState()).getInventory().clear();
+					if(b instanceof RegiosContainer) {
+						((RegiosContainer)b).clearInventory();
 					}
 
-					b.setTypeId(blocks[index] & 0xFF);
+					b.setId(blocks[index] & 0xFF);
 					b.setData(blockData[index]);
 
 					index++;
@@ -388,13 +387,13 @@ public class Blueprint extends PermissionsCore {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Block b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
-					if(b.getState() instanceof InventoryHolder) {
-						((InventoryHolder)b.getState()).getInventory().setContents(containerData.get(index));
+					RegiosBlock b = w.getBlockAt(StartX + x, StartY + y, StartZ + z);
+					if(b instanceof RegiosContainer) {
+						((RegiosContainer)b).setContents(containerData.get(index));
 					}
 
-					if(b.getState() instanceof Sign) {
-						Sign sign = (Sign) b.getState();
+					if(b instanceof RegiosSign) {
+						RegiosSign sign = (RegiosSign) b;
 						int line = 0;
 						for(String s : signData.get(index)) {
 							if(line > 3) {
@@ -403,18 +402,18 @@ public class Blueprint extends PermissionsCore {
 							sign.setLine(line, s);
 							line++;
 						}
-						sign.update();
+						//sign.update();
 					}
 					index++;
 				}
 			}
 		}
 
-		RBF_Core.undoCache.put(p.getName(), blockss);
+		RBF_Core.getUndoCache().put(p.getName(), blockss);
 
 		fis.close();
 		nbt.close();
 
-		p.sendMessage(ChatColor.GREEN + "[Regios] Blueprint " + ChatColor.BLUE + sharename + ChatColor.GREEN + " loaded successfully from .blp file!");
+		p.sendMessage("<DGREEN>" + "[Regios] Blueprint " + "<BLUE>" + sharename + "<DGREEN>" + " loaded successfully from .blp file!");
 	}
 }
