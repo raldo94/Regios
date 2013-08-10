@@ -55,7 +55,31 @@ public class RegiosEntityListener implements Listener {
 				ce == EntityType.OCELOT || 
 				ce == EntityType.IRON_GOLEM || 
 				ce == EntityType.WOLF ||
-				ce == EntityType.BAT) {
+				ce == EntityType.BAT ||
+				ce == EntityType.HORSE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private boolean isHostileMob(EntityType ce)
+	{
+		if (ce == EntityType.ZOMBIE || 
+				ce == EntityType.BLAZE ||
+				ce == EntityType.CAVE_SPIDER ||
+				ce == EntityType.CREEPER ||
+				ce == EntityType.ENDER_DRAGON ||
+				ce == EntityType.ENDERMAN ||
+				ce == EntityType.GHAST ||
+				ce == EntityType.GIANT ||
+				ce == EntityType.MAGMA_CUBE ||
+				ce == EntityType.PIG_ZOMBIE ||
+				ce == EntityType.SILVERFISH ||
+				ce == EntityType.SKELETON ||
+				ce == EntityType.SLIME ||
+				ce == EntityType.SPIDER ||
+				ce == EntityType.WITHER) {
 			return true;
 		} else {
 			return false;
@@ -141,9 +165,9 @@ public class RegiosEntityListener implements Listener {
 				return;
 			}
 		}
-
+		
 		if (!r.canMonstersSpawn()) {
-			if (!isPeacefulMob(ce)) {
+			if (isHostileMob(ce)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Monster '" + ce.getName() + "' tried to spawn but was prevented."));
 				evt.setCancelled(true);
 				return;
@@ -316,14 +340,14 @@ public class RegiosEntityListener implements Listener {
 					if (edevt.getDamager() instanceof Player && edevt.getEntity() instanceof Player) {
 						damager = edevt.getDamager();
 						evt.setCancelled(true);
-						evt.setDamage(0);
+						evt.setDamage(0.0);
 						return;
 					} else if (edevt.getDamager().getType() == EntityType.ARROW && edevt.getEntity() instanceof Player) { //Check to see if the player was shot by an arrow.
 						Projectile arrow = (Arrow) edevt.getDamager();
 						damager = arrow.getShooter(); //get the arrows shooter
 						if(damager.getType() == EntityType.PLAYER) { //if shot by a player, cancel the event
 							evt.setCancelled(true);
-							evt.setDamage(0);
+							evt.setDamage(0.0);
 						}
 						return;
 					} else if (edevt.getDamager().getType() == EntityType.SPLASH_POTION && edevt.getEntity() instanceof Player) { //Check if player was hit by a potion
@@ -331,7 +355,7 @@ public class RegiosEntityListener implements Listener {
 						damager = potion.getShooter(); //get the potion's thrower
 						if(damager.getType() == EntityType.PLAYER) { //if it was thrown by a player, cancel the event
 							evt.setCancelled(true);
-							evt.setDamage(0);
+							evt.setDamage(0.0);
 						}
 						return;
 					} else {
@@ -345,7 +369,7 @@ public class RegiosEntityListener implements Listener {
 
 		if (!r.isHealthEnabled()) {
 			evt.setCancelled(true);
-			evt.setDamage(0);
+			evt.setDamage(0.0);
 			return;
 		}
 
@@ -358,7 +382,7 @@ public class RegiosEntityListener implements Listener {
 					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
 					((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
 					evt.setCancelled(true);
-					evt.setDamage(0);
+					evt.setDamage(0.0);
 					return;
 				} else if (edevt.getDamager().getType() == EntityType.ARROW && edevt.getEntity() instanceof Player) { //Check to see if the player was shot by an arrow.
 					Projectile arrow = (Arrow) edevt.getDamager();
@@ -367,7 +391,7 @@ public class RegiosEntityListener implements Listener {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
 						((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
 						evt.setCancelled(true);
-						evt.setDamage(0);
+						evt.setDamage(0.0);
 					}
 					return;
 				} else if (edevt.getDamager().getType() == EntityType.SPLASH_POTION && edevt.getEntity() instanceof Player) { //Check if player was hit by a potion
@@ -377,7 +401,7 @@ public class RegiosEntityListener implements Listener {
 						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
 						((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
 						evt.setCancelled(true);
-						evt.setDamage(0);
+						evt.setDamage(0.0);
 					}
 					return;
 				} else {

@@ -71,6 +71,11 @@ public class Saveable  {
 				c.set(world + ".Mobs.Spawning.Snowman", true);
 				c.set(world + ".Mobs.Spawning.IronGolem", true);
 				c.set(world + ".Mobs.Spawning.Ocelot", true);
+				c.set(world + ".Mobs.Spawning.Bat", true);
+				c.set(world + ".Mobs.Spawning.Wither", true);
+				c.set(world + ".Mobs.Spawning.WitherSkull", true);
+				c.set(world + ".Mobs.Spawning.Witch", true);
+				c.set(world + ".Mobs.Spawning.Horse", true);
 				c.set(world + ".Mobs.Creeper.DoesExplode", true);
 				c.set(world + ".Block.BlockForm.Enabled", true);
 				try {

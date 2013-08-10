@@ -236,6 +236,7 @@ public class LoaderCore {
 		ArrayList<String> count = (ArrayList<String>) c.getList("Restrictions.Count");
 		RestrictionParameters.count = count;
 
+		RegiosConversions.loadServerWorlds();
 		save.saveWorlds();
 		loadWorlds();
 
@@ -243,8 +244,6 @@ public class LoaderCore {
 	}
 
 	public void loadWorlds(){
-		RegiosConversions.loadServerWorlds();
-		
 		for(RegiosWorld w : wm.getRegiosWorlds()){
 			log.info("[Regios] Loading world configuration for world: " + w.getName());
 			File root = new File("plugins" + File.separator + "Regios" + File.separator + "Configuration" + File.separator + "WorldConfigurations");
@@ -291,6 +290,7 @@ public class LoaderCore {
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Wither", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WITHER")); }
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.WitherSkull", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WITHER_SKULL")); }
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Witch", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WITCH")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Horse", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("HORSE")); }
 		}
 	}
 

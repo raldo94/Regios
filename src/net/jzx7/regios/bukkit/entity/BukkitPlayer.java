@@ -69,12 +69,12 @@ public class BukkitPlayer implements RegiosPlayer {
 	}
 
 	@Override
-	public int getHealth() {
+	public double getHealth() {
 		return bukkitPlayer.getHealth();
 	}
 
 	@Override
-	public void setHealth(int h) {
+	public void setHealth(double h) {
 		bukkitPlayer.setHealth(h);
 	}
 
@@ -152,7 +152,7 @@ public class BukkitPlayer implements RegiosPlayer {
 	}
 
 	@Override
-	public void damage(int damage) {
+	public void damage(double damage) {
 		bukkitPlayer.damage(damage);
 	}
 
