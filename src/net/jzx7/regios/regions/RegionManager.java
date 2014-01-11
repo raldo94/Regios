@@ -44,7 +44,7 @@ public class RegionManager {
 	private final static SubRegionManager srm = new SubRegionManager();
 	private final static PlayerManager pm = new PlayerManager();
 	
-	private static char[] invalidModifiers = { '!', '\'', '£', '$', '%', '^', '&', '*', '¬', '`', '/', '?', '<', '>', '|', '\\' };
+	private static char[] invalidModifiers = { '!', '\'', 'ï¿½', '$', '%', '^', '&', '*', 'ï¿½', '`', '/', '?', '<', '>', '|', '\\' };
 
 	private static ArrayList<Region> regions = new ArrayList<Region>() , regionsInWorld = new ArrayList<Region>();
 
@@ -393,12 +393,12 @@ public class RegionManager {
 		for (Region reg : getRegions()) {
 			if (reg instanceof CuboidRegion) {
 				CuboidRegion cr = (CuboidRegion)reg;
-				if (regUtil.isInsideCuboid(l, cr.getL1(), cr.getL2()) && (l.getRegiosWorld().getName() == cr.getWorld().getName())) {
+				if (regUtil.isInsideCuboid(l, cr.getL1(), cr.getL2()) && (l.getRegiosWorld().getName().equals(cr.getWorld().getName()))) {
 					currentRegionSet.add(reg);
 				}
 			} else if (reg instanceof PolyRegion) {
 				PolyRegion pr = (PolyRegion) reg;
-				if (regUtil.isInsidePolygon(l, pr.get2DPolygon(), pr.getMinY(), pr.getMaxY()) && (l.getRegiosWorld().getName() == pr.getWorld().getName())) {
+				if (regUtil.isInsidePolygon(l, pr.get2DPolygon(), pr.getMinY(), pr.getMaxY()) && (l.getRegiosWorld().getName().equals(pr.getWorld().getName()))) {
 					currentRegionSet.add(reg);
 				}
 			}
