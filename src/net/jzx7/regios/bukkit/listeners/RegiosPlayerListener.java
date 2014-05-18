@@ -489,7 +489,6 @@ public class RegiosPlayerListener implements Listener {
 
 		RegiosPlayer p = RegiosConversions.getRegiosPlayer(evt.getPlayer());
 		Region r;
-
 		boolean authenticated = false, inRegion = false;
 
 		if (pm.getRegionBinding().containsKey(p.getName())) {
@@ -517,7 +516,7 @@ public class RegiosPlayerListener implements Listener {
 					} else {
 						if (!binding.isAuthenticated(p)) {
 							if (isSendable(p, MSG.AUTHENTICATION)) {
-								p.sendMessage(ChatColor.RED + "Authentication required! Do /regios auth <password>");
+								p.sendMessage(ConfigurationData.defaultAuthenticationMessage);
 							}
 							if (pm.getOutsideRegionLocation().containsKey(p.getName())) {
 								p.teleport(pm.getOutsideRegionLocation().get(p.getName()));
@@ -543,7 +542,7 @@ public class RegiosPlayerListener implements Listener {
 					} else {
 						if (!binding.isAuthenticated(p)) {
 							if (isSendable(p, MSG.AUTHENTICATION)) {
-								p.sendMessage(ChatColor.RED + "Authentication required! Do /regios auth <password>");
+								p.sendMessage(ConfigurationData.defaultAuthenticationMessage);
 							}
 							if (pm.getInsideRegionLocation().containsKey(p.getName())) {
 								p.teleport(pm.getInsideRegionLocation().get(p.getName()));

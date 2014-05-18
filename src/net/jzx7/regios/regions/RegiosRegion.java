@@ -114,15 +114,12 @@ public abstract class RegiosRegion extends PermChecks implements Region {
 			Bukkit.getServer().getPluginManager().callEvent(event);
 		}
 
-		welcomeMessage = ConfigurationData.defaultWelcomeMessage.toString();
+		welcomeMessage = ConfigurationData.defaultWelcomeMessage;
 
-		leaveMessage = ConfigurationData.defaultLeaveMessage.toString();
-		protectionMessage = (ConfigurationData.defaultProtectionMessage
-				.toString());
-		preventEntryMessage = (ConfigurationData.defaultPreventEntryMessage
-				.toString());
-		preventExitMessage = (ConfigurationData.defaultPreventExitMessage
-				.toString());
+		leaveMessage = ConfigurationData.defaultLeaveMessage;
+		protectionMessage = ConfigurationData.defaultProtectionMessage;
+		preventEntryMessage = ConfigurationData.defaultPreventEntryMessage;
+		preventExitMessage = ConfigurationData.defaultPreventExitMessage;
 		if (ConfigurationData.passwordEnabled) {
 			passwordEnabled = true;
 			password = ConfigurationData.password;
@@ -277,8 +274,7 @@ public abstract class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public boolean getAuthentication(String password, RegiosPlayer p) {
-		if (encUtil.compareHashes(encUtil.computeSHA2_384BitHash(password),
-				encUtil.computeSHA2_384BitHash(this.password))) {
+		if (encUtil.compareHashes(encUtil.computeSHA2_384BitHash(password), (this.password))) {
 			authentication.put(p.getName(), true);
 			return true;
 		} else {

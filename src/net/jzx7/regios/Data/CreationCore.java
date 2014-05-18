@@ -213,7 +213,7 @@ public class CreationCore {
 			c.set("DefaultSettings.Password.PasswordProtection", false);
 			c.set("DefaultSettings.Password.Password", "NA");
 			c.set("DefaultSettings.Password.PasswordMessage", "<RED>Authentication required! Do /regios auth <password>");
-			c.set("DefaultSettings.Password.PasswordSuccessMessage", "Authentication successful!");
+			c.set("DefaultSettings.Password.PasswordSuccessMessage", "<DGREEN>Authentication successful!");
 
 			c.set("DefaultSettings.Spout.SpoutWelcomeIconID", 2);
 			c.set("DefaultSettings.Spout.SpoutLeaveIconID", 3);
