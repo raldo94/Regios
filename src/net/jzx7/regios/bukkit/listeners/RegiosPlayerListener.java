@@ -33,16 +33,14 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.material.Openable;
 
 public class RegiosPlayerListener implements Listener {
@@ -127,6 +125,30 @@ public class RegiosPlayerListener implements Listener {
 			EconomyPending.loadAndSendPending(p);
 		}
 		
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerInteractEntity(PlayerInteractEntityEvent evt) {
+		if(evt.getRightClicked() == null) {
+			return;
+		}
+		RegiosPoint l = RegiosConversions.getPoint(evt.getRightClicked().getLocation());
+		RegiosPlayer p = RegiosConversions.getRegiosPlayer(evt.getPlayer());
+		Region r = rm.getRegion(l);
+
+		Entity e = evt.getRightClicked();
+
+		if(e.getType() == EntityType.ITEM_FRAME) {
+			if (r.isProtected()) {
+				if (!r.canBypassProtection(p)) {
+					if (isSendable(p, MSG.PROTECTION)) {
+						p.sendMessage(ChatColor.RED + "[Regios] You can not interact width item frames.");
+					}
+					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact but did not g permissions."));
+					evt.setCancelled(true);
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -286,7 +308,7 @@ public class RegiosPlayerListener implements Listener {
 				}
 			}
 
-			if (b.getTypeId() == 64 || b.getTypeId() == 71 || b.getTypeId() == 96) {
+			if (b.getType() == Material.WOODEN_DOOR || b.getType() == Material.IRON_DOOR || b.getType() == Material.TRAP_DOOR) {
 				if (r.areDoorsLocked()) {
 					if (!r.canBypassProtection(p)) {
 						if (isSendable(p, MSG.PROTECTION)) {
@@ -300,7 +322,7 @@ public class RegiosPlayerListener implements Listener {
 				}
 			}
 
-			if (b.getTypeId() == 54 || b.getTypeId() == 95) {
+			if (b.getType() == Material.CHEST || b.getType() == Material.TRAPPED_CHEST) {
 				if (r.areChestsLocked()) {
 					if (!r.canBypassProtection(p)) {
 						if (isSendable(p, MSG.PROTECTION)) {
@@ -313,7 +335,7 @@ public class RegiosPlayerListener implements Listener {
 				}
 			}
 
-			if (b.getTypeId() == 23) {
+			if (b.getType() == Material.DISPENSER) {
 				if (r.areDispensersLocked()) {
 					if (!r.canBypassProtection(p)) {
 						if (isSendable(p, MSG.PROTECTION)) {

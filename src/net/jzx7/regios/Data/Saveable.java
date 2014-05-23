@@ -104,11 +104,11 @@ public class Saveable  {
 		
 		FileConfiguration c = YamlConfiguration.loadConfiguration(region_core);
 		
-		c.set("Region.Messages.WelcomeMessage", r.getWelcomeMessage().toString());
-		c.set("Region.Messages.LeaveMessage", r.getLeaveMessage().toString());
-		c.set("Region.Messages.ProtectionMessage", r.getProtectionMessage().toString());
-		c.set("Region.Messages.PreventEntryMessage", r.getPreventEntryMessage().toString());
-		c.set("Region.Messages.PreventExitMessage", r.getPreventExitMessage().toString());
+		c.set("Region.Messages.WelcomeMessage", r.getWelcomeMessage());
+		c.set("Region.Messages.LeaveMessage", r.getLeaveMessage());
+		c.set("Region.Messages.ProtectionMessage", r.getProtectionMessage());
+		c.set("Region.Messages.PreventEntryMessage", r.getPreventEntryMessage());
+		c.set("Region.Messages.PreventExitMessage", r.getPreventExitMessage());
 		c.set("Region.Messages.ShowPvpWarning", Boolean.valueOf(r.isShowPvpWarning()));
 		
 		c.set("Region.Messages.ShowWelcomeMessage", Boolean.valueOf(r.isShowWelcomeMessage()));

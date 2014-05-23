@@ -611,7 +611,7 @@ public abstract class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public boolean isPlayerInRegion(RegiosPlayer p) {
-		if (playersInRegion.contains(p)) {
+		if (playersInRegion.contains(p.getName())) {
 			return true;
 		} else {
 			return false;
@@ -751,8 +751,8 @@ public abstract class RegiosRegion extends PermChecks implements Region {
 
 	@Override
 	public void removePlayer(RegiosPlayer p) {
-		if (playersInRegion.contains(p)) {
-			playersInRegion.remove(p);
+		if (playersInRegion.contains(p.getName())) {
+			playersInRegion.remove(p.getName());
 		}
 	}
 

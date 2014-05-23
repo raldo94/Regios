@@ -44,7 +44,7 @@ public class RegionManager {
 	private final static SubRegionManager srm = new SubRegionManager();
 	private final static PlayerManager pm = new PlayerManager();
 	
-	private static char[] invalidModifiers = { '!', '\'', '�', '$', '%', '^', '&', '*', '�', '`', '/', '?', '<', '>', '|', '\\' };
+	private static char[] invalidModifiers = { '!', '\'', '?', '$', '%', '^', '&', '*', '^', '`', '/', '?', '<', '>', '|', '\\' };
 
 	private static ArrayList<Region> regions = new ArrayList<Region>() , regionsInWorld = new ArrayList<Region>();
 
@@ -417,7 +417,7 @@ public class RegionManager {
 
 	public Region getRegion(RegiosPlayer p){
 		for(Region r : regions){
-			if(r.getPlayersInRegion().contains(p)){
+			if(r.getPlayersInRegion().contains(p.getName())){ //TODO Test if correct
 				return r;
 			}
 		}
@@ -473,7 +473,7 @@ public class RegionManager {
 	}
 
 	public boolean isInRegion(RegiosPlayer p) {
-		return (getRegion(p) == null ? false : true);
+		return (getRegion(p.getName()) == null ? false : true);
 	}
 
 	private boolean isSendable(RegiosPlayer p, Region r) {

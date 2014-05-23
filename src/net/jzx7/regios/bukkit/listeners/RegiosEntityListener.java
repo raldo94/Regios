@@ -15,14 +15,7 @@ import net.jzx7.regiosapi.regions.PolyRegion;
 import net.jzx7.regiosapi.regions.Region;
 import net.jzx7.regiosapi.worlds.RegiosWorld;
 
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Enderman;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -322,14 +315,24 @@ public class RegiosEntityListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent evt) {
 
-		if (!(evt.getEntity() instanceof Player)) {
-			return;
-		}
-
 		RegiosPoint l = RegiosConversions.getPoint(evt.getEntity().getLocation());
 		RegiosWorld w = l.getRegiosWorld();
 
 		Region r = rm.getRegion(l);
+
+		if (evt instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent edevt = (EntityDamageByEntityEvent) evt;
+			if(edevt.getEntity() instanceof ItemFrame && edevt.getDamager() instanceof Player) {
+				Player p = (Player) edevt.getDamager();
+				if (!r.canBypassProtection(RegiosConversions.getRegiosPlayer(p))) {
+					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact but did not have permissions."));
+					evt.setCancelled(true);
+				}
+			}
+		}
+		if (!(evt.getEntity() instanceof Player)) {
+			return;
+		}
 
 		if (r == null)
 		{
@@ -344,18 +347,22 @@ public class RegiosEntityListener implements Listener {
 						return;
 					} else if (edevt.getDamager().getType() == EntityType.ARROW && edevt.getEntity() instanceof Player) { //Check to see if the player was shot by an arrow.
 						Projectile arrow = (Arrow) edevt.getDamager();
-						damager = arrow.getShooter(); //get the arrows shooter
-						if(damager.getType() == EntityType.PLAYER) { //if shot by a player, cancel the event
-							evt.setCancelled(true);
-							evt.setDamage(0.0);
+						if(arrow.getShooter() instanceof Player) {
+							damager = (Player) arrow.getShooter(); //get the arrows shooter
+							if (arrow.getType() == EntityType.PLAYER) { //if shot by a player, cancel the event
+								evt.setCancelled(true);
+								evt.setDamage(0.0);
+							}
 						}
 						return;
 					} else if (edevt.getDamager().getType() == EntityType.SPLASH_POTION && edevt.getEntity() instanceof Player) { //Check if player was hit by a potion
 						Projectile potion = (ThrownPotion) edevt.getDamager();
-						damager = potion.getShooter(); //get the potion's thrower
-						if(damager.getType() == EntityType.PLAYER) { //if it was thrown by a player, cancel the event
-							evt.setCancelled(true);
-							evt.setDamage(0.0);
+						if(potion.getShooter() instanceof Player) {
+							damager = (Player) potion.getShooter(); //get the potion's thrower
+							if (damager.getType() == EntityType.PLAYER) { //if it was thrown by a player, cancel the event
+								evt.setCancelled(true);
+								evt.setDamage(0.0);
+							}
 						}
 						return;
 					} else {
@@ -386,26 +393,27 @@ public class RegiosEntityListener implements Listener {
 					return;
 				} else if (edevt.getDamager().getType() == EntityType.ARROW && edevt.getEntity() instanceof Player) { //Check to see if the player was shot by an arrow.
 					Projectile arrow = (Arrow) edevt.getDamager();
-					damager = arrow.getShooter(); //get the arrows shooter
-					if(damager.getType() == EntityType.PLAYER) { //if shot by a player, cancel the event
-						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-						((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
-						evt.setCancelled(true);
-						evt.setDamage(0.0);
+					if(arrow.getShooter() instanceof Player) {
+						damager = (Player) arrow.getShooter(); //get the arrows shooter
+						if(damager.getType() == EntityType.PLAYER) { //if shot by a player, cancel the event
+							LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
+							((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
+							evt.setCancelled(true);
+							evt.setDamage(0.0);
+						}
 					}
 					return;
 				} else if (edevt.getDamager().getType() == EntityType.SPLASH_POTION && edevt.getEntity() instanceof Player) { //Check if player was hit by a potion
 					Projectile potion = (ThrownPotion) edevt.getDamager();
-					damager = potion.getShooter(); //get the potion's thrower
-					if(damager.getType() == EntityType.PLAYER) { //if it was thrown by a player, cancel the event
-						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-						((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
-						evt.setCancelled(true);
-						evt.setDamage(0.0);
+					if(potion.getShooter() instanceof Player) {
+						damager = (Player) potion.getShooter(); //get the potion's thrower
+						if(damager.getType() == EntityType.PLAYER) { //if it was thrown by a player, cancel the event
+							LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
+							((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
+							evt.setCancelled(true);
+							evt.setDamage(0.0);
+						}
 					}
-					return;
-				} else {
-					return;
 				}
 			}
 		}

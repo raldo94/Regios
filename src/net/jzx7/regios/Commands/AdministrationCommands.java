@@ -30,9 +30,9 @@ public class AdministrationCommands extends PermissionsCore {
 					PermissionsCore.sendInvalidPerms(p);
 				}
 			} else {
-				if (RegiosConversions.getRegiosPlayer(args[1].toString()) != null) {
+				if (RegiosConversions.getRegiosPlayer(args[1]) != null) {
 					if (PermissionsCore.doesHaveNode(p, "regios.data.list-player")) {
-						p.sendMessage(mutable.listOwnedRegions(args[1].toString()));
+						p.sendMessage(mutable.listOwnedRegions(args[1]));
 					} else {
 						PermissionsCore.sendInvalidPerms(p);
 					}
