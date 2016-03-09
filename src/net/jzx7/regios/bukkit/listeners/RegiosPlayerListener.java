@@ -33,9 +33,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -146,6 +146,31 @@ public class RegiosPlayerListener implements Listener {
 					}
 					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact but did not g permissions."));
 					evt.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerInteractAt(PlayerInteractAtEntityEvent evt) { //Armor stands
+		if (evt.isCancelled()) {
+			return;
+		}
+
+		RegiosPlayer p = RegiosConversions.getRegiosPlayer(evt.getPlayer());
+
+		if (rm.getRegion(p) == null) {
+			return;
+		}
+
+		Region r = rm.getRegion(p);
+
+		if (r.isProtected()) {
+			if (!(r.canBypassProtection(p))) {
+				if (evt.getRightClicked() instanceof ArmorStand) {
+					evt.setCancelled(true);
+					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact with armor stand but did not have permissions."));
+					p.sendMessage(Message.PERMISSIONDENIED.toString());
 				}
 			}
 		}

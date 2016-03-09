@@ -1,6 +1,7 @@
 package net.jzx7.regios.bukkit.listeners;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.jzx7.regios.Scheduler.HealthRegeneration;
 import net.jzx7.regios.Scheduler.LogRunner;
@@ -15,6 +16,7 @@ import net.jzx7.regiosapi.regions.PolyRegion;
 import net.jzx7.regiosapi.regions.Region;
 import net.jzx7.regiosapi.worlds.RegiosWorld;
 
+import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -155,6 +157,52 @@ public class RegiosEntityListener implements Listener {
 			return;
 		}
 
+		//Armor stands
+
+		if (r.isProtected()) { //Really ugly way to check if armor stand is allowed to be placed, seems to get off by one issue.
+			if (ce == EntityType.ARMOR_STAND) {
+				Location entLoc = evt.getEntity().getLocation();
+				List<Entity> entities = evt.getEntity().getNearbyEntities(entLoc.getX(), entLoc.getY(),entLoc.getZ());
+				List<RegiosPlayer> playersInRange = new ArrayList<>();
+
+				int ex = (int) entLoc.getX(), ey = (int) entLoc.getY(), ez = (int) entLoc.getZ();
+
+				for (Entity ent : entities) {
+					if (ent instanceof Player) {
+
+						Location playerLoc = ent.getLocation();
+
+						int px = (int) playerLoc.getX(), py = (int) playerLoc.getY(), pz = (int) playerLoc.getZ();
+
+						//Check 20 block sphere around the entity for players.
+						if ((px > ex - 10 && px < ex + 10) && (pz > ez - 10 && pz < ez + 10) && (py > ey - 10 && py < ey + 10)) {
+							playersInRange.add(RegiosConversions.getRegiosPlayer((Player) ent));
+						}
+
+					}
+				}
+
+				if (playersInRange.size() > 1) {
+					evt.setCancelled(true);
+				}
+				//Loop through players and only allow if all players within range have permission.
+				boolean trigger = false;
+				for (RegiosPlayer rp : playersInRange) {
+					if (!r.canBypassProtection(rp)) {
+						trigger = true;
+					}
+				}
+
+				if (!trigger) {
+					evt.setCancelled(false);
+					return;
+				} else {
+					evt.setCancelled(true);
+				}
+			}
+		}
+
+
 		if (!r.canMobsSpawn()) {
 			if (isPeacefulMob(ce)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Mob '" + ce.getName() + "' tried to spawn but was prevented."));
@@ -167,7 +215,6 @@ public class RegiosEntityListener implements Listener {
 			if (isHostileMob(ce)) {
 				LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Monster '" + ce.getName() + "' tried to spawn but was prevented."));
 				evt.setCancelled(true);
-				return;
 			}
 		}
 	}
@@ -325,12 +372,22 @@ public class RegiosEntityListener implements Listener {
 		Region r = rm.getRegion(l);
 
 		if (evt instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent edevt = (EntityDamageByEntityEvent) evt;
-			if(edevt.getEntity() instanceof ItemFrame && edevt.getDamager() instanceof Player) {
-				Player p = (Player) edevt.getDamager();
-				if (!r.canBypassProtection(RegiosConversions.getRegiosPlayer(p))) {
-					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact but did not have permissions."));
-					evt.setCancelled(true);
+			if (!(rm.getRegion(l) == null)) {
+				EntityDamageByEntityEvent edevt = (EntityDamageByEntityEvent) evt;
+				if(edevt.getEntity() instanceof ItemFrame && edevt.getDamager() instanceof Player) {
+					Player p = (Player) edevt.getDamager();
+					if (!r.canBypassProtection(RegiosConversions.getRegiosPlayer(p))) {
+						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact but did not have permissions."));
+						evt.setCancelled(true);
+					}
+				}
+
+				if (edevt.getEntity() instanceof ArmorStand && edevt.getDamager() instanceof Player) {
+					Player p = (Player) edevt.getDamager();
+					if (!r.canBypassProtection(RegiosConversions.getRegiosPlayer(p))) {
+						LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact with armor stand but did not have permissions."));
+						evt.setCancelled(true);
+					}
 				}
 			}
 		}

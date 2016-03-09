@@ -19,6 +19,7 @@ import net.jzx7.regiosapi.worlds.RegiosWorld;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 
 
 public class LoaderCore {
@@ -291,6 +292,7 @@ public class LoaderCore {
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.WitherSkull", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WITHER_SKULL")); }
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Witch", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("WITCH")); }
 			if(c.getBoolean(w.getName() + ".Mobs.Spawning.Horse", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("HORSE")); }
+			if(c.getBoolean(w.getName() + ".Mobs.Spawning.ArmorStand", true)){ w.addCreatureSpawn(RegiosConversions.getEntityTypeID("ARMOR_STAND")); }
 		}
 	}
 
