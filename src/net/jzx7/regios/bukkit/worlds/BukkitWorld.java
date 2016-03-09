@@ -23,6 +23,7 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_9_R1.Overridden;
 import org.bukkit.entity.EntityType;
 
 public class BukkitWorld extends RegWorld{
@@ -57,6 +58,11 @@ public class BukkitWorld extends RegWorld{
 	@Override
 	public int getMaxHeight() {
 		return world.getMaxHeight();
+	}
+
+	@Override
+	public boolean canCreatureSpawn(EntityType type) {
+		return creaturesWhoSpawn.contains(type);
 	}
 
 	@Override

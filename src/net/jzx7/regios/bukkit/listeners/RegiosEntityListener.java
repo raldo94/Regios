@@ -49,7 +49,8 @@ public class RegiosEntityListener implements Listener {
 				ce == EntityType.IRON_GOLEM || 
 				ce == EntityType.WOLF ||
 				ce == EntityType.BAT ||
-				ce == EntityType.HORSE) {
+				ce == EntityType.HORSE ||
+				ce == EntityType.RABBIT) {
 			return true;
 		} else {
 			return false;
@@ -60,6 +61,7 @@ public class RegiosEntityListener implements Listener {
 	{
 		if (ce == EntityType.ZOMBIE || 
 				ce == EntityType.BLAZE ||
+				ce == EntityType.SHULKER ||
 				ce == EntityType.CAVE_SPIDER ||
 				ce == EntityType.CREEPER ||
 				ce == EntityType.ENDER_DRAGON ||
@@ -70,6 +72,8 @@ public class RegiosEntityListener implements Listener {
 				ce == EntityType.PIG_ZOMBIE ||
 				ce == EntityType.SILVERFISH ||
 				ce == EntityType.SKELETON ||
+				ce == EntityType.GUARDIAN ||
+				ce == EntityType.ENDERMITE||
 				ce == EntityType.SLIME ||
 				ce == EntityType.SPIDER ||
 				ce == EntityType.WITHER) {
@@ -145,7 +149,7 @@ public class RegiosEntityListener implements Listener {
 		Region r = rm.getRegion(l);
 
 		if (r == null) {
-			if (!w.canCreatureSpawn(ce.getTypeId())) {
+			if (!w.canCreatureSpawn(ce)) {
 				evt.setCancelled(true);
 			}
 			return;
@@ -386,8 +390,8 @@ public class RegiosEntityListener implements Listener {
 				Entity damager;
 				if (edevt.getDamager() instanceof Player && edevt.getEntity() instanceof Player) {
 					damager = edevt.getDamager();
-					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-					((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
+					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + damager.getName() + "' tried to attack '" + (evt.getEntity()).getName() + " but was prevented."));
+					damager.sendMessage(Message.REGIONPVPDISABLED.getMessage());
 					evt.setCancelled(true);
 					evt.setDamage(0.0);
 					return;
@@ -396,8 +400,8 @@ public class RegiosEntityListener implements Listener {
 					if(arrow.getShooter() instanceof Player) {
 						damager = (Player) arrow.getShooter(); //get the arrows shooter
 						if(damager.getType() == EntityType.PLAYER) { //if shot by a player, cancel the event
-							LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-							((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
+							LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + damager.getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
+							damager.sendMessage(Message.REGIONPVPDISABLED.getMessage());
 							evt.setCancelled(true);
 							evt.setDamage(0.0);
 						}
@@ -408,8 +412,8 @@ public class RegiosEntityListener implements Listener {
 					if(potion.getShooter() instanceof Player) {
 						damager = (Player) potion.getShooter(); //get the potion's thrower
 						if(damager.getType() == EntityType.PLAYER) { //if it was thrown by a player, cancel the event
-							LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + ((Player) damager).getName() + "' tried to attack '" + ((Player) evt.getEntity()).getName() + " but was prevented."));
-							((Player) damager).sendMessage(Message.REGIONPVPDISABLED.getMessage());
+							LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + damager.getName() + "' tried to attack '" + evt.getEntity().getName() + " but was prevented."));
+							damager.sendMessage(Message.REGIONPVPDISABLED.getMessage());
 							evt.setCancelled(true);
 							evt.setDamage(0.0);
 						}

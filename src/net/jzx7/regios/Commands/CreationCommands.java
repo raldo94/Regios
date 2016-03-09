@@ -47,6 +47,9 @@ public class CreationCommands extends PermissionsCore {
 	public String getSettingType(RegiosPlayer p) {
 		return setting.get(p.getName());
 	}
+	public String getModdingType(RegiosPlayer p) {
+			return modding.get(p.getName());
+		}
 
 	public boolean isModding(RegiosPlayer p) {
 		return (modding.containsKey(p.getName()) ? true : false);

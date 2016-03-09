@@ -138,11 +138,11 @@ public class RegiosPlayerListener implements Listener {
 
 		Entity e = evt.getRightClicked();
 
-		if(e.getType() == EntityType.ITEM_FRAME) {
+		if(e.getType() == EntityType.ITEM_FRAME && (r != null)) {
 			if (r.isProtected()) {
 				if (!r.canBypassProtection(p)) {
 					if (isSendable(p, MSG.PROTECTION)) {
-						p.sendMessage(ChatColor.RED + "[Regios] You can not interact width item frames.");
+						p.sendMessage(ChatColor.RED + "[Regios] You can not interact with item frames.");
 					}
 					LogRunner.addLogMessage(r, LogRunner.getPrefix(r) + (" Player '" + p.getName() + "' tried to interact but did not g permissions."));
 					evt.setCancelled(true);
@@ -212,16 +212,17 @@ public class RegiosPlayerListener implements Listener {
 		if (creationCommands.isModding(p)) {
 			Action act = evt.getAction();
 			if (act == Action.LEFT_CLICK_BLOCK) {
-				if (creationCommands.getSettingType(p).equalsIgnoreCase("cuboid")) {
+				if (creationCommands.getModdingType(p).equalsIgnoreCase("cuboid")) {
 					creationCommands.setFirstMod(p, RegiosConversions.getPoint(evt.getClickedBlock().getLocation()));
-				} else if (creationCommands.getSettingType(p).equalsIgnoreCase("polygon")) {
+				} else if (creationCommands.getModdingType(p).equalsIgnoreCase("polygon")) {
 					creationCommands.addMPoint(p, l);
 				}
 				return;
 			} else if (act == Action.RIGHT_CLICK_BLOCK) {
-				if (creationCommands.getSettingType(p).equalsIgnoreCase("cuboid")) {
+
+				if (creationCommands.getModdingType(p).equalsIgnoreCase("cuboid")) {
 					creationCommands.setSecondMod(p, RegiosConversions.getPoint(evt.getClickedBlock().getLocation()));
-				} else if (creationCommands.getSettingType(p).equalsIgnoreCase("polygon")) {
+				} else if (creationCommands.getModdingType(p).equalsIgnoreCase("polygon")) {
 					creationCommands.removeLastMPoint(p);
 				}
 				return;

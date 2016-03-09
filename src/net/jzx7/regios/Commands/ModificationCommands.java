@@ -96,7 +96,7 @@ public class ModificationCommands extends PermissionsCore {
 		if (doesHaveNode(p, "regios.modify.modify")) {
 			if (args.length == 2) {
 				if (args[1].equalsIgnoreCase("confirm")) {
-					setModifyPoints(CreationCommands.mod1.get(p), CreationCommands.mod2.get(p), p);
+					setModifyPoints(CreationCommands.mod1.get(p.getName()), CreationCommands.mod2.get(p.getName()), p);
 				} else {
 					startModification(rm.getRegion(args[1]), args[1], p);
 				}
@@ -217,7 +217,7 @@ public class ModificationCommands extends PermissionsCore {
 			p.sendMessage("<RED>" + "[Regios] You have not set 2 points!");
 			return;
 		}
-		Region r = CreationCommands.modRegion.get(p);
+		Region r = CreationCommands.modRegion.get(p.getName());
 		if (!r.canModify(p)) {
 			p.sendMessage("<RED>" + "[Regios] You are not permitted to modify this region!");
 			return;
